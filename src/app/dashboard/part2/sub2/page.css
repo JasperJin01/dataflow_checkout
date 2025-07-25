@@ -1,0 +1,35 @@
+/* 容器样式 */
+.wave-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+/* 控制按钮样式 */
+.play-button {
+  padding: 8px 16px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.play-button:hover {
+  background: #2980b9;
+}
+
+/* 波形颜色定制 */
+svg line {
+  transition: stroke 0.3s ease;
+}
+
+svg line[stroke="#2c3e50"] {
+  stroke: #2ecc71;  /* 水平线颜色 */
+}
+
+svg line[stroke="#e74c3c"] {
+  stroke: #e67e22;  /* 垂直线颜色 */
+}

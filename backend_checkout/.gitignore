@@ -1,0 +1,10 @@
+logs/
+venv/
+.idea/
+dist/
+
+**/__pycache__
+/part3_cache
+test.py
+server_log.log
+/cga

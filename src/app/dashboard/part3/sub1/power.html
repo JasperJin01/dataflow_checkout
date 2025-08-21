@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="{% static 'images/hust.jfif' %}" type="image/ico" />
+
+	<title>图计算演示系统</title>
+
+    <!-- Bootstrap -->
+	<link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{% static 'vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+	<!-- NProgress -->
+	<link href="{% static 'vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="{% static 'vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
+	<!-- bootstrap-progressbar -->
+    <link href="{% static 'vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css' %}" rel="stylesheet">
+	<!-- JQVMap -->
+    <link href="{% static 'vendors/jqvmap/dist/jqvmap.min.css' %}" rel="stylesheet"/>
+	<!-- bootstrap-daterangepicker -->
+	<link href="{% static 'vendors/bootstrap-daterangepicker/daterangepicker.css' %}" rel="stylesheet">
+    <!-- Custom Theme Style -->
+	<link href="{% static 'build/css/custom.css' %}" rel="stylesheet">
+
+	<link href="{% static 'loading_css/loading2.css' %}" rel="stylesheet">
+	
+	<script src="{% static 'jquery/jquery-3.1.1.min.js' %} "></script>
+	
+
+	<script src="{% static 'power/layerslider/js/jquery.js' %}" type="text/javascript"></script>
+	<script src="{% static 'power/layerslider/js/greensock.js' %}" type="text/javascript"></script>
+	<script src="{% static 'power/layerslider/js/layerslider.transitions.js' %}" type="text/javascript"></script>
+	<script src="{% static 'power/layerslider/js/layerslider.kreaturamedia.jquery.js' %}" type="text/javascript"></script>
+	<script src="{% static 'power/js/bootstrap.min.js' %}" type="text/javascript"></script>
+	<script src="{% static 'power/js/jquery.bxslider.js' %}"></script>
+	<script type="text/javascript" src="{% static 'power/echarts.min.js' %}"></script>
+	
+	<script>
+		$.extend({
+			readcode: function(url, f) {
+				$.get(url, function(record) {
+					f.call(this, record);
+				});
+			}
+		});
+
+		$(document).ready(function(){
+			
+			$("#power_reset").on("click", function () {
+				var chart = echarts.init(document.getElementById("pf_graphMap"));
+				chart.dispose();
+				chart = echarts.init(document.getElementById("pf_columnBarChart"));
+				chart.dispose();
+				chart = echarts.init(document.getElementById("pf_bardata"));
+				chart.dispose();
+				/*chart = echarts.init(document.getElementById("se_graphMap"));
+				chart.dispose();
+				chart = echarts.init(document.getElementById("se_columnBarChart"));
+				chart.dispose();*/
+				chart = echarts.init(document.getElementById("se_bardata"));
+				chart.dispose();
+				$("#power_run_ans").html("");
+				//$("#power_code").val('');
+				$("#power_code").html("");
+				
+				pfColumns.x_data = [];
+				pfColumns.foregraph_data = [];
+
+				pfColumns.acc_data = [];
+				pfColumns.final_data = [];
+				
+				seColumns.x_data = [];
+				seColumns.foregraph_data = [];
+
+				seColumns.acc_data = [];
+				seColumns.final_data = [];
+				
+				document.getElementById("loading_terminal").style.display="none";
+				document.getElementById("loading_graphMap").style.display="none";
+			});
+
+			$("#span_refresh").bind("click", function () {
+				//console.log('reset Accelerator');
+				document.getElementById("loading_terminal").style.display="";
+				$("#power_run_ans").html("Accelerator is resetting...");
+				$.ajax({
+					url:"/reset_run/",
+					type:"GET",
+					data:{"info":'reset Accelerator'},
+					success:function (data) {
+						$("#power_run_ans").html("");     
+						for(var i = 0; i<= data.length-1; i++){
+							$("#power_run_ans").append(data[i] + '</br>')
+						}
+						$("#power_run_ans").append('Accelerator reset complete' + '</br>')
+						document.getElementById("loading_terminal").style.display="none";
+					}
+				});
+			});
+
+			$("#code_show").on("click", function () {
+				if($("#algorithm").val()==='pf') {
+					$.readcode("{% static 'code_show/powerflow.cpp' %}?ti=" + new Date().getTime(), function(record) {
+						//$("#power_code").val(record);
+						record = record.replace(/\t/g, '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp');
+						record = record.replace(/\n/g, '</br>');
+						
+						$("#power_code").html("");
+						$("#power_code").append(record);
+						var str=document.getElementById("power_code").innerHTML;
+						/*str=str.replace(/InitializeGraph/,"<font color=\"red\">InitializeGraph</font>");
+						str=str.replace(/VertexFilter/,"<font color=\"red\">VertexFilter</font>");
+						str=str.replace(/ProcessEdge/,"<font color=\"red\">ProcessEdge</font>");
+						str=str.replace(/AccumulateEdge/,"<font color=\"red\">AccumulateEdge</font>");
+						str=str.replace(/AccumulateVertex/,"<font color=\"red\">AccumulateVertex</font>");
+						str=str.replace(/print/,"<font color=\"red\">print</font>");
+						str=str.replace(/UserAlgorithm/g,"<font color=\"red\">UserAlgorithm</font>");
+						str=str.replace(/ExecuteAlgorithm/g,"<b>ExecuteAlgorithm</b>");
+						str=str.replace(/PrintPerformance/g,"<b>PrintPerformance</b>");*/
+						str=str.replace(/for/g,"<b>for</b>");
+						str=str.replace(/while/g,"<b>while</b>");
+						str=str.replace(/if/g,"<b>if</b>");
+						str=str.replace(/else/g,"<b>else</b>");
+						//str=str.replace(/new/g,"<b>new</b>");
+						document.getElementById("power_code").innerHTML=str;
+					});
+				}
+				else if($("#algorithm").val()==='se') {
+					$.readcode("{% static 'code_show/stateestimation.cpp' %}?ti=" + new Date().getTime(), function(record) {
+						//$("#power_code").val(record);
+						record = record.replace(/\t/g, '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp');
+						record = record.replace(/\n/g, '</br>');
+						
+						$("#power_code").html("");
+						$("#power_code").append(record);
+						var str=document.getElementById("power_code").innerHTML;
+						/*str=str.replace(/InitializeGraph/,"<font color=\"red\">InitializeGraph</font>");
+						str=str.replace(/VertexFilter/,"<font color=\"red\">VertexFilter</font>");
+						str=str.replace(/ProcessEdge/,"<font color=\"red\">ProcessEdge</font>");
+						str=str.replace(/AccumulateEdge/,"<font color=\"red\">AccumulateEdge</font>");
+						str=str.replace(/AccumulateVertex/,"<font color=\"red\">AccumulateVertex</font>");
+						str=str.replace(/print/,"<font color=\"red\">print</font>");
+						str=str.replace(/UserAlgorithm/g,"<font color=\"red\">UserAlgorithm</font>");
+						str=str.replace(/ExecuteAlgorithm/g,"<b>ExecuteAlgorithm</b>");
+						str=str.replace(/PrintPerformance/g,"<b>PrintPerformance</b>");*/
+						str=str.replace(/for/g,"<b>for</b>");
+						str=str.replace(/while/g,"<b>while</b>");
+						str=str.replace(/if/g,"<b>if</b>");
+						str=str.replace(/else/g,"<b>else</b>");
+						//str=str.replace(/new/g,"<b>new</b>");
+						document.getElementById("power_code").innerHTML=str;
+					});
+				}
+			});
+			
+			$("#algorithm").change(function (data) {
+				if($("#algorithm").val()==='pf'){
+					var sel=document.getElementById("dataset");
+					sel.disabled="";
+					var sel2=document.getElementById("dataset2");
+					sel2.disabled="disabled";
+				}
+				if($("#algorithm").val()==='se'){
+					var sel=document.getElementById("dataset");
+					sel.disabled="disabled";
+					var sel2=document.getElementById("dataset2");
+					sel2.disabled="";
+				}
+			});
+
+			$("#power_run").on("click", function () {
+			if($("#algorithm").val()==='pf'){
+				//$("#power-flow-tab").attr('class',"nav-link active");
+				//$("#state_estimation-tab").attr('class',"nav-link");
+				//$("#power_flow1").attr('class',"tab-pane fade show active");
+				//$("#state_estimation1").attr('class',"tab-pane fade show ");
+
+				// if(!($("#dataset").val().includes("Case"))){
+				// 	return;
+				// }
+
+				var chart = echarts.init(document.getElementById("pf_graphMap"));
+				chart.dispose();
+				chart = echarts.init(document.getElementById("pf_columnBarChart"));
+				chart.dispose();
+				$("#power_run_ans").html("");
+
+				document.getElementById("loading_terminal").style.display="";
+				document.getElementById("loading_graphMap").style.display="";
+				document.getElementById("loading_pf_bardata").style.display="";
+
+				$.ajax({
+					url:"/power_run/",
+					type:"GET",
+					data:{"dataset":$("#dataset").val(),"precision":'0.001'},
+					success:function (data) {
+
+						$("#power_run_ans").html("");
+
+						for(var i = 0; i<= data.length-1; i++){
+							if(JSON.stringify(data[i]).substr(2,10)=='XILINX_XRT'
+								||JSON.stringify(data[i]).substr(2,4)=='PATH'
+								||JSON.stringify(data[i]).substr(2,15)=='LD_LIBRARY_PATH'
+								||JSON.stringify(data[i]).substr(2,10)=='PYTHONPATH'){
+								continue;
+							}
+							$("#power_run_ans").append(data[i] + '</br>')
+						}
+						var dom = document.getElementById("pf_graphMap");
+						var pf_myChart = echarts.init(dom);
+						var dom2 = document.getElementById("pf_columnBarChart");
+						var pf_barChart = echarts.init(dom2);
+						pf_getGraphDataSource(pf_myChart);
+						power_getBarChart(pf_barChart,0);
+						
+						pfColumns.x_data.push($("#dataset").val());
+						pfColumns.foregraph_data.push(1000);
+
+						var str= JSON.stringify(data[data.length-2]);
+						var str2= str.substr(30,8);
+						var str3=parseFloat(1000*parseFloat(str2)).toFixed(2);
+						console.log(str);
+						console.log(str2);
+						console.log(str3);
+						pfColumns.acc_data.push(str3);
+						pfColumns.final_data.push(100);
+						var myChart = echarts.init(document.getElementById('pf_bardata'));
+						draw_pr(pfColumns,myChart,1200);
+						
+						//var dom3 = document.getElementById("se_graphMap");
+						//var se_myChart = echarts.init(dom3);
+						//se_getGraphDataSource(se_myChart);
+						//var dom4 = document.getElementById("se_columnBarChart");
+						//var se_barChart = echarts.init(dom4);
+						//power_getBarChart(se_barChart,1);
+						
+						document.getElementById("loading_terminal").style.display="none";
+						document.getElementById("loading_graphMap").style.display="none";
+						document.getElementById("loading_pf_bardata").style.display="none";
+					}
+				});
+			}
+			/*});
+		
+			$("#power_run2").on("click", function () {*/
+			if($("#algorithm").val()==='se'){
+				//$("#state_estimation-tab").attr('class',"nav-link active");
+				//$("#power-flow-tab").attr('class',"nav-link");
+				//$("#power_flow1").attr('class',"tab-pane fade show ");
+				//$("#state_estimation1").attr('class',"tab-pane fade show active");
+				
+				if(!($("#dataset2").val().includes("sc"))){
+					return;
+				}
+
+				var chart = echarts.init(document.getElementById("pf_graphMap"));
+				chart.dispose();
+				chart = echarts.init(document.getElementById("pf_columnBarChart"));
+				chart.dispose();
+				$("#power_run_ans").html("");
+
+				document.getElementById("loading_terminal").style.display="";
+				document.getElementById("loading_graphMap").style.display="";
+				document.getElementById("loading_se_bardata").style.display="";
+
+				$.ajax({
+					url:"/power_run/",
+					type:"GET",
+					data:{"dataset":$("#dataset2").val(),"precision":'0.001'},
+					success:function (data) {
+					
+						$("#power_run_ans").html("");
+					
+						for(var i = 0; i<= data.length-1; i++){
+							if(JSON.stringify(data[i]).substr(2,10)=='XILINX_XRT'
+								||JSON.stringify(data[i]).substr(2,4)=='PATH'
+								||JSON.stringify(data[i]).substr(2,15)=='LD_LIBRARY_PATH'
+								||JSON.stringify(data[i]).substr(2,10)=='PYTHONPATH'){
+								continue;
+							}
+							$("#power_run_ans").append(data[i] + '</br>')
+						}
+						//console.log($("#power-flow-tab").attr('class'));
+						//console.log($("#state_estimation-tab").attr('class'));
+						//$("#state_estimation-tab").attr('class',"nav-link active");
+						//$("#power-flow-tab").attr('class',"nav-link");
+						
+
+						var dom3 = document.getElementById("pf_graphMap");
+						var se_myChart = echarts.init(dom3);
+						se_getGraphDataSource(se_myChart);
+						var dom4 = document.getElementById("pf_columnBarChart");
+						var se_barChart = echarts.init(dom4);
+						power_getBarChart(se_barChart,1);
+
+						seColumns.x_data.push($("#dataset2").val());
+						seColumns.foregraph_data.push(3500);
+
+
+						var str= JSON.stringify(data[data.length-2]);
+						var str2= str.substr(30,8);
+						var str3=parseFloat(1000*parseFloat(str2)).toFixed(2);
+						console.log(str);
+						console.log(str2);
+						console.log(str3);
+						seColumns.acc_data.push(str3);//(JSON.stringify(data[data.length-2]).substr(44,9));
+						seColumns.final_data.push(200);
+						var myChart = echarts.init(document.getElementById('se_bardata'));
+						draw_pr(seColumns,myChart,4000);
+
+						document.getElementById("loading_terminal").style.display="none";
+						document.getElementById("loading_graphMap").style.display="none";
+						document.getElementById("loading_se_bardata").style.display="none";
+					}
+				});
+			}
+			});
+		});
+
+	</script>
+	
+	<script src="{% static 'barchart/echarts.js' %} "></script>
+	<script>
+		pfColumns = {};
+		pfColumns['x_data'] = [];
+		pfColumns['foregraph_data'] = [];
+
+		pfColumns['acc_data'] = [];
+		pfColumns['final_data'] = [];
+
+		seColumns = {};
+		seColumns['x_data'] = [];
+		seColumns['foregraph_data'] = [];
+
+		seColumns['acc_data'] = [];
+		seColumns['final_data'] = [];
+
+		function draw_pr(prColumns,myChart,max_time){
+			//var myChart = echarts.init(document.getElementById(pr_bardata));
+			var colors = ['#D65DB1', '#FF9671'];
+			option = {
+				color: colors,
+			tooltip: {
+				trigger: 'axis',
+				axisPointer: {
+					type: 'cross'
+				}
+			},
+			grid: {
+				left: '15%',
+				right: '15%'
+			},
+			toolbox: {
+				feature: {
+					dataView: {show: true, readOnly: true},
+					restore: {show: false},
+					saveAsImage: {show: true}
+				}
+			},
+			legend: {
+				data:['传统实现','加速器'],
+				textStyle: { //图例文字的样式
+                            color: '#000000',
+                            fontSize: 16
+                        }
+			},
+			xAxis: [
+				{
+					type: 'category',
+					axisTick: {
+						aignWithLabel: true
+					},
+					data: prColumns.x_data
+				}
+			],
+			yAxis: [
+				{
+					type: 'value',
+					name: '时间(ms)',
+					min: 0.0,
+					max: max_time,
+					position: 'left',
+					axisLine: {
+						lineStyle: {
+							color: '#000000'
+						}
+					},
+					axisLabel: {
+						formatter: '{value} '
+					}
+				},
+				{
+					type: 'value',
+					name: '',
+					min: 0.0,
+					max: max_time,
+					position: 'right',
+					axisLine: {
+						lineStyle: {
+							color: '#000000'
+						}
+					},
+					axisLabel: {
+						formatter: '{value} '
+					}
+				}
+			],
+			series: [
+				{
+					name:'传统实现',
+					type:'bar',
+					data: prColumns.foregraph_data,
+					label: {              
+							show: true, //开启显示
+							position: 'top',//数值展示的位置
+							textStyle: {
+								color: '#000000',
+								//backgroundColor:'red',
+								fontSize: 16
+							},
+						}
+				},
+				{
+					name:'加速器',
+					type:'bar',
+					yAxisIndex: 1,
+					data: prColumns.acc_data,
+					label: {              
+							show: true, //开启显示
+							position: 'top',//数值展示的位置
+							textStyle: {
+								color: '#000000',
+								//backgroundColor:'red',
+								fontSize: 16
+							},
+						}
+				}
+			]
+		};
+
+		myChart.setOption(option);
+	}
+	</script>		
+
+
+	<script type="text/javascript">
+		$.extend({
+			csv: function(url, f) {
+				$.get(url, function(record) {
+					//按回车拆分
+					record = record.split(/\n/);
+					//第一行标题
+					var title = record[0].split(",");
+					//删除第一行
+					//record.shift();
+					var data = [];
+					for (var i = 0; i < record.length; i++) {
+						var t = record[i].split(",");
+						for (var y = 0; y < t.length; y++) {
+							if (!data[i]) data[i] = {};
+							data[i][y] = t[y];//console.log(i+','+y+','+data[i][y]);
+						}
+					}
+					f.call(this, data);
+					data = null;
+				});
+			}
+		});
+		
+		function pf_getGraphDataSource(se_myChart) {
+			$.csv("{% static 'data/power/pf_node.csv' %}?ti=" + new Date().getTime(), function(_node_data) {
+				var _nodes = [];
+				console.log('node_num:'+_node_data.length);
+				for(var i=0;i<_node_data.length;i++){
+					var _id = parseInt(_node_data[i][0]),
+						_true_id = parseInt(_node_data[i][1]),
+						_category = parseInt(_node_data[i][2]),
+						_x = parseFloat(_node_data[i][3]),
+						_y = parseFloat(_node_data[i][4]),
+						_init_Vm = parseFloat(_node_data[i][5]),
+						_init_Va = parseFloat(_node_data[i][6]),
+						_init_P = parseFloat(_node_data[i][7]),
+						_init_Q = parseFloat(_node_data[i][8]),
+						_Vm = parseFloat(_node_data[i][9]),
+						_Va = parseFloat(_node_data[i][10]);
+					
+					_nodes.push({
+						name: ''+_true_id,
+						x: _x,
+						y: _y,
+						category: _category,
+						init_Vm: _init_Vm,
+						init_Va: _init_Va,
+						init_P: _init_P,
+						init_Q: _init_Q,
+						Vm: _Vm,
+						Va: _Va,
+					});
+					//console.log(_id+','+_true_id+','+_category+','+_x+','+_y+','+_init_Vm+','+_init_Va+','+_init_P+','+_init_Q+','+_Vm+','+_Va);
+				}
+					
+				$.csv("{% static 'data/power/pf_edge.csv' %}?ti=" + new Date().getTime(), function(_edge_data) {
+					var _links = [];
+					//console.log('edge_num:'+_edge_data.length);
+					
+					for(var i=0;i<_edge_data.length;i++){
+						var _edge_id = parseInt(_edge_data[i][0]),
+								_source = parseInt(_edge_data[i][1]),
+								_target = parseInt(_edge_data[i][2]),
+								_true_source = parseInt(_edge_data[i][3]),
+								_true_target = parseInt(_edge_data[i][4]),
+								_G = parseFloat(_edge_data[i][5]),
+								_B = parseFloat(_edge_data[i][6]);
+							
+						_links.push({
+							edge_id: _edge_id,
+							source: _source,
+							target: _target,
+							true_source: _true_source,
+							true_target: _true_target,
+							G: _G,
+							B: _B
+						});
+							//console.log(_edge_id+','+_source+','+_target+','+_true_source+','+_true_target+','+_G+','+_B);
+					}
+					
+					var categories = [];
+					categories[0] = {
+						name: 'PQ节点'
+					};
+					categories[1] = {
+						name: 'PV节点'
+					};
+					categories[2] = {
+						name: '平衡节点'
+					};
+					
+					option = {
+					//	title: {
+					//		text: 'Power System\n' /*+ result_data*/,
+					//		subtext: 'Default layout',
+					//		//subtext: result_data,
+					//		top: 'top',
+					//		left: 'left'
+					//	},
+						//tooltip: {},
+						tooltip: {
+							trigger: 'item',
+							formatter: function (params) {
+								if (params.data.source) {
+									return 'edge' + params.data.edge_id + ':' + '\n\t源点:' + params.data.true_source + '\n\t目标点:' + params.data.true_target	+ '\n\t电导:' + params.data.G + '\n\t电纳:' + params.data.B;
+								} else {
+									var iVm,iVa,iP,iQ,itype;
+									if(params.data.category===0){
+										iVm='-';iVa='-';iP=''+params.data.init_P;iQ=''+params.data.init_Q;itype='PQ节点';
+									}
+									else if(params.data.category===1){
+										iVm=''+params.data.init_Vm;iVa='-';iP=''+params.data.init_P;iQ='-';itype='PV节点';
+									}
+									else{
+										iVm=''+params.data.init_Vm;iVa=''+params.data.init_Va;iP='-';iQ='-';itype='平衡节点';
+									}
+									return '节点' + params.data.name + ':'
+											+ '\n\t节点类型：' + itype
+											+ '\n\t初始电压幅值：' + iVm
+											+ '\n\t初始电压相位：' + iVa
+											+ '\n\t初始有功功率：' + iP
+											+ '\n\t初始无功功率：' + iQ
+											+ '\n\t结果电压幅值：' + params.data.Vm
+											+ '\n\t结果电压相位：' + params.data.Va;
+								}
+							},
+							extraCssText: 'width:400px; white-space:pre-wrap'
+						},
+						
+						legend: [{
+							// selectedMode: 'single',
+							data: categories.map(function (a) {
+								return a.name;
+							})
+						}],
+						animation: false,
+						series: [
+							{
+								name: '',
+								type: 'graph',
+								//layout: 'force',
+								symbolSize: 10,
+								data: _nodes,
+								links: _links,
+								categories: categories,
+								roam: true,
+								edgeSymbol: ['circle', 'arrow'],
+								edgeSymbolSize: [4, 10],
+								label: {
+									normal: {
+										position: 'right'
+									}
+								},
+								force: {
+									//initLayout: ,//力引导的初始化布局，默认使用xy轴的标点
+									repulsion: 100,//节点之间的斥力因子。支持数组表达斥力范围，值越大斥力越大。
+									gravity: 0.03,//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
+									edgeLength: 80,//边的两个节点之间的距离，这个距离也会受 repulsion。[10, 50] 。值越小则长度越长
+									layoutAnimation: true
+								}
+							}
+						]
+					};
+					
+					se_myChart.setOption(option);
+				});
+			});
+		}
+		
+		function se_getGraphDataSource(se_myChart) {
+			$.csv("{% static 'data/power/se_node.csv' %}?ti=" + new Date().getTime(), function(_node_data) {
+				var _nodes = [];
+				console.log('node_num:'+_node_data.length);
+				for(var i=0;i<_node_data.length;i++){
+					var _id = parseInt(_node_data[i][0]),
+							_true_id = parseInt(_node_data[i][1]),
+							_category = parseInt(_node_data[i][2]),
+							_x = parseFloat(_node_data[i][3]),
+							_y = parseFloat(_node_data[i][4]),
+							_init_Vm = parseFloat(_node_data[i][5]),
+							_init_Va = parseFloat(_node_data[i][6]),
+							_init_P = parseFloat(_node_data[i][7]),
+							_init_Q = parseFloat(_node_data[i][8]),
+							_Ri_V = parseFloat(_node_data[i][9]),
+							_Ri_vP = parseFloat(_node_data[i][10]),
+							_Ri_vQ = parseFloat(_node_data[i][11]),
+							_Vm = parseFloat(_node_data[i][12]),
+							_Va = parseFloat(_node_data[i][13]);
+					
+					_nodes.push({
+						name: ''+_true_id,
+						x: _x,
+						y: _y,
+						category: _category,
+						init_Vm: _init_Vm,
+						init_Va: _init_Va,
+						init_P: _init_P,
+						init_Q: _init_Q,
+						Ri_V: _Ri_V,
+						Ri_vP: _Ri_vP,
+						Ri_vQ: _Ri_vQ,
+						Vm: _Vm,
+						Va: _Va,
+					});
+					//console.log(_id+','+_true_id+','+_category+','+_x+','+_y+','+_init_Vm+','+_init_Va+','+_init_P+','+_init_Q+','+_Vm+','+_Va);
+				}
+				
+				$.csv("{% static 'data/power/se_edge.csv' %}?ti=" + new Date().getTime(), function(_edge_data) {
+					var _links = [];
+					//console.log('edge_num:'+_edge_data.length);
+					
+					for(var i=0;i<_edge_data.length;i++){
+						var _edge_id = parseInt(_edge_data[i][0]),
+								_source = parseInt(_edge_data[i][1]),
+								_target = parseInt(_edge_data[i][2]),
+								_true_source = parseInt(_edge_data[i][3]),
+								_true_target = parseInt(_edge_data[i][4]),
+								_G = parseFloat(_edge_data[i][5]),
+								_B = parseFloat(_edge_data[i][6]),
+								_hB = parseFloat(_edge_data[i][7]),
+								_K = parseFloat(_edge_data[i][8]),
+								_Kcount = parseInt(_edge_data[i][9]),
+								_M_P_TLPF = parseFloat(_edge_data[i][10]),
+								_M_Q_TLPF = parseFloat(_edge_data[i][11]),
+								_Ri_eP = parseFloat(_edge_data[i][12]),
+								_Ri_eQ = parseFloat(_edge_data[i][13]),
+								_M_P_TLPF_reverse = parseFloat(_edge_data[i][14]),
+								_M_Q_TLPF_reverse = parseFloat(_edge_data[i][15]),
+								_Ri_eP_reverse = parseFloat(_edge_data[i][16]),
+								_Ri_eQ_reverse = parseFloat(_edge_data[i][17]);
+								
+						_links.push({
+							edge_id: _edge_id,
+							source: _source,
+							target: _target,
+							true_source: _true_source,
+							true_target: _true_target,
+							G: _G,
+							B: _B,
+							hB: _hB,
+							K: _K,
+							Kcount: _Kcount,
+							M_P_TLPF: _M_P_TLPF,
+							M_Q_TLPF: _M_Q_TLPF,
+							Ri_eP: _Ri_eP,
+							Ri_eQ: _Ri_eQ,
+							M_P_TLPF_reverse: _M_P_TLPF_reverse,
+							M_Q_TLPF_reverse: _M_Q_TLPF_reverse,
+							Ri_eP_reverse: _Ri_eP_reverse,
+							Ri_eQ_reverse: _Ri_eQ_reverse,
+						});
+						//console.log(_edge_id+','+_source+','+_target+','+_true_source+','+_true_target+','+_G+','+_B);
+					}
+					
+					var categories = [];
+					categories[0] = {
+						name: 'PQ节点'
+					};
+					categories[1] = {
+						name: 'PV节点'
+					};
+					categories[2] = {
+						name: '平衡节点'
+					};
+					
+					option = {
+						//title: {
+						//	text: 'Power System\n' /*+ result_data*/,
+						//	subtext: 'Default layout',
+							//subtext: result_data,
+						//	top: 'top',
+						//	left: 'left'
+						//},
+						//tooltip: {},
+						tooltip: {
+							trigger: 'item',
+							formatter: function (params) {
+								if (params.data.source) {
+									return 'edge' + params.data.edge_id + ':' + '\n\t源点:' + params.data.true_source + '\n\t目标点:' + params.data.true_target
+											+ '\n\t电导:' + params.data.G + '\n\t电纳:' + params.data.B
+											+ '\n\t补偿电纳：' + params.data.hB
+											+ '\n\t变压器变比：' + params.data.K
+											+ '\n\t并联支路数：' + params.data.Kcount
+											+ '\n\t正向支路量测有功功率：' + params.data.M_P_TLPF
+											+ '\n\t正向支路量测无功功率：' + params.data.M_Q_TLPF
+											+ '\n\t正向支路有功权重：' + params.data.Ri_eP
+											+ '\n\t正向支路无功权重：' + params.data.Ri_eQ
+											+ '\n\t反向支路量测有功功率：' + params.data.M_P_TLPF_reverse
+											+ '\n\t反向支路量测无功功率：' + params.data.M_Q_TLPF_reverse
+											+ '\n\t反向支路有功权重：' + params.data.Ri_eP_reverse
+											+ '\n\t反向支路无功权重：' + params.data.Ri_eQ_reverse;
+								} else {
+									var iVm,iVa,iP,iQ,itype;
+									if(params.data.category===0){
+										iVm='-';iVa='-';iP=''+params.data.init_P;iQ=''+params.data.init_Q;itype='PQ节点';
+									}
+									else if(params.data.category===1){
+										iVm=''+params.data.init_Vm;iVa='-';iP=''+params.data.init_P;iQ='-';itype='PV节点';
+									}
+									else{
+										iVm=''+params.data.init_Vm;iVa=''+params.data.init_Va;iP='-';iQ='-';itype='平衡节点';
+									}
+									return '节点' + params.data.name + ':'
+											+ '\n\t节点类型：' + itype
+											+ '\n\t量测电压幅值：' + params.data.init_Vm
+											+ '\n\t量测电压相位：' + params.data.init_Va
+											+ '\n\t量测有功功率：' + params.data.init_P
+											+ '\n\t量测无功功率：' + params.data.init_Q
+											+ '\n\t电压幅值权重：' + params.data.Ri_V
+											+ '\n\t有功功率权重：' + params.data.Ri_vP
+											+ '\n\t无功功率权重：' + params.data.Ri_vQ
+											+ '\n\t结果电压幅值：' + params.data.Vm
+											+ '\n\t结果电压相位：' + params.data.Va;
+								}
+							},
+							extraCssText: 'width:400px; white-space:pre-wrap'
+						},
+						
+						legend: [{
+							// selectedMode: 'single',
+							data: categories.map(function (a) {
+								return a.name;
+							})
+						}],
+						animation: false,
+						series: [
+							{
+								name: '',
+								type: 'graph',
+								//layout: 'force',
+								symbolSize: 10,
+								data: _nodes,
+								links: _links,
+								categories: categories,
+								roam: true,
+								edgeSymbol: ['circle', 'arrow'],
+								edgeSymbolSize: [4, 10],
+								label: {
+									normal: {
+										position: 'right'
+									}
+								},
+								force: {
+									//initLayout: ,//力引导的初始化布局，默认使用xy轴的标点
+									repulsion: 100,//节点之间的斥力因子。支持数组表达斥力范围，值越大斥力越大。
+									gravity: 0.03,//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
+									edgeLength: 80,//边的两个节点之间的距离，这个距离也会受 repulsion。[10, 50] 。值越小则长度越长
+									layoutAnimation: true
+								}
+							}
+						]
+					};
+					
+					se_myChart.setOption(option);
+				});
+			});
+		}
+		
+		function pf_createGraphChart (graph,result_data,categories,option,se_myChart) {
+			option = {
+				title: {
+					text: 'Power System\n' + result_data,
+					subtext: 'Default layout',
+					//subtext: result_data,
+					top: 'top',
+					left: 'left'
+				},
+				//tooltip: {},
+				tooltip: {
+					trigger: 'item',
+					formatter: function (params) {
+						if (params.data.source) {
+							params.data.weight = params.data.weight.split("\\n").join("\n\t");
+							return 'edge' + params.data.id + ':' + '\n\t源点:' + params.data.source + '\n\t目标点:' + params.data.target + params.data.weight;
+						} else {
+							params.data.value = params.data.value.split("\\n").join("\n\t");
+							return 'node' + params.data.id + ':' + params.data.value/* + params.data.value.replace('\\n', '\n')*/;
+						}
+					},
+					extraCssText: 'width:400px; white-space:pre-wrap'
+				},
+				
+				legend: [{
+					// selectedMode: 'single',
+					data: categories.map(function (a) {
+						return a.name;
+					})
+				}],
+				animation: false,
+				series: [
+					{
+						name: '',
+						type: 'graph',
+						//layout: 'force',
+						data: graph.nodes,
+						links: graph.links,
+						categories: categories,
+						roam: true,
+						edgeSymbol: ['circle', 'arrow'],
+						edgeSymbolSize: [4, 10],
+						label: {
+							normal: {
+								position: 'right'
+							}
+						},
+						force: {
+							//initLayout: ,//力引导的初始化布局，默认使用xy轴的标点
+							repulsion : 100,//节点之间的斥力因子。支持数组表达斥力范围，值越大斥力越大。
+							gravity : 0.03,//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
+							edgeLength :80,//边的两个节点之间的距离，这个距离也会受 repulsion。[10, 50] 。值越小则长度越长
+							layoutAnimation : true
+						}
+					}
+				]
+			};
+			
+			se_myChart.setOption(option);
+		}
+		
+		function power_getBarChart(barChart,flag) {
+			var runtime_file;
+			if(flag==1){
+				runtime_file='{% static 'data/power/se_time.csv' %}?ti=' + new Date().getTime();
+			}
+			else{
+				runtime_file='{% static 'data/power/pf_time.csv' %}?ti=' + new Date().getTime();
+			}
+			$.csv(runtime_file, function(rows) {
+				if (rows) {
+					var _points = rows[0];
+					power_createBarChart(_points,barChart);
+				}
+				/*setTimeout(function() {
+					power_getBarChart(barChart);
+					}, 10000);*/
+			});
+		}
+		
+		function power_createBarChart(_points,barChart) {
+			var legendData = ['矩阵生成','矩阵分解','传输','右端项','前代/回代'],
+				seriesData = [],
+				len = Object.keys(_points).length;
+
+			console.log(len);
+			
+			for (var i = 0; i < len; i++) {
+				var tag_name;
+				var pos='top';
+				if(i<2){
+					tag_name=legendData[i];
+				}
+				else if((i-2)%4==0){
+					tag_name=legendData[2];
+					pos='bottom';
+				}
+				else if((i-2)%4==1){
+					tag_name=legendData[3];
+					pos='top';
+				}
+				else if((i-2)%4==2){
+					tag_name=legendData[4];
+					pos='bottom';
+				}
+				else if((i-2)%4==3){
+					tag_name=legendData[2];
+					pos='top';
+				}
+				
+				// 累加图例
+				//if (i < this.__MAX_LENGED_SIZE) {
+				//    legendData.push(type_name[i]);
+				//}
+				// 累加图表序列
+				
+				seriesData.push({
+					name: tag_name,
+					type: 'bar',
+					stack: '总量',
+					barWidth:15,
+					label: {
+						normal: {
+							show: true,
+							position: pos
+						}
+					},
+					data: [_points[i]*1]
+				});
+			}
+			// console.log(legendData,seriesData);
+			
+			var option = {
+				tooltip: {
+					show:true,
+					trigger: 'axis',
+					axisPointer: {
+						type: 'shadow'
+					},
+					formatter:function(datas){
+						var res='<PRE style=\"color:white;font-size:15px;font-family: Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif;\">'+'';
+						for(var i = 0, length = datas.length; i < 20; i++) {
+							for(var j=i;j<length;j+=20){
+								if(j+20<length){
+									res += datas[j].marker+datas[j].seriesName + ':&nbsp' + datas[j].value+'ms';
+									var str1=''+datas[j].seriesName;
+									var str2=''+datas[j].value;
+									var num_space;
+									if(str1.length<5){
+										num_space=20-3*str1.length-str2.length;
+									}
+									else{
+										num_space=20-13-str2.length;
+									}
+									for(var k=0;k<num_space;k++){
+										res +='&nbsp';
+									}
+									res += '&#9'
+								}
+								else{
+									res += datas[j].marker+datas[j].seriesName + ':&nbsp' + datas[j].value+'ms' + '<br/>';
+								}
+							}
+						}
+						res += '</PRE>';
+						return res;
+					},
+				},
+				legend: {
+					data: legendData
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true
+				},
+				xAxis: {
+					type: 'value',
+					name:'ms'
+				},
+				yAxis: {
+					type: 'category',
+					data: ['时间']
+				},
+				series: seriesData
+			};
+
+			barChart.setOption(option);
+		}
+	</script>
+
+	
+  </head>
+
+  <style type="text/css">
+  #terminal {
+  /* 父容器设置宽度, 并超出部分不显示 */
+  /* width: 650px; */
+  height: 320px; 
+  overflow: hidden;
+  }
+  #terminal > div {
+  /* 子容器比父容器的宽度多 17 px, 经测正好是滚动条的默认宽度 */
+  /* width: 667px; */
+  height: 358px; 
+  line-height: 20px;
+  text-align: left;
+  overflow-y: scroll;
+  word-break:break-all;
+  font-size:16px;
+  }
+
+  #pf_graphMap {
+  width: 100%;
+  height: 400px;
+  margin: 0 auto;
+  }
+
+  #pf_columnBarChart{
+  width: 100%;
+  margin: 0 auto;
+  height: 100px;
+  margin-top: 15px;
+  }
+
+  #se_graphMap{
+  width: 100%;
+  height: 400px;
+  margin: 0 auto;
+  }
+  #se_columnBarChart{
+  width: 100%;
+  margin: 0 auto;
+  height: 100px;
+  margin-top: 15px;
+  }
+  #pf_bardata{
+	margin-left: 0px;
+	 border: 2px solid #457;
+	float: left;
+	clear: both;
+	width: 100%;
+	height: 306px;
+	border: rgb(223, 13, 170);
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-bottom: 0;
+  }
+  #se_bardata{
+	margin-left: 0px;
+	border: 2px solid #457;
+	float: left;
+	clear: both;
+	width: 100%;
+	height: 306px;
+	border: rgb(223, 13, 170);
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-bottom: 0;
+  }
+
+  </style>
+
+
+  <body class="nav-md">
+    <div class="container body" style="font-size:0">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view" style="height:2800px">
+
+            <div class="clearfix"></div>
+
+            <!-- menu profile quick info -->
+            <div class="profile clearfix">
+              <div class="profile_pic" style="margin-top:10px">
+				<img src="{% static 'images/logo.jpg' %}" alt="..." class="img-circle profile_img" style="padding: 0px 0px 0px 0px">
+			  </div>
+              <div class="profile_info" style="margin-left:-10px;width:150px;">
+                <span>CCF computility图计算挑战赛</span>
+                <h2>电力图分析 </br></h2>
+              </div>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+				<div class="menu_section">
+				  <h2 style="margin-left:43px"> <font size="5" color='#BBFFFF'> 演示内容 </font></h2>
+				  <ul class="nav side-menu">
+					
+					<li><a><i class="fa fa-home"></i> <font size="4"> 电力图分析 </font> <span class="fa fa-chevron-down"></span></a>
+					  <ul class="nav child_menu">
+						  <li><a href="{% url 'power' %}"> <font size="3"> 潮流计算</a> </font> </li>
+					  </ul>
+					</li>
+				  </ul>
+				</div>
+			</div>
+            <!-- /sidebar menu -->
+
+            <!-- /menu footer buttons -->
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <!--<a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+              </a>-->
+			  <a data-toggle="tooltip" data-placement="top" title="Reset Accelerator">
+				<span id="span_refresh" class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+			  </a>
+              <a data-toggle="tooltip" data-placement="top" title="Logout" >
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+          <div class="right_col" role="main" style="height:2800px">
+		  <!-- top tiles -->
+		  <div class="row">
+			 <div class="tile_count">
+				<div class="col">
+					<span class="count_top"><i class="fa fa-user"></i> <font size='5'>达成指标</br></font></span>
+					<ul style="margin-left:-15px;">
+						<li{st-style: none} style="font-size:18px">① 1万图顶点数据的<font color='#FF0000'>潮流计算</font>，计算时间约为<font color='#FF0000'>100ms</font>。</br></li>
+					</ul>
+					<span class="count_top"><i class="fa fa-user"></i> <font size='5'>评测方法</font></span>
+					<ul style="margin-left:-15px;">
+						<li{st-style: none} style="font-size:18px">① <font color='#FF0000'>潮流计算性能评测方法</font>：选取包含一万多个顶点的电力图开展潮流计算。</br></li>
+					</ul>
+					<span class="count_top"><i class="fa fa-user"></i> <font size='5'>数据集来源</font></span>
+					<ul style="margin-left:-15px;">
+						<li{st-style: none} style="font-size:18px">① 数据来自于国家电网提供的10790节点的某国电网数据。</br></li>
+					</ul>
+				</div>
+			</div>
+			</div>
+		  <!-- /top tiles -->
+
+		  <!-- project introduction -->
+		  <!--<div class="row">
+			<div class="col-md-12 col-sm-12 ">
+			  <div class="x_panel">
+			   <div class="x_title">
+			    <h2>电力图应用简介</h2>
+				 <ul class="nav navbar-right panel_toolbox">
+				  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+				  </li>
+				  <li><a class="close-link"><i class="fa fa-close"></i></a>
+				  </li>
+				</ul>
+				<div class="clearfix"></div>
+			   </div>
+			   <div class="x_content">
+			    <div class="dashboard-widget-content">
+
+				 <ul class="list-unstyled timeline widget">
+				  <li>
+				   <div class="block">
+				    <div class="block_content">
+					 <h2 class="title">
+					  <a>背景</a>
+					 </h2>
+					 <p class="excerpt" style="text-indent:2em;"> 状态估计和潮流计算是电力系统稳态分析的两大基础应用，其作用是计算某一时刻各节点处的电压值。其中状态估计的功能是在测量数据误差或者错误的情况下估算节点状态。基于状态估计的结果，潮流计算的功能则是求解精确采取节点状态。传统的方法是把电力数据看作矩阵，会造成较大的冗余存储和计算开销，难以满足实时性的要求。电力图是一个天然的稀疏图，我们将其构建为图，用图算法来进行求解，并部署到FPGA上加速。
+					 </p>
+					 <h2 class="title">
+					  <a>方案介绍</a>
+					 </h2>
+					 <p class="excerpt" style="text-indent:2em;"> 状态估计根据最小二乘法构建非线性方程组，然后对非线性方程组进行求解。潮流计算根据电力方程构建非线性方程组，然后对非线性方程进行求解。对非线性方程组的求解，我们采用工程上常用的雅可比迭代法，最后在计算上则是图计算和矩阵运算交替执行，我们把图计算部分用FPGA进行加速。
+					 </p>
+					</div>
+				   </div>
+				  </li>
+				 </ul>
+				</div>
+			   </div>
+			 </div>-->
+			
+
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 ">
+              <div class="dashboard_graph">
+
+                <div class="row x_title">
+                  <div class="col-md-6">
+                    <h3>电力图计算</h3>
+                  </div>
+                  <div class="col-md-6">
+                    <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+                      <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                      <span>December 30, 2018 - February 28, 2020</span> <b class="caret"></b>
+                    </div>
+                  </div>
+                </div>
+
+				<!-- run_info_terminal -->
+				
+				<div class="col-md-6 col-sm-6 x_content">
+					<table id="datatable-checkbox" class="table table-striped table-bordered bulk_action" style="width:100%;margin-left:-11px;margin-top:-5px;height: 392px;">
+						<thead style="font-size:18px">
+							<tr>
+								<!--<th>
+									<th><input type="checkbox" id="check-all" class="flat"></th>
+								</th>-->
+								<th>数据集</th>
+								<th>点数</th>
+								<th>边数</th>
+							</tr>
+						</thead>
+
+						<tbody style="font-size:16px">
+							<!--<tr>
+								<td>
+									<th><input type="checkbox" id="check-all" class="flat"></th>
+								</td>
+								<td>IEEE118</td>
+								<td>118</td>
+								<td>476</td>
+							</tr>-->
+							<tr>
+								<!--<td>
+									<th><input type="checkbox" id="check-all" class="flat"></th>
+								</td>-->
+								<td>Case10790</td>
+								<td>10,790</td>
+								<td>36,608</td>
+							</tr>
+							<tr>
+								<!--<td>
+									<th><input type="checkbox" id="check-all" class="flat"></th>
+								</td>-->
+								<td>IEEE118</td>
+								<td>118</td>
+								<td>176</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				
+
+				<div class="col-md-6 col-sm-6 ">
+					<div class="x_panel">
+						<div class="x_title">
+							<div class="col-md-6">
+								<h2 style="font-size:22px">代码展示</h2>
+							</div>
+							<div class="col-md-6">
+								<ul class="nav navbar-right panel_toolbox">
+									<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+									</li>
+									<li><a class="close-link"><i class="fa fa-close"></i></a>
+									</li>
+								</ul>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="x_content">
+							<div class="col-md-12 col-sm-12 " >
+								<div id="power_code" style="height: 342px;overflow-y: scroll;font-size:16px;"></div>
+								<!--<textarea class="resizable_textarea form-control" placeholder="潮流计算/状态估计代码..." style="height: 302px" id="power_code"></textarea>
+								-->
+							</div>
+						</div>
+					</div>
+				</div>		
+			
+
+
+
+			</div>
+		  </div>
+		</div>
+		<div class="clearfix"></div>
+
+
+
+
+		<!-- run_info_terminal -->
+		<div class="row">
+
+		  
+		  <div class="col-md-6 col-md-6 ">
+			<div class="x_panel">
+			  <div class="x_title">
+				<h2 style="font-size:22px">潮流计算数据集&精度</h2>
+				<ul class="nav navbar-right panel_toolbox">
+					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+					</li>
+					<li><a class="close-link"><i class="fa fa-close"></i></a>
+					</li>
+				</ul>
+				<div class="clearfix"></div>
+			  </div>
+			  <div class="x_content">
+								<br />
+								<form class="form-horizontal form-label-left" target="iframe_acc">
+									<div class="form-group row">
+										<label class="control-label col-md-4 col-sm-4 " style="font-size:18px">算法</label>
+										<div class="col-md-8 col-sm-8 ">
+											<select class="select2_single form-control" tabindex="-1" id='algorithm'>
+												<option value="None">请选择</option>
+												<option value="pf">潮流计算</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label class="control-label col-md-4 col-sm-4 " style="font-size:18px">潮流计算数据集</label>
+										<div class="col-md-8 col-sm-8 ">
+											<select class="select2_single form-control" tabindex="-1" id='dataset'>
+												<option value="None">请选择</option>
+												<option value="Case10790">Case10790</option>
+												<option value="IEEE118">IEEE118</option>
+											</select>
+										</div>
+									</div>
+
+								
+									
+									<!--<div class="form-group row">
+										<label class="control-label col-md-4 col-sm-4 " style="font-size:18px">精度选择</label>
+										<div class="col-md-8 col-sm-8 ">
+											<select class="select2_single form-control" tabindex="-1" id='precision'>
+												<option value="None">请选择</option>
+												<option value="0.001">0.001</option>
+												<option value="0.0001">0.0001</option>
+											</select>
+										</div>
+									</div>-->
+
+									<div class="ln_solid"></div>
+									<div class="form-group">
+										<div class="col-md-9 col-sm-9  offset-md-3">
+											<!-- <button type="reset" class="btn btn-primary" id='power_reset'>重置</button> -->
+											<button type="submit" class="btn btn-success" id='power_run'>运行</button>
+											<button type="submit" class="btn btn-success" id='code_show'>代码</button>
+										</div>
+									</div>
+								</form>
+								
+								<iframe name="iframe_acc" style="display:none;"></iframe>
+
+								</br>
+
+					</div>
+				  </div>
+				</div>
+							
+				
+				<!-- terminal -->
+				<div class="col-md-6 col-md-6 " id="terminal">
+						<div class="x_panel">
+							<div class="x_title">
+								<h2 style="font-size:22px">控制台输出</h2>
+								<ul class="nav navbar-right panel_toolbox">
+									<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+									</li>
+									<li><a class="close-link"><i class="fa fa-close"></i></a>
+									</li>
+								</ul>
+								<div class="clearfix"></div>
+							</div>
+
+							<div class="x_content">
+								
+								<div id="power_run_ans"></div>
+
+								<div id="loading_terminal" class="l-wrapper" style="display: none;margin-top:220px;">
+									<svg viewBox="0 0 240 240" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+										<g id="circle" class="g-circles g-circles--v1">
+											<circle id="12" transform="translate(35, 16.698730) rotate(-30) translate(-35, -16.698730) " cx="35" cy="16.6987298" r="10"></circle>
+											<circle id="11" transform="translate(16.698730, 35) rotate(-60) translate(-16.698730, -35) " cx="16.6987298" cy="35" r="10"></circle>
+											<circle id="10" transform="translate(10, 60) rotate(-90) translate(-10, -60) " cx="10" cy="60" r="10"></circle>
+											<circle id="9" transform="translate(16.698730, 85) rotate(-120) translate(-16.698730, -85) " cx="16.6987298" cy="85" r="10"></circle>
+											<circle id="8" transform="translate(35, 103.301270) rotate(-150) translate(-35, -103.301270) " cx="35" cy="103.30127" r="10"></circle>
+											<circle id="7" cx="60" cy="110" r="10"></circle>
+											<circle id="6" transform="translate(85, 103.301270) rotate(-30) translate(-85, -103.301270) " cx="85" cy="103.30127" r="10"></circle>
+											<circle id="5" transform="translate(103.301270, 85) rotate(-60) translate(-103.301270, -85) " cx="103.30127" cy="85" r="10"></circle>
+											<circle id="4" transform="translate(110, 60) rotate(-90) translate(-110, -60) " cx="110" cy="60" r="10"></circle>
+											<circle id="3" transform="translate(103.301270, 35) rotate(-120) translate(-103.301270, -35) " cx="103.30127" cy="35" r="10"></circle>
+											<circle id="2" transform="translate(85, 16.698730) rotate(-150) translate(-85, -16.698730) " cx="85" cy="16.6987298" r="10"></circle>
+											<circle id="1" cx="60" cy="10" r="10"></circle>
+										</g>
+										<use xlink:href="#circle" class="use"/>
+									</svg>
+								</div>		
+
+							</div>
+						</div>
+				</div>		
+		</div>
+		<div class="clearfix"></div>
+		<div class="clearfix"></div>
+		<div class="row">
+			<div class="col-md-12 col-md-12">
+				<div class= "x_panel">
+					<div class="x_title">
+						<h2 style="font-size:22px">潮流计算性能对比</h2>
+						<ul class="nav navbar-right panel_toolbox">
+						<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+						</li>
+						<li><a class="close-link"><i class="fa fa-close"></i></a>
+						</li>
+						</ul>
+						<div class="clearfix"></div>
+					</div>
+			
+					<div class="x_content">
+						<div id="pf_bardata"></div>
+
+						<div id="loading_pf_bardata" class="l-wrapper" style="display: none;margin-top:110px;">
+							<svg viewBox="0 0 240 240" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+								<g id="circle" class="g-circles g-circles--v1">
+									<circle id="12" transform="translate(35, 16.698730) rotate(-30) translate(-35, -16.698730) " cx="35" cy="16.6987298" r="10"></circle>
+									<circle id="11" transform="translate(16.698730, 35) rotate(-60) translate(-16.698730, -35) " cx="16.6987298" cy="35" r="10"></circle>
+									<circle id="10" transform="translate(10, 60) rotate(-90) translate(-10, -60) " cx="10" cy="60" r="10"></circle>
+									<circle id="9" transform="translate(16.698730, 85) rotate(-120) translate(-16.698730, -85) " cx="16.6987298" cy="85" r="10"></circle>
+									<circle id="8" transform="translate(35, 103.301270) rotate(-150) translate(-35, -103.301270) " cx="35" cy="103.30127" r="10"></circle>
+									<circle id="7" cx="60" cy="110" r="10"></circle>
+									<circle id="6" transform="translate(85, 103.301270) rotate(-30) translate(-85, -103.301270) " cx="85" cy="103.30127" r="10"></circle>
+									<circle id="5" transform="translate(103.301270, 85) rotate(-60) translate(-103.301270, -85) " cx="103.30127" cy="85" r="10"></circle>
+									<circle id="4" transform="translate(110, 60) rotate(-90) translate(-110, -60) " cx="110" cy="60" r="10"></circle>
+									<circle id="3" transform="translate(103.301270, 35) rotate(-120) translate(-103.301270, -35) " cx="103.30127" cy="35" r="10"></circle>
+									<circle id="2" transform="translate(85, 16.698730) rotate(-150) translate(-85, -16.698730) " cx="85" cy="16.6987298" r="10"></circle>
+									<circle id="1" cx="60" cy="10" r="10"></circle>
+								</g>
+								<use xlink:href="#circle" class="use"/>
+							</svg>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+		
+					<div class="col-md-12 col-sm-12 ">
+					  <div class="x_panel">
+						
+						<div class="x_title">
+							<div class="col-md-6">
+								<h2 style="font-size:22px">图形化结果展示</h2>
+							</div>
+							<div class="col-md-6">
+								<ul class="nav navbar-right panel_toolbox">
+									<!--<div>
+										<button class="btn" id="show_run">手动刷新 </button>
+									</div>-->
+									<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+									</li>
+									<li><a class="close-link"><i class="fa fa-close"></i></a>
+									</li>
+								</ul>
+
+
+								<script type="text/javascript">
+/*
+								show_run.onclick = function(e) {
+									var dom = document.getElementById("pf_graphMap");
+									var pf_myChart = echarts.init(dom);
+									var dom2 = document.getElementById("pf_columnBarChart");
+									var pf_barChart = echarts.init(dom2);
+									pf_getGraphDataSource(pf_myChart);
+									power_getBarChart(pf_barChart,0);
+
+									/*var dom3 = document.getElementById("se_graphMap");
+									var se_myChart = echarts.init(dom3);
+									se_getGraphDataSource(se_myChart);
+									var dom4 = document.getElementById("se_columnBarChart");
+									var se_barChart = echarts.init(dom4);
+									power_getBarChart(se_barChart,1);
+								}*/
+								</script>
+							</div>
+
+							<div class="clearfix"></div>
+
+
+						</div>
+					
+						<div class="col-md-12 col-sm-12">
+							<div class="x_content">
+							<!--	<ul class="nav nav-tabs justify-content-end bar_tabs" id="myTab" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link active" id="power-flow-tab" data-toggle="tab" href="#power_flow1" role="tab" aria-controls="power_flow" aria-selected="false">潮流计算</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link " id="state_estimation-tab" data-toggle="tab" href="#state_estimation1" role="tab" aria-controls="state_estimation" aria-selected="true">状态估计</a>
+									</li>
+								</ul>-->
+
+								<!--<div class="tab-content" id="myTabContent">
+									<div class="tab-pane fade show active" id="power_flow1" role="tabpanel" aria-labelledby="power-flow-tab" >-->
+										<div id="pf_graphMap"></div>
+										<div id="pf_columnBarChart"></div>
+								<!--	</div>
+									<div class="tab-pane fade" id="state_estimation1" role="tabpanel" aria-labelledby="state_estimation-tab" >
+										<div id="se_graphMap"></div>
+										<div id="se_columnBarChart"></div>
+									</div>
+								</div>-->
+
+								<div id="loading_graphMap" class="l-wrapper" style="display: none;margin-top:220px;">
+									<svg viewBox="0 0 240 240" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+										<g id="circle" class="g-circles g-circles--v1">
+											<circle id="12" transform="translate(35, 16.698730) rotate(-30) translate(-35, -16.698730) " cx="35" cy="16.6987298" r="10"></circle>
+											<circle id="11" transform="translate(16.698730, 35) rotate(-60) translate(-16.698730, -35) " cx="16.6987298" cy="35" r="10"></circle>
+											<circle id="10" transform="translate(10, 60) rotate(-90) translate(-10, -60) " cx="10" cy="60" r="10"></circle>
+											<circle id="9" transform="translate(16.698730, 85) rotate(-120) translate(-16.698730, -85) " cx="16.6987298" cy="85" r="10"></circle>
+											<circle id="8" transform="translate(35, 103.301270) rotate(-150) translate(-35, -103.301270) " cx="35" cy="103.30127" r="10"></circle>
+											<circle id="7" cx="60" cy="110" r="10"></circle>
+											<circle id="6" transform="translate(85, 103.301270) rotate(-30) translate(-85, -103.301270) " cx="85" cy="103.30127" r="10"></circle>
+											<circle id="5" transform="translate(103.301270, 85) rotate(-60) translate(-103.301270, -85) " cx="103.30127" cy="85" r="10"></circle>
+											<circle id="4" transform="translate(110, 60) rotate(-90) translate(-110, -60) " cx="110" cy="60" r="10"></circle>
+											<circle id="3" transform="translate(103.301270, 35) rotate(-120) translate(-103.301270, -35) " cx="103.30127" cy="35" r="10"></circle>
+											<circle id="2" transform="translate(85, 16.698730) rotate(-150) translate(-85, -16.698730) " cx="85" cy="16.6987298" r="10"></circle>
+											<circle id="1" cx="60" cy="10" r="10"></circle>
+										</g>
+										<use xlink:href="#circle" class="use"/>
+									</svg>
+								</div>
+
+							</div>
+						</div>
+					
+					</div>
+				  </div>
+
+        </div>
+
+	
+					
+
+
+
+
+            </div>
+
+          </div>
+          <br />
+
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <!--<footer>
+          <div class="pull-right">
+            <a href="http://grid.hust.edu.cn">计算机科学与技术学院，服务计算技术与系统教育部重点实验室、集群与网格计算湖北省重点实验室</a>
+          </div>
+          <div class="clearfix"></div>
+        </footer>-->
+        <!-- /footer content -->
+      </div>
+    </div>
+
+
+	<!-- Bootstrap -->
+	<script src="{% static 'vendors/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+	<!-- FastClick -->
+    <script src="{% static 'vendors/fastclick/lib/fastclick.js' %}"></script>
+	<!-- NProgress -->
+    <script src="{% static 'vendors/nprogress/nprogress.js' %}"></script>
+	<!-- Chart.js -->
+    <script src="{% static 'vendors/Chart.js/dist/Chart.min.js' %}"></script>
+	<!-- gauge.js -->
+    <script src="{% static 'vendors/gauge.js/dist/gauge.min.js' %}"></script>
+	<!-- bootstrap-progressbar -->
+    <script src="{% static 'vendors/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
+	<!-- iCheck -->
+    <script src="{% static 'vendors/iCheck/icheck.min.js' %}"></script>
+	<!-- Skycons -->
+    <script src="{% static 'vendors/skycons/skycons.js' %}"></script>
+	<!-- Flot -->
+    <script src="{% static 'vendors/flot/jquery.flot.js' %}"></script>
+	<script src="{% static 'vendors/flot/jquery.flot.pie.js' %}"></script>
+	<script src="{% static 'vendors/flot/jquery.flot.time.js' %}"></script>
+	<script src="{% static 'vendors/flot/jquery.flot.stack.js' %}"></script>
+	<script src="{% static 'vendors/flot/jquery.flot.resize.js' %}"></script>
+	<!-- Flot plugins -->
+    <script src="{% static 'vendors/flot.orderbars/js/jquery.flot.orderBars.js' %}"></script>
+	<script src="{% static 'vendors/flot-spline/js/jquery.flot.spline.min.js' %}"></script>
+	<script src="{% static 'vendors/flot.curvedlines/curvedLines.js' %}"></script>
+	<!-- DateJS -->
+    <script src="{% static 'vendors/DateJS/build/date.js' %}"></script>
+	<!-- JQVMap -->
+    <script src="{% static 'vendors/jqvmap/dist/jquery.vmap.js' %}"></script>
+	<script src="{% static 'vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+	<script src="{% static 'vendors/jqvmap/examples/js/jquery.vmap.sampledata.js' %}"></script>
+	<!-- bootstrap-daterangepicker -->
+	<script src="{% static 'vendors/moment/min/moment.min.js' %}"></script>
+	<script src="{% static 'vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+    <!-- Custom Theme Scripts -->
+	<script src="{% static 'build/js/custom.min.js' %}"></script>
+
+  </body>
+</html>

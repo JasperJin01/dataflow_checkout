@@ -1,0 +1,233 @@
+<div style="color: #444444;">
+<style>
+.code-title {
+  color: #0033CC;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.code-content {
+  margin: 0 !;             /* 移除默认边距 */
+  line-height: 1.5;      /* 统一行高 */
+  font-family: monospace; /* 等宽字体 */
+}
+
+.comment {
+  color: #7F8C8D;
+  line-height: inherit;  /* 继承行高 */
+}
+.function-name {
+  color: #E67E22;
+}
+</style>
+
+<div>
+<div class="code-title">// 节点数据结构定义</div>
+<pre class="code-content">typedef struct{
+    int type;
+    double Vm, Va, P, Q, G, B;
+    double Ri_V, Ri_vP, Ri_vQ;
+    double M_Vm;
+    double sumG, sumB, sumBi, sumBedge;
+    double deltaH_r_P, deltaH_r_Q;
+}VT;</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 边数据结构定义</div>
+<pre class="code-content">typedef struct{
+    int src;
+    double G, B, hB, K;
+    int Kcount;
+    double BIJ, M_P_TLPF, M_Q_TLPF, Ri_eP, Ri_eQ;
+    double M_P_TLPF_reverse, M_Q_TLPF_reverse;
+    double Ri_eP_reverse, Ri_eQ_reverse;
+}ET;</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 图初始化函数</div>
+<pre class="code-content">void <span class="function-name">InitializeGraph</span>(V, E, isfirst){
+    SetVertexType(VT);    <span class="comment">//VT为节点类型</span>
+    SetEdgeType(ET);      <span class="comment">//ET为边类型</span>
+    SetIteration(1);
+    if(isfirst){
+        LoadVertex(V);
+        LoadEdge(E);
+    }
+    else{
+        LoadVertex(V, "Vm", "Va");  <span class="comment">//只同步变化的顶点值</span>
+    }
+}</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 顶点过滤函数</div>
+<pre class="code-content">bool <span class="function-name">VertexFilter</span>(vertex){
+    return false;
+}</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 边处理函数</div>
+<pre class="code-content">void <span class="function-name">ProcessEdge</span>(value, vertex, src, edge){
+    double tap_ratio = fabs(edge.K/edge.Kcount);
+    double tap_ratio_square = (edge.K/edge.Kcount)*(edge.K/edge.Kcount);
+    
+    if(edge.K==0){
+        value.tmpP += vertex.Vm*src.Vm * (-1*edge.G*cos(vertex.Va-src.Va) + 
+            (edge.B * sin(vertex.Va - src.Va)));
+        
+        value.tmpQ += vertex.Vm*src.Vm * (-1*edge.G*sin(vertex.Va-src.Va) - 
+            (edge.B * cos(vertex.Va-src.Va)));
+        
+        value.tmpH_r_P = edge.BIJ * (edge.M_P_TLPF - (vertex.Vm * vertex.Vm * edge.G - 
+            vertex.Vm * src.Vm * (edge.G*cos(vertex.Va-src.Va) + 
+            (-edge.B)*sin(vertex.Va-src.Va)))) * edge.Ri_eP + 
+            (-1) * edge.BIJ * (edge.M_P_TLPF_reverse - (src.Vm * src.Vm * edge.G - 
+            src.Vm * vertex.Vm * (edge.G*cos(src.Va-vertex.Va) + 
+            (-edge.B)*sin(src.Va-vertex.Va)))) * edge.Ri_eP_reverse;
+        
+        value.tmpH_r_Q = (edge.B - edge.hB) * (edge.M_Q_TLPF - 
+            (- vertex.Vm * vertex.Vm * (-edge.B + 0.5*edge.hB) - 
+            vertex.Vm * src.Vm * (edge.G*sin(vertex.Va-src.Va) - 
+            (-edge.B)*cos(vertex.Va-src.Va)))) * edge.Ri_eQ + 
+            (-1) * edge.B * (edge.M_Q_TLPF_reverse - 
+            (- src.Vm * src.Vm * (-edge.B + 0.5*edge.hB) - 
+            src.Vm * vertex.Vm * (edge.G*sin(src.Va-vertex.Va) - 
+            (-edge.B)*cos(src.Va-vertex.Va)))) * edge.Ri_eQ_reverse;
+    }
+    else if(edge.K>0){
+        double newG = edge.G/tap_ratio;
+        double newB = edge.B/tap_ratio;
+        
+        value.tmpP += vertex.Vm*src.Vm * (-1*newG*cos(vertex.Va-src.Va) + 
+            (newB * sin(vertex.Va-src.Va)));
+        
+        value.tmpQ += vertex.Vm*src.Vm * (-1*newG*sin(vertex.Va-src.Va) - 
+            (newB * cos(vertex.Va-src.Va)));
+        
+        value.tmpH_r_P = edge.BIJ * (edge.M_P_TLPF - 
+            (vertex.Vm * vertex.Vm * (edge.G/tap_ratio_square) - 
+            vertex.Vm * src.Vm * ((edge.G/tap_ratio)*cos(vertex.Va-src.Va) + 
+            (-edge.B/tap_ratio)*sin(vertex.Va-src.Va)))) * edge.Ri_eP + 
+            (-1) * edge.BIJ * (edge.M_P_TLPF_reverse - 
+            (src.Vm * src.Vm * edge.G - 
+            src.Vm * vertex.Vm * ((edge.G/tap_ratio)*cos(src.Va-vertex.Va) + 
+            (-edge.B/tap_ratio)*sin(src.Va-vertex.Va)))) * edge.Ri_eP_reverse;
+        
+        value.tmpH_r_Q = (edge.B/tap_ratio - edge.hB) * (edge.M_Q_TLPF - 
+            (- vertex.Vm * vertex.Vm * (-edge.B + 0.5*edge.hB) / tap_ratio_square - 
+            vertex.Vm * src.Vm * ((edge.G/tap_ratio)*sin(vertex.Va-src.Va) - 
+            (-edge.B/tap_ratio)*cos(vertex.Va-src.Va)))) * edge.Ri_eQ + 
+            (-1) * (edge.B/tap_ratio) * (edge.M_Q_TLPF_reverse - 
+            (- src.Vm * src.Vm * (-edge.B + 0.5*edge.hB) - 
+            src.Vm * vertex.Vm * ((edge.G/tap_ratio)*sin(src.Va-vertex.Va) - 
+            (-edge.B/tap_ratio)*cos(src.Va-vertex.Va)))) * edge.Ri_eQ_reverse;
+    }
+    else{
+        double newG = edge.G/tap_ratio;
+        double newB = edge.B/tap_ratio;
+        
+        value.tmpP += vertex.Vm*src.Vm * (-1*newG*cos(vertex.Va-src.Va) + 
+            (newB * sin(vertex.Va-src.Va)));
+        
+        value.tmpQ += vertex.Vm*src.Vm * (-1*newG*sin(vertex.Va-src.Va) - 
+            (newB * cos(vertex.Va-src.Va)));
+        
+        value.tmpH_r_P = edge.BIJ * (edge.M_P_TLPF - 
+            (vertex.Vm * vertex.Vm * edge.G - 
+            vertex.Vm * src.Vm * ((edge.G/tap_ratio)*cos(vertex.Va-src.Va) + 
+            (-edge.B/tap_ratio)*sin(vertex.Va-src.Va)))) * edge.Ri_eP + 
+            (-1) * edge.BIJ * (edge.M_P_TLPF_reverse - 
+            (src.Vm * src.Vm * (edge.G/tap_ratio_square) - 
+            src.Vm * vertex.Vm * ((edge.G/tap_ratio)*cos(src.Va-vertex.Va) + 
+            (-edge.B/tap_ratio)*sin(src.Va-vertex.Va)))) * edge.Ri_eP_reverse;
+        
+        value.tmpH_r_Q = (edge.B/tap_ratio - edge.hB) * (edge.M_Q_TLPF - 
+            (- vertex.Vm * vertex.Vm * (-edge.B + 0.5*edge.hB) - 
+            vertex.Vm * src.Vm * ((edge.G/tap_ratio)*sin(vertex.Va-src.Va) - 
+            (-edge.B/tap_ratio)*cos(vertex.Va-src.Va)))) * edge.Ri_eQ + 
+            (-1) * (edge.B/tap_ratio) * (edge.M_Q_TLPF_reverse - 
+            (- src.Vm * src.Vm * (-edge.B + 0.5*edge.hB) / tap_ratio_square - 
+            src.Vm * vertex.Vm * ((edge.G/tap_ratio)*sin(src.Va-vertex.Va) - 
+            (-edge.B/tap_ratio)*cos(src.Va-vertex.Va)))) * edge.Ri_eQ_reverse;
+    }
+}</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 边累积函数</div>
+<pre class="code-content">void <span class="function-name">AccumulateEdge</span>(tmp, value){
+    tmp.P += value.tmpP;
+    tmp.Q += value.tmpQ;
+    tmp.H_r_P += value.tmpH_r_P;
+    tmp.H_r_Q += value.tmpH_r_Q;
+}</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 顶点累积函数</div>
+<pre class="code-content">void <span class="function-name">AccumulateVertex</span>(vertex, tmp){
+    if(vertex.type<3){
+        vertex.deltaH_r_P = (-1) * vertex.sumBi * 
+            (vertex.P - (tmp.P + vertex.Vm*vertex.Vm*vertex.sumG)) * 
+            vertex.Ri_vP + tmp.H_r_P;
+    }
+    else{
+        vertex.deltaH_r_P = 0;
+    }
+    vertex.deltaH_r_Q = (-1) * (2*vertex.sumB + vertex.sumBedge)* vertex.Q - 
+        (tmp.Q - vertex.Vm*vertex.Vm*vertex.sumB) * vertex.Ri_vQ + 
+        (vertex.M_Vm - vertex.Vm) * vertex.Ri_V + tmp.H_r_Q;
+}</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 结果打印函数</div>
+<pre class="code-content">void <span class="function-name">print</span>(){
+    StoreResult("deltaH_r_P", "deltaH_r_Q");
+}</pre>
+</div>
+
+<div class="code-block">
+<div class="code-title">// 主函数</div>
+<pre class="code-content">int <span class="function-name">main</span>(){
+    InitializeVertex(V);    <span class="comment">//顶点初始化</span>
+    InitializeEdge(E);      <span class="comment">//边初始化</span>
+    matrix=MakeH(E,V);      <span class="comment">//构建H矩阵，非加速器相关代码</span>
+    lu=LU_fac(matrix);      <span class="comment">//导纳H矩阵分解，非加速器相关代码</span>
+    while(!CheckConv(E,V)){ <span class="comment">//收敛性判断</span>
+        SE = new UserAlgorithm(InitializeGraph,
+            VertexFilter, ProcessEdge, AccumulateEdge,
+            AccumulateVertex, StoreResult);
+        ExecuteAlgorithm(SE); <span class="comment">//执行加速器代码</span>
+        PrintPerformance();
+        
+        BackForward(E,V);     <span class="comment">//前代回代过程更新顶点Vm和Va属性，非加速器相关代码</span>
+    }
+}</pre>
+</div>
+
+<div class="code-block" style="margin-bottom: 0;">
+<pre class="code-content" style="background-color: #F8F9F9; padding: 10px; border-left: 4px solid #0033CC;">void <span class="function-name">UserAlgorithm</span>(){
+    <span style="color: #0033CC; font-weight: bold;">//图数据初始化</span>
+    InitializeGraph(V,E);
+
+    while(iter++ < MAX_ITERS){
+        <span style="color: #0033CC; font-weight: bold;">//图数据交互</span>
+        for vertex in V{
+            if(!VertexFilter(vertex)){
+                Ngh = GetInNeighbor(vertex);
+                for src in Ngh{
+                    <span style="color: #0033CC; font-weight: bold;">//图数据计算</span>
+                    ProcessEdge(value,vertex,src,edge);
+                    AccumulateEdge(tmp,value);
+                }
+                AccumulateVertex(vertex,tmp);
+            }
+        }
+    }
+    Print();
+}</pre>
+</div>
+</div>

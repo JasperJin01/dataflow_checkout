@@ -64,10 +64,10 @@ export function SideNav(): React.JSX.Element {
               国家重点项目
             </Typography>
             <Typography color="inherit" sx={{fontSize: '15px'}} >
-              面向复杂场景的图计算机
+              多层次融合的软件定义数据流关键技术与系统
             </Typography>
             <Typography color="inherit" sx={{fontSize: '15px'}}>
-              (2023YFB4502300)
+              (2023YFB4503400)
             </Typography>
           </Box>
          </Box>

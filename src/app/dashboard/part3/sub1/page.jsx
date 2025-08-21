@@ -1,583 +1,639 @@
 "use client";
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Box, Grid, Button, Select, MenuItem,
-  Paper, Typography, LinearProgress
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Select,
+  MenuItem,
+  Button,
+  Tabs,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  LinearProgress,
 } from '@mui/material';
-import ReadOnlyCodeBox from './CodeContainer';
-import request from '@/lib/request/request';
-import { CGA_CODE_MAP } from './constCGACode';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
+import request from '@/lib/request/request'; // 假设你有一个请求库
+import PowerGraphDisplay from './PowerGraphDisplay';
+import { selog, executionTimes } from './constData';
 
-// 算法和数据集映射
-export const algorithmMappings = {
-  'bfs': {
-    url: 'bfs',
-    datasets: ['smallgraph', 'facebook', 'physics', ],
-  },
-  'sssp': {
-    url: 'sssp',
-    datasets: ['smallgraph', 'facebook', 'physics', ],
-  },
-  'wcc': {
-    url: 'wcc',
-    datasets: ['euroroad', 'pdzbase', 'facebook'],
-  },
-  'kcore': {
-    url: 'kcore',
-    datasets: ['physics', 'facebook'],
-  },
-  'k-Clique': {
-    url: 'cf',
-    datasets: ['euroroad', 'physics'],
-  },
-  'ppr': {
-    url: 'ppr',
-    datasets: ['smallgraph', 'physics', 'facebook'],
-  },
-  'gcn': {
-    url: 'gcn',
-    datasets: ['cora'],
-  }
+const algorithms = ['潮流计算','状态估计'];
+const datasets = [
+  'Case10790',
+  'IEEE118',
+  'sc_20171128_174550',
+  'sc_20171207_06300',
+  'sc_20171207_08000',
+  'sc_20171207_09150',
+  'sc_20171207_10000',
+  'sc_20171207_11100',
+  'sc_20171208_11100'
+];
+
+// 算法与数据集组合配置，用于选项框的展示
+const configCombinations = {
+  '潮流计算': ['Case10790', 'IEEE118'],
+  '状态估计': [
+    'sc_20171128_174550',
+    'sc_20171207_06300',
+    'sc_20171207_08000',
+    'sc_20171207_09150',
+    'sc_20171207_10000',
+    'sc_20171207_11100',
+    'sc_20171208_11100'
+  ]
+}
+
+// 允许执行的组合配置，不出现在这里的不允许进行运行
+const allowedCombinations = {
+  '潮流计算': ['Case10790', 'IEEE118'],
+  '状态估计': [
+    'sc_20171128_174550',
+    'sc_20171207_06300',
+    'sc_20171207_08000',
+    'sc_20171207_09150',
+    'sc_20171207_10000',
+    'sc_20171207_11100',
+    'sc_20171208_11100'
+  ]
 };
 
-// 数据集到URL的映射
-const datasetMappings = {
-  'facebook': 'facebook',
-  'euroroad': 'euroroad',
-  'physics': 'physics',
-  'pdzbase': 'pdzbase',
-  'smallgraph':'smallgraph',
-  'cora':'cora',
+const datasetInfo = {
+  'Case10790': { nodes: '10,790', edges: '36,608' },
+  'IEEE118': { nodes: '118', edges: '176' },
+  'sc_20171128_174550': { nodes: '2,703', edges: '5,806' },
+  'sc_20171207_06300': { nodes: '2,637', edges: '5,584' },
+  'sc_20171207_08000': { nodes: '2,654', edges: '5,614' },
+  'sc_20171207_09150': { nodes: '2,651', edges: '5,608' },
+  'sc_20171207_10000': { nodes: '2,654', edges: '5,614' },
+  'sc_20171207_11100': { nodes: '2,647', edges: '5,600' },
+  'sc_20171208_11100': { nodes: '2,433', edges: '5,156' }
 };
-
-const algorithms = Object.keys(algorithmMappings);
-
-// 工具函数：获取算法的URL
-const getAlgorithmUrl = (algorithm) => {
-  return algorithmMappings[algorithm]?.url || algorithm;
-};
-
-// 工具函数：获取数据集的URL
-const getDatasetUrl = (dataset) => {
-  return datasetMappings[dataset] || dataset;
-};
-
-
 
 export default function Page() {
   const [selectedAlgo, setSelectedAlgo] = useState(algorithms[0]);
-  // 示例类型映射
-  const EXAMPLE_TYPES = useMemo(() => {
-    const isPPR = selectedAlgo === 'ppr'; // 或者 selectedAlgo.id === 'ppr' 取决于你的数据结构
-    
-    return {
-      cgafile: { label: '基于CGA编程模型的代码展示' },
-      graphIR: { label: 'GraphIR展示' },
-      gcbefore: { label: isPPR ? '后端算子接口展示2' : '后端算子接口展示' },
-      gcafter: { label: isPPR ? '算子汇编生成展示2' : '算子汇编生成展示' },
-      outdegbefore: { label: '后端算子接口展示1' },
-      outdegafter: { label:  '算子汇编生成展示1' },
-      matrixIR: { label: 'MatrixIR展示' },
-      asmfile: { label: '硬件指令展示' }
-    };
-  }, [selectedAlgo]); // 当 selectedAlgo 变化时重新计算
-
-  const [selectedDataset, setSelectedDataset] = useState(algorithmMappings[algorithms[0]].datasets[0]);
-  const [results, setResults] = useState({
-    cgafile: CGA_CODE_MAP[algorithms[0]]
-  });
-  const [isRunning, setIsRunning] = useState(false);
+  const [selectedDataset, setSelectedDataset] = useState(allowedCombinations[algorithms[0]][0]);
+  const [tabValue, setTabValue] = useState(0);
+  const [logs, setLogs] = useState([]);
+  const [running, setRunning] = useState(false);
+  const [performanceData, setPerformanceData] = useState([]);
+  const [chartMetric, setChartMetric] = useState('time');
   const [progress, setProgress] = useState(0);
-  const [showButtons, setShowButtons] = useState({
-    cgafile: false,
-    graphIR: false,
-    gcbefore: false,
-    gcafter: false,
-    outdegbefore: false,
-    outdegafter: false,
-    matrixIR: false,
-    asmfile: false,
-  });
-  const [simulatorResults, setSimulatorResults] = useState('');
-  const [isSimulatorRunning, setIsSimulatorRunning] = useState(false);
-  const [simulatorProgress, setSimulatorProgress] = useState(0);
+  const [showReferenceLine, setShowReferenceLine] = useState(false);
+  const [codeContent, setCodeContent] = useState('');
+  const [showGraphDisplay, setShowGraphDisplay] = useState(false); // 新增状态控制图形显示
+  const logBoxRef = React.useRef(null);
+  const leftPanelRef = React.useRef(null);
+  const codeDisplayRef = React.useRef(null);
+  const performanceRef = React.useRef(null);  // 添加性能对比区域的ref
 
-  const resultsBoxRef = React.useRef(null);
-  const simulatorBoxRef = React.useRef(null);
+  // 加载代码内容
+  useEffect(() => {
+    const codeFile = selectedAlgo === '潮流计算' ? 'power-flow-code.txt' : 'state-esti-code.txt';
+    fetch(`/power/${codeFile}`)
+      .then(response => response.text())
+      .then(text => setCodeContent(text))
+      .catch(error => console.error('Error loading code:', error));
+  }, [selectedAlgo]);
 
   // 自动滚动到底部
   const scrollToBottom = () => {
-    if (resultsBoxRef.current) {
-      resultsBoxRef.current.scrollTop = resultsBoxRef.current.scrollHeight;
-    }
-    if (simulatorBoxRef.current) {
-      simulatorBoxRef.current.scrollTop = simulatorBoxRef.current.scrollHeight;
+    if (logBoxRef.current) {
+      logBoxRef.current.scrollTop = logBoxRef.current.scrollHeight;
     }
   };
 
+  // 监听日志变化，自动滚动
   React.useEffect(() => {
     scrollToBottom();
-  }, [results, simulatorResults]);
+  }, [logs]);
 
-  // 根据算法类型获取可见示例
-  const getVisibleExamples = (algorithm) => {
-    const baseExamples = ['cgafile', 'graphIR', 'matrixIR', 'asmfile'];
+
+  // 处理功耗趋势数据请求
+  const handlePowerTrend = async () => {
+    if (running) return;
     
-    if (['ppr'].includes(algorithm)) {
-      return ['cgafile', 'graphIR', 'outdegbefore', 'outdegafter', 'gcbefore', 'gcafter', 'matrixIR', 'asmfile', ];
-    } else if (['wcc', 'bfs', 'kcore', 'sssp'].includes(algorithm)) {
-      return ['cgafile', 'graphIR', 'gcbefore', 'gcafter', 'matrixIR', 'asmfile', ];
-    } else {
-      return ['cgafile', 'graphIR', 'matrixIR', 'asmfile'];
-    }
-  };
-
-  // 当算法改变时
-  const handleAlgoChange = (event) => {
-    console.log('handlealgochange')
-    const newAlgo = event.target.value;
-    console.log(newAlgo)
-    setSelectedAlgo(newAlgo);
-    setSelectedDataset(algorithmMappings[newAlgo].datasets[0]);
-    setResults({ cgafile: CGA_CODE_MAP[getAlgorithmUrl(newAlgo)] });
-    setProgress(0);
-    
-    // 重置按钮显示状态
-    const initialButtons = {
-      cgafile: false,
-      graphIR: false,
-      gcbefore: false,
-      gcafter: false,
-      outdegbefore: false,
-      outdegafter: false,
-      matrixIR: false,
-      asmfile: false,
-    };
-    setShowButtons(initialButtons);
-
-  };
-
-  // 加载CGA编程模型代码（弃用）
-  // const loadCGAExample = async (algorithm) => {
-  //   try {
-  //     const urlAlgo = getAlgorithmUrl(algorithm);
-  //     const res = await request({
-  //       url: `/part3/cgafile/1/${urlAlgo}/r/`,
-  //       method: 'GET',
-  //     });
-
-  //     if (res && res.content) {
-  //       setResults(prev => ({
-  //         ...prev,
-  //         cgafile: res.content.join('\n')
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.error('获取CGA示例失败:', error);
-  //     setResults(prev => ({
-  //       ...prev,
-  //       cgafile: `获取示例失败: ${error.message}`
-  //     }));
-  //   }
-  // };
-
-
-  const handleRun = async () => {
-    if (isRunning) return;
-
-    setIsRunning(true);
-    setProgress(0);
-    setResults(prev => ({ ...prev, terminal: '正在与服务器建立连接...\n' }));
+    setRunning(true);
+    setLogs(['正在获取功耗趋势数据...']);
     
     try {
-      const urlAlgo = getAlgorithmUrl(selectedAlgo);
-      const urlDataset = getDatasetUrl(selectedDataset);
-      const eventSource = new EventSource(`${request.BASE_URL}/part3/execute/1/${urlAlgo}/${urlDataset}/`);
-
-      eventSource.onmessage = async (event) => {
-        if (event.data === '[done]') {
-          eventSource.close();
-          setResults(prev => ({
-            ...prev,
-            terminal: prev.terminal + '正在拷贝result\n'
-          }));
-          
-          try {
-            const res = await fetch(`${request.BASE_URL}/part3/result/1/${urlAlgo}/`);
-            const jsonData = await res.json();
-            setResults(prev => ({
-              ...prev,
-              terminal: prev.terminal + '完成\n'
-            }));
-            setProgress(100);
-
-            // 运行完成后自动加载GraphIR
-            await handleShowExample('graphIR');
-
-          } catch (error) {
-            setResults(prev => ({
-              ...prev,
-              terminal: prev.terminal + `获取结果失败: ${error.message}\n`
-            }));
-          } finally {
-            setIsRunning(false);
-          }
-          
-        } else if (event.data === '[error]') {
-          eventSource.close();
-          setResults(prev => ({
-            ...prev,
-            terminal: prev.terminal + '\n执行出错\n'
-          }));
-          setIsRunning(false);
-        } else {
-          setResults(prev => ({
-            ...prev,
-            terminal: prev.terminal + event.data + '\n'
-          }));
-        }
-      };
+      const eventSource = new EventSource(`/api/usage/powertrend/${selectedDataset}/`);
       
-      eventSource.onerror = () => {
-        eventSource.close();
-        setResults(prev => ({
-          terminal: prev.terminal + '\n连接错误\n'
-        }));
-        setIsRunning(false);
-      };
-
-    } catch (error) {
-      console.error('执行失败:', error);
-      setResults(prev => ({
-        ...prev,
-        terminal: `执行失败: ${error.message}`
-      }));
-    }
-  };
-
-  const handleSimulatorRun = async () => {
-    if (isSimulatorRunning) return;
-
-    setIsSimulatorRunning(true);
-    setSimulatorProgress(0);
-    setSimulatorResults('正在与服务器建立连接...\n');
-
-    try {
-      const urlAlgo = getAlgorithmUrl(selectedAlgo);
-      const urlDataset = getDatasetUrl(selectedDataset);
-
-
-      const eventSource = new EventSource(`${request.BASE_URL}/part3/moni/1/${urlAlgo}/${urlDataset}/`);
-
       eventSource.onmessage = (event) => {
         if (event.data === '[done]') {
           eventSource.close();
-          setSimulatorResults(prev => prev + '模拟器执行完成\n');
-          setSimulatorProgress(100);
-          setIsSimulatorRunning(false);
+          setLogs(prev => [...prev, '执行完成']);
+          setRunning(false);
         } else if (event.data === '[error]') {
           eventSource.close();
-          setSimulatorResults(prev => prev + '\n执行出错\n');
-          setIsSimulatorRunning(false);
+          setLogs(prev => [...prev, '❌ 执行出错']);
+          setRunning(false);
         } else {
-          setSimulatorResults(prev => prev + event.data + '\n');
-          setSimulatorProgress(prev => Math.min(prev + 5, 95));
+          setLogs(prev => [...prev, event.data]);
         }
       };
-
+      
       eventSource.onerror = () => {
         eventSource.close();
-        setSimulatorResults(prev => prev + '\n连接错误\n');
-        setIsSimulatorRunning(false);
+        setLogs(prev => [...prev, '❌ 连接错误']);
+        setRunning(false);
       };
-
+      
     } catch (error) {
-      console.error('模拟器执行失败:', error);
-      setSimulatorResults(`执行失败: ${error.message}`);
-      setIsSimulatorRunning(false);
+      setLogs(prev => [...prev, `❌ 执行失败: ${error.message}`]);
+      setRunning(false);
     }
   };
 
-  // 阶段流转映射表
-  const NEXT_STAGE_MAP = {
-    // 通用流程
-    '*': {
-      'graphIR': 'gcbefore',
-      'gcbefore': 'gcafter',
-      'gcafter': 'matrixIR',
-      'matrixIR': 'asmfile',
-      'asmfile': null
-    },
-    // PPR特殊流程
-    'ppr': {
-      'graphIR': 'outdegbefore',
-      'outdegbefore': 'outdegafter',
-      'outdegafter': 'gcbefore',
-      'gcbefore': 'gcafter',
-      'gcafter': 'matrixIR',
-      'matrixIR': 'asmfile',
-      'asmfile': null
-    },
-    // 不需要GC流程的算法
-    'gcn': {
-      'graphIR': 'matrixIR',
-      'matrixIR': 'asmfile',
-      'asmfile': null
-    },
-    'k-Clique': {
-      'graphIR': 'matrixIR',
-      'matrixIR': 'asmfile',
-      'asmfile': null
-    },
+  // 新增判断按钮是否可用的逻辑
+  const isButtonDisabled = () => {
+    if (running) return true;
+
+    // 判断单个数据集是否允许
+    if (selectedDataset !== 'all-datasets') { // 假设all-datasets是默认值
+      return !allowedCombinations[selectedAlgo].includes(selectedDataset);
+    }
+
+    // 判断"全部数据集"是否允许（检查算法是否有可用的数据集）
+    return true;
+  };
+
+
+  // 获取有效数据（已执行的数据集）
+  const getValidData = () => {
+    return performanceData
+  };
+
+  // 生成图表数据
+  const getChartData = () => {
+    return performanceData.map(item => ({
+      ...item,
+      displayName: item.dataset
+    }));
+  };
+
+  // 添加处理算法改变的函数
+  const handleAlgoChange = (e) => {
+    const newAlgo = e.target.value;
+    setSelectedAlgo(newAlgo);
+    // 当算法改变时，自动选择该算法下的第一个可用数据集
+    setSelectedDataset(configCombinations[newAlgo][0]);
+    // 清空性能数据
+    setPerformanceData([]);
+  };
+
+  // 添加滚动到性能对比区域的函数
+  const scrollToPerformance = () => {
+    performanceRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // 修改handleRun函数
+  const handleRun = async () => {
+    if (running) return;
     
-    // 其他算法可以在这里添加特殊流程
-  };
+    setRunning(true);
+    setProgress(0);
+    setLogs(['正在与服务器建立连接...']);
+    setShowGraphDisplay(false); // 开始执行时隐藏图形显示
 
+    // 直接在这里执行滚动
+    setTimeout(() => {
+      // performanceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      performanceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50); // 延时50ms，等待react状态更新
+    await new Promise(resolve => setTimeout(resolve, 500)); // 等待滚动完成
 
-  const handleShowExample = async (exampleKey) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 200));
-      const urlAlgo = getAlgorithmUrl(selectedAlgo);
-      console.log('selectedAlgo', selectedAlgo)
-      
-      // 获取当前算法的阶段映射，如果没有则使用通用映射；确定下一个阶段
-      const stageMap = NEXT_STAGE_MAP[selectedAlgo] || NEXT_STAGE_MAP['*'];
-      const nextExampleKey = stageMap[exampleKey];
-      
-      // API路径映射
-      const apiPathMap = {
-        'graphIR': 'GraphIR',
-        'gcbefore': 'GCBefore',
-        'gcafter': 'GCAfter',
-        'outdegbefore': 'OUTDEGBefore',
-        'outdegafter': 'OUTDEGAfter',
-        'matrixIR': 'MatrixIR',
-        'asmfile': 'asm'
-      };
-      
-      const apiPath = apiPathMap[exampleKey];
-      if (!apiPath) {
-        throw new Error(`未知的阶段: ${exampleKey}`);
-      }
-      
-      const res = await request({
-        url: `/part3data/1/${urlAlgo}/${apiPath}/`,
-        method: 'GET',
-      });
-      
-      if (res && res.data) {
-        setResults(prev => ({
-          ...prev,
-          [exampleKey]: res.data.join('\n')
-        }));
+      if (selectedAlgo === '潮流计算') {
+        // 执行功耗趋势计算
+        const eventSource = new EventSource(request.getApiUrl(`/api/usage/powertrend/${selectedDataset}/`));
+        let totalTime = null;
         
-        setShowButtons(prev => ({ // todo 修改
-          ...prev,
-          [exampleKey]: true
-        }));
+        eventSource.onmessage = async (event) => {
+          if (event.data === '[done]') {
+            eventSource.close();
+            setLogs(prev => [...prev, '执行完成']);
+
+            
+            if (totalTime !== null) {
+              // 更新性能数据
+              const newResult = {
+                combinedKey: `${selectedAlgo}-${selectedDataset}`,
+                algorithm: selectedAlgo,
+                dataset: selectedDataset,
+                nodes: datasetInfo[selectedDataset].nodes,
+                edges: datasetInfo[selectedDataset].edges,
+                cpu: 978.12, // 1000ms
+                accelerator: (totalTime * 1000).toFixed(2), // 转换为毫秒，保留两位小数
+                speedUp: 978.12 / (totalTime * 1000),
+                throughput: 1.0
+              };
+              
+              // 更新性能数据
+              setPerformanceData(prev => {
+                // 移除相同算法和数据集的旧数据
+                const filtered = prev.filter(item => 
+                  !(item.algorithm === selectedAlgo && item.dataset === selectedDataset)
+                );
+                // 添加新数据并按照allowedCombinations中的顺序排序
+                const newData = [...filtered, newResult];
+                return newData.sort((a, b) => {
+                  if (a.algorithm !== b.algorithm) {
+                    return algorithms.indexOf(a.algorithm) - algorithms.indexOf(b.algorithm);
+                  }
+                  return allowedCombinations[a.algorithm].indexOf(a.dataset) - 
+                         allowedCombinations[b.algorithm].indexOf(b.dataset);
+                });
+              });
+            }
+            
+            setRunning(false);
+            setShowGraphDisplay(true); // 执行完成后显示图形
+          } else if (event.data === '[error]') {
+            eventSource.close();
+            setLogs(prev => [...prev, '❌ 执行出错']);
+            setProgress(0);
+            setRunning(false);
+            setShowGraphDisplay(false); // 执行出错时不显示图形
+          } else {
+            setLogs(prev => [...prev, event.data]);
+            // 从日志中提取总时间
+            const match = event.data.match(/total\s*:\s*(\d+\.\d+)s/);
+            if (match) {
+              totalTime = parseFloat(match[1]);
+            }
+            setProgress(50);
+          }
+        };
+        
+        eventSource.onerror = () => {
+          eventSource.close();
+          setLogs(prev => [...prev, '❌ 连接错误']);
+          setProgress(0);
+          setRunning(false);
+          setShowGraphDisplay(false);
+        };
+      } else { // 状态估计
+        // 状态估计的执行逻辑
+        const lines = selog.split('\n');
+        let currentLine = 0;
+        
+        // 模拟逐行显示日志
+        const displayInterval = setInterval(() => {
+          if (currentLine < lines.length) {
+            setLogs(prev => [...prev, lines[currentLine]]);
+            currentLine++;
+          } else {
+            clearInterval(displayInterval);
+            
+            // 添加性能数据
+            const newResult = {
+              combinedKey: `${selectedAlgo}-${selectedDataset}`,
+              algorithm: selectedAlgo,
+              dataset: selectedDataset,
+              nodes: datasetInfo[selectedDataset].nodes,
+              edges: datasetInfo[selectedDataset].edges,
+              cpu: executionTimes[selectedDataset].cpu,
+              accelerator: executionTimes[selectedDataset].accelerator,
+              speedUp: executionTimes[selectedDataset].cpu / executionTimes[selectedDataset].accelerator,
+              throughput: 1.0
+            };
+            
+            setPerformanceData(prev => {
+              const filtered = prev.filter(item => 
+                !(item.algorithm === selectedAlgo && item.dataset === selectedDataset)
+              );
+              return [...filtered, newResult];
+            });
+            
+            setRunning(false);
+            setShowGraphDisplay(true);
+          }
+        }, 50); // 每50ms显示一行
       }
-      
     } catch (error) {
-      console.error(`获取${exampleKey}示例失败:`, error);
-      setResults(prev => ({
-        ...prev,
-        [exampleKey]: `获取示例失败: ${error.message}`
-      }));
+      setLogs(prev => [...prev, `❌ 执行失败: ${error.message}`]);
+      setProgress(0);
+      setRunning(false);
+      setShowGraphDisplay(false); // 执行失败时不显示图形
     }
   };
 
+ 
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#f5f6fa' }}>
-      {/* 文字说明模块 */}
-      <Paper elevation={0} sx={{ p: 3, mb: 3, borderRadius: 2, backgroundColor: '#f0f4f8', border: '1px solid #e0e0e0' }}>
-        <Typography variant="body1" component="div" sx={{ lineHeight: 1.6, color: '#2d3436', fontSize: '0.95rem' }}>
-          <strong>考核指标：</strong>
-          <Box component="span" display="block">建立统一图计算编程模型和编译工具</Box>
-          <Box component="span" display="block">动态图更新性能达到每秒百万条边</Box>
-          <strong>中期指标：</strong>
-          <Box component="span" display="block">指标3.1：抽象出图遍历、图挖掘、图学习所具有的共性计算特征</Box>
-          <Box component="span" display="block">指标3.2：使用SNAP标准动态图数据集进行评测，动态图更新速率达到每秒五十万条边</Box>
-          <strong>完成时指标：</strong>
-          <Box component="span" display="block">指标3.1：提出对图遍历、图挖掘、图学习算法统一化表达的编程模型和编译工具</Box>
-          <Box component="span" display="block">指标3.2：使用SNAP标准动态图数据集进行评测，动态图更新速率达到每秒百万条边</Box>
-          <strong>考核方式：</strong>
-          <Box component="span" display="block">首先，将图遍历、图学习、图挖掘应用采用CGA编程模型统一化表达</Box>
-          <Box component="span" display="block">然后，将CGA编程模型经过多层编译，转换成图计算加速卡（模拟器）上运行的代码</Box>
-          <Box component="span" display="block">最后，支持GraphScope和DGL框架向CGA编程模型的转换</Box>
-          <Box component="span" display="block">使用SNAP标准动态图数据集进行评测，性能指标计算方法是：动态图更新速率=总更新边数/总更新时间</Box>
-          <strong>数据集来源：</strong>
-          <Box component="span" display="block">采用选自斯坦福网络分析平台（SNAP）的自然图数据集ego-Facebook，大型网络数据集KONECT的自然图数据集Euroroads、PDZBase、Physicians，和图卷积网络自然图数据集Cora</Box>
-        </Typography>
-      </Paper>
+      <Grid item xs={12} sx={{ mb: 3 }}>
+        <Paper elevation={0} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: '#f0f4f8',
+          border: '1px solid #e0e0e0'
+        }}>
+          <Typography variant="body1" component="div" sx={{
+            lineHeight: 1.6,
+            color: '#2d3436',
+            fontSize: '0.95rem',
+            '& .red-bold': {
+              fontWeight: 600,
+              color: '#ff4444',
+              display: 'inline',
+              padding: '0 2px'
+            },
+            '& strong': {
+              fontWeight: 600
+            }
+          }}>
+            <strong style={{ fontSize: '16px' }}>达成指标：</strong>
+            <Box component="span" display="block">
+              ① 1万图顶点数据的<span className='red-bold'>潮流计算</span>，计算时间约为<span className='red-bold'>100ms</span>。
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ② 省级规模电网<span className='red-bold'>状态估计</span>，计算时间不超过<span className='red-bold'>200ms</span>。
+            </Box>
 
-      {/* 运行控制模块和Terminal执行结果并排 */}
-      <Grid container spacing={3} mb={2} alignItems="stretch">
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 250, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'secondary.main', borderBottom: '2px solid', borderColor: 'secondary.main', pb: 1 }}>
-              运行控制
-            </Typography>
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 550, fontSize: '16px', mb: 1 }}>
-                选择算法
-              </Typography>
-              <Select
-                fullWidth
-                value={selectedAlgo}
-                onChange={handleAlgoChange}
-                disabled={isRunning}
-              >
-                {algorithms.map((algo) => (
-                  <MenuItem key={algo} value={algo}>
-                    {algo}
-                  </MenuItem>
-                ))}
-              </Select>
+            <strong style={{ fontSize: '16px' }}>评测方法：</strong>
+            <Box component="span" display="block">
+              ① <span className='red-bold'>潮流计算性能评测方法</span>：选取包含一万多个顶点的电力图开展潮流计算。
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              ② <span className='red-bold'>状态估计性能评测方法</span>：选取省级规模电网开展状态估计。
             </Box>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={handleRun} 
-              disabled={isRunning} 
-              sx={{ marginBottom: 2 }}
-            >
-              {isRunning ? '运行中...' : '运行'}
-            </Button>
-            {isRunning && <LinearProgress value={progress} />}
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 350, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'secondary.main' }}>
-              Terminal执行结果
-            </Typography>
-            <Box sx={{
-              backgroundColor: '#1e1e1e',
-              color: '#4caf50',
-              fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
-              fontSize: '0.875rem',
-              lineHeight: 1.5,
-              overflow: 'auto',
-              padding: '16px',
-              borderRadius: '4px',
-              flex: 1,
-              whiteSpace: 'pre',
-              p: 1.5,
-            }} ref={resultsBoxRef}>
-              <div>{results.terminal || ''}</div>
+
+            <strong style={{ fontSize: '16px' }}>数据集来源：</strong>
+            <Box component="span" display="block">
+              ① 数据来自于国家电网提供的10790节点的某国电网数据。
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ② 状态估计数据来自于国家电网提供的不同时期的某省电网数据。
             </Box>
-          </Paper>
-        </Grid>
+          </Typography>
+        </Paper>
       </Grid>
 
-      {/* 示例展示区域 */}
       <Grid container spacing={3}>
-      {getVisibleExamples(selectedAlgo).map((exampleKey) => {
-          // 获取当前算法的阶段映射
-          const stageMap = NEXT_STAGE_MAP[selectedAlgo] || NEXT_STAGE_MAP['*'];
-          // 判断是否是最后一个阶段
-          const isLastStage = stageMap[exampleKey] === null;
-          
-          return (
-            <Grid item xs={12} md={6} key={exampleKey}>
-              <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 500 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: 'secondary.main' }}>
-                    {EXAMPLE_TYPES[exampleKey].label}
-                  </Typography>
-                  {/* 不显示cgafile的按钮，且不是最后一个阶段 */}
-                  {exampleKey !== 'cgafile' && !isLastStage && showButtons[exampleKey] && (
-                    <Button 
-                      variant="contained" 
-                      color="primary" 
-                      onClick={async () => {
-                        // 点击按钮后，先隐藏当前按钮
-                        setShowButtons(prev => ({
-                          ...prev,
-                          [exampleKey]: false
-                        }));
-                        
-                        // 获取下一个阶段
-                        const nextExampleKey = stageMap[exampleKey];
-                        
-                        if (nextExampleKey) {
-                          // 加载下一个阶段的代码
-                          await handleShowExample(nextExampleKey);
-                        }
-                      }}
-                    >
-                      运行
-                    </Button>
-                  )}
-                </Box>
-                <ReadOnlyCodeBox content={results[exampleKey] || ''} height={400} />
+        {/* 左侧列 */}
+        <Grid item xs={12} md={4}>
+          {/* 算法选择卡片 */}
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+                <Typography variant="h6" sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: 'secondary.main',
+                  borderBottom: '2px solid',
+                  borderColor: 'secondary.main',
+                  pb: 1
+                }}>
+                  算法和数据集选择
+                </Typography>
+
+                <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
+                  算法选择
+                </Typography>
+                <Select
+                  fullWidth
+                  value={selectedAlgo}
+                  onChange={handleAlgoChange}
+                  sx={{ mb: 2 }}
+                >
+                  {algorithms.map(algo => (
+                    <MenuItem key={algo} value={algo}>{algo}</MenuItem>
+                  ))}
+                </Select>
+
+                <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
+                  {selectedAlgo}数据集
+                </Typography>
+                <Select
+                  fullWidth
+                  value={selectedDataset}
+                  onChange={(e) => setSelectedDataset(e.target.value)}
+                  sx={{ mb: 2 }}
+                >
+                  {configCombinations[selectedAlgo].map(ds => (
+                    <MenuItem key={ds} value={ds}>{ds}</MenuItem>
+                  ))}
+                </Select>
+
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={handleRun}
+                  disabled={isButtonDisabled()}
+                  color="success"
+                  sx={{ py: 1.5 }}
+                >
+                  {running ? '执行中...' : '开始执行'}
+                </Button>
+                {running && <LinearProgress value={progress} sx={{ mt: 1 }} />}
               </Paper>
             </Grid>
-          );
-        })}
-      </Grid>
 
-      {/* 模拟器执行区域 */}
-      <Grid container spacing={3} mt={2}>
-        {/* 模拟器控制模块 */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 250, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'secondary.main', borderBottom: '2px solid', borderColor: 'secondary.main', pb: 1 }}>
-              模拟器控制
+            {/* 数据集信息卡片 */}
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+                <Typography variant="h6" sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: 'secondary.main',
+                  borderBottom: '2px solid',
+                  borderColor: 'secondary.main',
+                  pb: 1
+                }}>
+                  电力图数据集信息
+                </Typography>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>数据集</TableCell>
+                        <TableCell>点数</TableCell>
+                        <TableCell>边数</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {configCombinations[selectedAlgo].map(ds => (
+                        <TableRow key={ds}>
+                          <TableCell>{ds}</TableCell>
+                          <TableCell>{datasetInfo[ds].nodes}</TableCell>
+                          <TableCell>{datasetInfo[ds].edges}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        {/* 右侧列 */}
+        <Grid item xs={12} md={8}>
+          {/* 代码展示 */}
+          <Paper elevation={3} sx={{
+            p: 2,
+            height: '100%',
+            borderRadius: 3,
+            overflow: 'hidden',
+            mb: 1.5  // 从 mb: 3 改为 mb: 1.5
+          }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              代码展示
             </Typography>
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 550, fontSize: '16px', mb: 1 }}>
-                选择数据集
-              </Typography>
-              <Select
-                fullWidth
-                value={selectedDataset}
-                onChange={(e) => setSelectedDataset(e.target.value)}
-                disabled={isSimulatorRunning}
-              >
-                {algorithmMappings[selectedAlgo].datasets.map((dataset) => (
-                  <MenuItem key={dataset} value={dataset}>
-                    {dataset}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Box>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={handleSimulatorRun} 
-              disabled={isSimulatorRunning} 
-              sx={{ marginBottom: 2 }}
-            >
-              {isSimulatorRunning ? '运行中...' : '运行模拟器'}
-            </Button>
-            {isSimulatorRunning && <LinearProgress value={simulatorProgress} />}
+            <Box ref={codeDisplayRef} sx={{
+              height: '600px',
+              overflow: 'auto',
+              backgroundColor: '#f9f9f9',
+              borderRadius: 2,
+              p: 1.5,
+              fontFamily: '"Fira Code", "Consolas", monospace',
+              fontSize: '0.95rem',
+              lineHeight: 1.6,
+              '& pre.code-content': {
+                margin: 0,
+                padding: 0
+              },
+              '& div.code-title': {
+                margin: 0,
+                padding: 0
+              }
+            }} 
+            dangerouslySetInnerHTML={{ __html: codeContent }}
+            />
           </Paper>
         </Grid>
 
-        {/*模拟器执行结果显示*/}
-        <Grid item xs={8}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 450, display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, color: 'secondary.main' }}>
-                在模拟器上执行硬件指令
-              </Typography>
+        {/* 下方性能对比和执行日志 */}
+        <Grid item xs={12} md={5} ref={performanceRef}>
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              潮流计算性能对比
+            </Typography>
+            <Box>
+              <BarChart
+                width={400}
+                height={300}
+                data={getChartData()}
+                margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="displayName" />
+                <YAxis label={{ value: '执行时间(ms)', angle: -90, position: 'insideLeft' }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="cpu" fill="#7f58af" name="CPU时间" barSize={50} />
+                <Bar dataKey="accelerator" fill="#64b5f6" name="加速器时间" barSize={50} />
+              </BarChart>
             </Box>
-            <Box sx={{
-              backgroundColor: '#1e1e1e',
-              color: '#d4d4d4',
-              fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
-              fontSize: '0.875rem',
-              lineHeight: 1.5,
-              overflow: 'auto',
-              padding: '16px',
-              borderRadius: '4px',
-              flex: 1,
-              whiteSpace: 'pre',
-            }} ref={simulatorBoxRef}>
-              {simulatorResults}
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={7}>
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              执行日志
+            </Typography>
+            <Box 
+              ref={logBoxRef}
+              sx={{
+                height: 300,
+                overflow: 'auto',
+                fontFamily: 'monospace',
+                fontSize: '0.8rem',
+                backgroundColor: '#1a1a1a',
+                borderRadius: 2,
+                p: 1.5,
+                '& > div': {
+                  color: '#ffffff',
+                  lineHeight: 1.6,
+                  borderBottom: '1px solid rgba(255,255,255,0.1)',
+                  py: 0.5
+                }
+              }}
+            >
+              {logs.filter(log => log && typeof log === 'string' && !log.includes('PATH')).map((log, index) => (
+                <div key={index}>{`> ${log}`}</div>
+              ))}
             </Box>
+            {running && <LinearProgress value={progress} sx={{ mt: 1 }} />}
+          </Paper>
+        </Grid>
+
+        {/* 图形化结果展示 */}
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              图形化结果展示
+            </Typography>
+            {!showGraphDisplay ? (
+              <Box
+                sx={{
+                  height: '700px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: 2,
+                  border: '2px dashed #ccc'
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: '#666',
+                    textAlign: 'center',
+                    maxWidth: '80%'
+                  }}
+                >
+                  {running ? (
+                    <>
+                      <Box sx={{ mb: 2 }}>正在计算中，请稍候...</Box>
+                      <LinearProgress sx={{ width: '200px' }} />
+                    </>
+                  ) : (
+                    "图形化结果将在执行完毕后显示"
+                  )}
+                </Typography>
+              </Box>
+            ) : (
+              <PowerGraphDisplay 
+                dataset={selectedDataset} 
+                algorithm={selectedAlgo === '潮流计算' ? 'pf' : 'se'} 
+              />
+            )}
           </Paper>
         </Grid>
       </Grid>

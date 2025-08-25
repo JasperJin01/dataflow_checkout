@@ -5,6 +5,7 @@
   "licence": "MIT",
   "homepage": "https://devias.io",
   "private": false,
+  "main": "main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,7 +14,14 @@
     "lint:fix": "next lint --fix",
     "typecheck": "tsc --noEmit",
     "format:write": "prettier --write \"**/*.{js,jsx,mjs,ts,tsx,mdx}\" --cache",
-    "format:check": "prettier --check \"**/*.{js,jsx,mjs,ts,tsx,mdx}\" --cache"
+    "format:check": "prettier --check \"**/*.{js,jsx,mjs,ts,tsx,mdx}\" --cache",
+    "electron": "electron .",
+    "electron-dev": "NODE_ENV=development electron .",
+    "build-electron": "next build && next export && electron-builder",
+    "dist": "npm run build && next export && electron-builder --publish=never",
+    "dist-mac": "npm run build && next export && electron-builder --mac",
+    "dist-win": "npm run build && next export && electron-builder --win",
+    "dist-linux": "npm run build && next export && electron-builder --linux"
   },
   "dependencies": {
     "@emotion/cache": "11.11.0",
@@ -56,6 +64,8 @@
     "@types/react-dom": "18.3.0",
     "@types/react-syntax-highlighter": "15.5.13",
     "@vercel/style-guide": "6.0.0",
+    "electron": "^37.3.1",
+    "electron-builder": "^26.0.12",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.4",
     "eslint-config-prettier": "9.1.0",
@@ -63,5 +73,46 @@
     "jest-environment-jsdom": "29.7.0",
     "prettier": "3.3.2",
     "typescript": "5.5.2"
+  },
+  "build": {
+    "appId": "com.devias.material-kit-react",
+    "productName": "Material Kit React",
+    "npmRebuild": false,
+    "buildDependenciesFromSource": false,
+    "nodeGypRebuild": false,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "out/**/*",
+      "node_modules/**/*",
+      "public/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        }
+      ]
+    }
   }
 }

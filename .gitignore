@@ -9,6 +9,8 @@
 **/drive_visualize_copy/
 **/up/
 **/down/
+**/dist/
+
 # testing
 /coverage
 

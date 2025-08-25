@@ -490,7 +490,7 @@ export default function Page() {
               borderColor: 'secondary.main',
               pb: 1
             }}>
-              代码展示
+              顶层代码模块展示
             </Typography>
             <Box ref={codeDisplayRef} sx={{
               height: '600px',
@@ -540,8 +540,8 @@ export default function Page() {
                 <YAxis label={{ value: '执行时间(ms)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="cpu" fill="#7f58af" name="CPU时间" barSize={50} />
-                <Bar dataKey="accelerator" fill="#64b5f6" name="加速器时间" barSize={50} />
+                <Bar dataKey="cpu" fill="#7f58af" name="融合前时间" barSize={50} />
+                <Bar dataKey="accelerator" fill="#64b5f6" name="融合后时间" barSize={50} />
               </BarChart>
             </Box>
           </Paper>

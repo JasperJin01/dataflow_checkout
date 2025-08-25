@@ -1,0 +1,99 @@
+WARNING:tensorflow:From /root/miniconda3/envs/tf265/lib/python3.8/site-packages/tensorflow/python/compat/v2_compat.py:101: disable_resource_variables (from tensorflow.python.ops.variable_scope) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+2025-07-27 17:10:28.896160: W core/npu_wrapper.cpp:187] Unrecognized graph engine option atomic_clean_policy:0
+2025-07-27 17:10:28.896283: W core/npu_wrapper.cpp:187] Unrecognized graph engine option compile_dynamic_mode:0
+2025-07-27 17:10:28.896308: W core/npu_wrapper.cpp:187] Unrecognized graph engine option dump_debug_mode:all
+2025-07-27 17:10:28.896324: W core/npu_wrapper.cpp:187] Unrecognized graph engine option dump_mode:output
+2025-07-27 17:10:28.896340: W core/npu_wrapper.cpp:187] Unrecognized graph engine option enable_dump:0
+2025-07-27 17:10:28.896353: W core/npu_wrapper.cpp:187] Unrecognized graph engine option enable_dump_debug:0
+2025-07-27 17:10:28.896367: W core/npu_wrapper.cpp:187] Unrecognized graph engine option enable_graph_parallel:0
+2025-07-27 17:10:28.896384: W core/npu_wrapper.cpp:187] Unrecognized graph engine option enable_small_channel:0
+2025-07-27 17:10:28.896399: W core/npu_wrapper.cpp:187] Unrecognized graph engine option external_weight:0
+2025-07-27 17:10:28.896415: W core/npu_wrapper.cpp:187] Unrecognized graph engine option hcom_parallel:1
+2025-07-27 17:10:28.896428: W core/npu_wrapper.cpp:187] Unrecognized graph engine option input_fusion_size:131072
+2025-07-27 17:10:28.896442: W core/npu_wrapper.cpp:187] Unrecognized graph engine option is_tailing_optimization:0
+2025-07-27 17:10:28.896456: W core/npu_wrapper.cpp:187] Unrecognized graph engine option jit_compile:auto
+2025-07-27 17:10:28.896493: I core/npu_wrapper.cpp:247] Start graph engine with options:
+2025-07-27 17:10:28.896511: I core/npu_wrapper.cpp:249]   event_sync_timeout:-1
+2025-07-27 17:10:28.896524: I core/npu_wrapper.cpp:249]   execute_times:-1
+2025-07-27 17:10:28.896537: I core/npu_wrapper.cpp:249]   ge.deterministic:0
+2025-07-27 17:10:28.896549: I core/npu_wrapper.cpp:249]   ge.exec.allow_hf32:1
+2025-07-27 17:10:28.896563: I core/npu_wrapper.cpp:249]   ge.exec.deployMode:0
+2025-07-27 17:10:28.896575: I core/npu_wrapper.cpp:249]   ge.exec.deviceId:0
+2025-07-27 17:10:28.896590: I core/npu_wrapper.cpp:249]   ge.exec.dumpData:tensor
+2025-07-27 17:10:28.896602: I core/npu_wrapper.cpp:249]   ge.exec.enable_exception_dump:2
+2025-07-27 17:10:28.896614: I core/npu_wrapper.cpp:249]   ge.exec.hcclFlag:1
+2025-07-27 17:10:28.896628: I core/npu_wrapper.cpp:249]   ge.exec.hccl_tailing_optimize:1
+2025-07-27 17:10:28.896640: I core/npu_wrapper.cpp:249]   ge.exec.isUseHcom:1
+2025-07-27 17:10:28.896657: I core/npu_wrapper.cpp:249]   ge.exec.logicalDeviceClusterDeployMode:LB
+2025-07-27 17:10:28.896670: I core/npu_wrapper.cpp:249]   ge.exec.overflow:1
+2025-07-27 17:10:28.896682: I core/npu_wrapper.cpp:249]   ge.exec.profilingMode:0
+2025-07-27 17:10:28.896698: I core/npu_wrapper.cpp:249]   ge.exec.profilingOptions:{"output":".\/","training_trace":"on","task_trace":"on",                                             "hccl":"on","aicpu":"on","aic_metrics":"PipeUtilization",                                             "msproftx":"off"}
+2025-07-27 17:10:28.896711: I core/npu_wrapper.cpp:249]   ge.exec.rankId:0
+2025-07-27 17:10:28.896726: I core/npu_wrapper.cpp:249]   ge.exec.rankTableFile:/root/tmp/pagerank/PageRank_v_3_0/tensorflow/ranktable_4p.json
+2025-07-27 17:10:28.896738: I core/npu_wrapper.cpp:249]   ge.exec.staticMemoryPolicy:0
+2025-07-27 17:10:28.896750: I core/npu_wrapper.cpp:249]   ge.graphRunMode:1
+2025-07-27 17:10:28.896764: I core/npu_wrapper.cpp:249]   ge.op_compiler_cache_mode:enable
+2025-07-27 17:10:28.896777: I core/npu_wrapper.cpp:249]   ge.tuningPath:./
+2025-07-27 17:10:28.896791: I core/npu_wrapper.cpp:249]   stream_sync_timeout:-1
+2025-07-27 17:10:40.552024: I core/npu_wrapper.cpp:260] Start graph engine succeed
+2025-07-27 17:10:40.573159: I core/npu_wrapper.cpp:266] Start tensorflow model parser succeed
+2025-07-27 17:10:40.580771: I core/npu_wrapper.cpp:291] Create device instance /job:localhost/replica:0/task:0/device:NPU:0 with extra options:
+2025-07-27 17:10:40.580835: W core/npu_wrapper.cpp:187] Unrecognized graph engine option _distribute.rank_id:0
+2025-07-27 17:10:40.580860: W core/npu_wrapper.cpp:187] Unrecognized graph engine option _distribute.rank_table:/root/tmp/pagerank/PageRank_v_3_0/tensorflow/ranktable_4p.json
+2025-07-27 17:10:40.580893: W core/npu_wrapper.cpp:187] Unrecognized graph engine option deterministic:0
+2025-07-27 17:10:40.580910: W core/npu_wrapper.cpp:187] Unrecognized graph engine option dump_data:tensor
+2025-07-27 17:10:40.580928: W core/npu_wrapper.cpp:187] Unrecognized graph engine option enable_exception_dump:2
+2025-07-27 17:10:40.580945: W core/npu_wrapper.cpp:187] Unrecognized graph engine option enable_profiling:0
+2025-07-27 17:10:40.580959: W core/npu_wrapper.cpp:187] Unrecognized graph engine option event_sync_timeout:-1
+2025-07-27 17:10:40.580974: W core/npu_wrapper.cpp:187] Unrecognized graph engine option execute_times:-1
+2025-07-27 17:10:40.580999: W core/npu_wrapper.cpp:187] Unrecognized graph engine option logical_device_cluster_deploy_mode:LB
+2025-07-27 17:10:40.581014: W core/npu_wrapper.cpp:187] Unrecognized graph engine option op_compiler_cache_mode:enable
+2025-07-27 17:10:40.581028: W core/npu_wrapper.cpp:187] Unrecognized graph engine option overflow_flag:1
+2025-07-27 17:10:40.581042: W core/npu_wrapper.cpp:187] Unrecognized graph engine option profiling_options:{"output":".\/","training_trace":"on","task_trace":"on",                                             "hccl":"on","aicpu":"on","aic_metrics":"PipeUtilization",                                             "msproftx":"off"}
+2025-07-27 17:10:40.581055: W core/npu_wrapper.cpp:187] Unrecognized graph engine option static_memory_policy:0
+2025-07-27 17:10:40.581069: W core/npu_wrapper.cpp:187] Unrecognized graph engine option stream_sync_timeout:-1
+2025-07-27 17:10:40.581081: W core/npu_wrapper.cpp:187] Unrecognized graph engine option work_path:./
+2025-07-27 17:10:40.597324: I core/npu_logger.cpp:49] Npu stdout receiver of device 0 started
+2025-07-27 17:10:40.597469: I core/npu_device_register.cpp:107] Npu device instance /job:localhost/replica:0/task:0/device:NPU:0 created
+2025-07-27 17:11:25.509962: I ../../../../../../../../../../asl/tfadaptor/tf_adapter/kernels/geop_npu.cc:1130] The model has been compiled on the Ascend AI processor, current graph id is: 1
+===> Parsed 7600696 edges, num_nodes = 174147
+[RANK 0] Step 0, err = 1.253116
+[RANK 0] Step 1, err = 0.251865
+[RANK 0] Step 2, err = 0.044706
+[RANK 0] Step 3, err = 0.011892
+[RANK 0] Step 4, err = 0.002987
+[RANK 0] Step 5, err = 0.000905
+================================ TensorFlow METHOD =======================================
+		Graph: nodes: 174147, edges: 7600696
+		GTEPS: 0.010117
+		Total Cost: 47.643 seconds
+================================ TensorFlow METHOD =======================================
+
+Printing top 20 node ids with their ranks
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.003486
+   2 |  159453 | 0.001435
+   3 |   78518 | 0.001430
+   4 |  133418 | 0.001423
+   5 |  144325 | 0.001420
+   6 |  158201 | 0.001419
+   7 |    2099 | 0.001417
+   8 |   20983 | 0.001415
+   9 |  115679 | 0.001415
+  10 |  143636 | 0.001401
+  11 |   46630 | 0.001398
+  12 |  108888 | 0.001395
+  13 |   19869 | 0.001391
+  14 |  124206 | 0.001389
+  15 |  116089 | 0.001349
+  16 |  123461 | 0.001349
+  17 |   48707 | 0.001327
+  18 |   74854 | 0.001326
+  19 |       2 | 0.001311
+  20 |   48718 | 0.000593
+2025-07-27 17:11:28.264791: I core/npu_logger.cpp:58] Stopping npu stdout receiver of device 0
+2025-07-27 17:11:28.265209: I core/npu_wrapper.cpp:312] Stop tensorflow model parser succeed
+2025-07-27 17:11:28.265260: I core/npu_wrapper.cpp:322] Stop graph engine succeed

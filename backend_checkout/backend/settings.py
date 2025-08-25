@@ -25,11 +25,12 @@ SECRET_KEY = "django-insecure-w1tl&a1_cpj0@d*yq(d4$_2xi9m&9#qj*50_wqyv3j(xia@3_d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["10.21.145.217", # rog-linux 校园网 ip
-                '10.21.150.129', # mbp 校园网 ip
+# NOTE 这里要加上访问后端服务器的IP地址，否则无法访问
+ALLOWED_HOSTS = ["10.21.145.217", 
+                '10.21.150.129', 
                 'localhost', 
                 '127.0.0.1', 
-                '10.11.74.113'
+                '10.12.60.75'
                 ]
 # ALLOWED_HOSTS = ['*']
 

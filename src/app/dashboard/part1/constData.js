@@ -31,33 +31,33 @@ export const PERFORMANCE_DATA = {
     'CPU': [
       {
         'Dataset': 'Rmat-16',
-        'Baseline-Time(s)': 12.5,
-        'Dataflow-Time(s)': 5.2,
-        'Baseline-Throughput': 2.1, // GTEPS
-        'Dataflow-Throughput': 5.4  // GTEPS
+        'Baseline-Time(s)': 75.225,
+        'Dataflow-Time(s)': 18.9,
+        'Baseline-Throughput': 0.001577, // GTEPS
+        'Dataflow-Throughput': 0.0148415  // GTEPS
       },
       {
         'Dataset': 'Rmat-18',
-        'Baseline-Time(s)': 42.3,
-        'Dataflow-Time(s)': 21.7,
-        'Baseline-Throughput': 2.2, // GTEPS
-        'Dataflow-Throughput': 4.1  // GTEPS
+        'Baseline-Time(s)': 155.493,
+        'Dataflow-Time(s)': 37.5,
+        'Baseline-Throughput': 0.001480, // GTEPS
+        'Dataflow-Throughput': 0.014936  // GTEPS
       },
       {
         'Dataset': 'Rmat-20',
-        'Baseline-Time(s)': 78.2,
-        'Dataflow-Time(s)': 7.8,
-        'Baseline-Throughput': 2.4, // GTEPS
-        'Dataflow-Throughput': 24.6 // GTEPS
+        'Baseline-Time(s)': 318.37,
+        'Dataflow-Time(s)': 76.3,
+        'Baseline-Throughput': 0.001476, // GTEPS
+        'Dataflow-Throughput': 0.01455304 // GTEPS
       }
     ],
     'GPU': [
       {
         'Dataset': 'Rmat-16',
-        'Baseline-Time(s)': 9,
-        'Dataflow-Time(s)': 3,
-        'Baseline-Throughput': 3, // GTEPS
-        'Dataflow-Throughput': 9  // GTEPS
+        'Baseline-Time(s)': 70.456,
+        'Dataflow-Time(s)': 32.53,
+        'Baseline-Throughput': 0.001606, // GTEPS
+        'Dataflow-Throughput': 0.01606  // GTEPS
       },
       {
         'Dataset': 'Rmat-18',
@@ -100,24 +100,24 @@ export const PERFORMANCE_DATA = {
     'DSA': [
       {
         'Dataset': 'Rmat-16',
-        'Baseline-Time(s)': 9,
-        'Dataflow-Time(s)': 2.8,
-        'Baseline-Throughput': 3, // GTEPS
-        'Dataflow-Throughput': 10.2 // GTEPS
+        'Baseline-Time(s)': 104.11,
+        'Dataflow-Time(s)': 20.7,
+        'Baseline-Throughput': 0.002234, // GTEPS
+        'Dataflow-Throughput': 0.040072 // GTEPS
       },
       {
         'Dataset': 'Rmat-18',
-        'Baseline-Time(s)': 29.8,
-        'Dataflow-Time(s)': 12.1,
-        'Baseline-Throughput': 3.2, // GTEPS
-        'Dataflow-Throughput': 7.1 // GTEPS
+        'Baseline-Time(s)': 216.99,
+        'Dataflow-Time(s)': 35.695,
+        'Baseline-Throughput': 0.002234, // GTEPS
+        'Dataflow-Throughput': 0.061618 // GTEPS
       },
       {
         'Dataset': 'Rmat-20',
-        'Baseline-Time(s)': 58.5,
-        'Dataflow-Time(s)': 3.5,
-        'Baseline-Throughput': 3.3, // GTEPS
-        'Dataflow-Throughput': 55.8 // GTEPS
+        'Baseline-Time(s)': 416.99,
+        'Dataflow-Time(s)': 67.054,
+        'Baseline-Throughput': 0.001855, // GTEPS
+        'Dataflow-Throughput': 0.082105 // GTEPS
       }
     ]
   },
@@ -125,15 +125,15 @@ export const PERFORMANCE_DATA = {
     'CPU': [
       {
         'Dataset': 'ImageNet',
-        'Baseline-Time(s)': 165.0,
-        'Dataflow-Time(s)': 102.0,
-        'Baseline-Throughput': 320, // GFLOPS
-        'Dataflow-Throughput': 510  // GFLOPS
+        'Baseline-Time(s)': 0.46,
+        'Dataflow-Time(s)': 0.16,
+        'Baseline-Throughput': 35.58, // GFLOPS
+        'Dataflow-Throughput': 115.41  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
-        'Baseline-Time(s)': 117.0,
-        'Dataflow-Time(s)': 73.5,
+        'Baseline-Time(s)': 0.53,
+        'Dataflow-Time(s)': 0.19,
         'Baseline-Throughput': 230, // GFLOPS
         'Dataflow-Throughput': 380  // GFLOPS
       }
@@ -142,9 +142,9 @@ export const PERFORMANCE_DATA = {
       {
         'Dataset': 'ImageNet',
         'Baseline-Time(s)': 110.0,
-        'Dataflow-Time(s)': 68.0,
-        'Baseline-Throughput': 580, // GFLOPS
-        'Dataflow-Throughput': 920  // GFLOPS
+        'Dataflow-Time(s)': 46.0,
+        'Baseline-Throughput': 480, // GFLOPS
+        'Dataflow-Throughput': 1279.22  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
@@ -157,26 +157,26 @@ export const PERFORMANCE_DATA = {
     'FPGA': [
       {
         'Dataset': 'ImageNet',
-        'Baseline-Time(s)': 110.0,
-        'Dataflow-Time(s)': 72.0,
-        'Baseline-Throughput': 580, // GFLOPS
-        'Dataflow-Throughput': 880  // GFLOPS
+        'Baseline-Time(s)': 0.0338,
+        'Dataflow-Time(s)': 0.0154,
+        'Baseline-Throughput': 27.673, // GFLOPS
+        'Dataflow-Throughput': 62.882  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
-        'Baseline-Time(s)': 78.0,
-        'Dataflow-Time(s)': 52.0,
-        'Baseline-Throughput': 420, // GFLOPS
-        'Dataflow-Throughput': 650  // GFLOPS
+        'Baseline-Time(s)': 0.0348,
+        'Dataflow-Time(s)': 0.0158,
+        'Baseline-Throughput': 25.823, // GFLOPS
+        'Dataflow-Throughput': 61.238  // GFLOPS
       }
     ],
     'DSA': [
       {
         'Dataset': 'ImageNet',
-        'Baseline-Time(s)': 110.0,
-        'Dataflow-Time(s)': 65.0,
-        'Baseline-Throughput': 580, // GFLOPS
-        'Dataflow-Throughput': 950  // GFLOPS
+        'Baseline-Time(s)': 180.0,
+        'Dataflow-Time(s)': 78.66,
+        'Baseline-Throughput': 380, // GFLOPS
+        'Dataflow-Throughput': 761  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',

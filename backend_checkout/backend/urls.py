@@ -20,8 +20,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('api/usage/powertrend/<str:dataset>/', views.stream_power_trend, name='stream_power_trend'),
+    
     path("admin/", admin.site.urls),
-    path('helloworld/', views.hello, name="hello"),
+
 
     path('stream/', views.stream_test, name='stream'),
     
@@ -43,5 +45,6 @@ urlpatterns = [
 
     
     path('logfile/<str:filename>/', views.read_log_file, name="read_log_file"), 
+    path('dist_vit_test/', views.dist_vit_test, name="dist_vit_test"),
 
 ]

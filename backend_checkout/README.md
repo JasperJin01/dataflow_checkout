@@ -12,12 +12,12 @@ pip install paramiko
 项目启动
 ```
 cd 项目目录
-python manage.py runserver 0.0.0.0:8000
+python manage.py runserver 0.0.0.0:8200
 ```
 
 或者挂载到后台执行：
 ```
-nohup python manage.py runserver 0.0.0.0:8000 > server_log.log 2>&1 &
+nohup python manage.py runserver 0.0.0.0:8200 > server_log.log 2>&1 &
 ```
 
-lsof -i :8000
+lsof -i :8200

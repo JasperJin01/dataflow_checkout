@@ -95,3 +95,17 @@ finally:
 # 程序结束时关闭所有连接
 pool.close_all()
 """ 
+
+if __name__ == "__main__":
+    print("start ssh test")
+    KEY_PATH = '/Users/jiminj/.ssh/id_rsa_hust_server'
+    pool86 = SSHConnectionPool(
+        hostname='192.168.165.232',
+        username='jinjm',
+        key_filename=KEY_PATH,
+        port=22222,
+        max_connections=5
+    )
+    client = pool86.get_connection()
+    stdin, stdout, stderr = client.exec_command('ls')
+    print(stdout.read().decode())

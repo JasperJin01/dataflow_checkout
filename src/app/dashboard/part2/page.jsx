@@ -4,10 +4,11 @@ import { Box, Grid, Paper, Typography, Select, MenuItem, Button, Tabs, Tab, Tabl
   TableBody, TableCell, TableContainer, TableHead, TableRow, LinearProgress } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from 'recharts';
 import request from '@/lib/request/request';
-import { PERFORMANCE_DATA, getRunMode, URL_MAPS, midtermMetrics } from './constData'
+import { PERFORMANCE_DATA, getRunMode, URL_MAPS, midtermMetrics, CARD_OPTIONS, DEFAULT_CARD_COUNT } from './constData';
+import { AssessmentCriteria, AlgorithmDetails, DatasetInfo, getThroughputUnit } from './info';
 
 const algorithms = ['PageRank', 'ViT'];
-const platforms = ['CPU-GPU', 'CPU-FPGA', 'CPU-DSA', 'CPU分布式'];
+const platforms = ['CPU-GPU', 'CPU-FPGA', 'CPU-DSA'];
 const allDatasetsOption = 'all-datasets';
 
 const datasetsByAlgorithm = {
@@ -15,40 +16,28 @@ const datasetsByAlgorithm = {
   'ViT': ['ImageNet', 'DriveSeg']
 };
 
-const algorithmDetails = {
-  PageRank: { description: '标准图遍历算法', },
-  ViT: { description: '视觉Transformer算法', },
-};
-
-const datasetInfo = {
-  'Rmat-16': { nodes: '174147', edges: '7600696' },
-  'Rmat-18': { nodes: '335318', edges: '15459350' },
-  'Rmat-20': { nodes: '645820', edges: '31361722' },
-  'ImageNet': { description: '1000类图像分类数据集，包含120万张训练图像和5万张验证图像' },
-  'DriveSeg': { description: '自动驾驶场景分割数据集，包含5000张训练图像和1000张验证图像' }
-};
-
-// 获取吞吐量单位
-const getThroughputUnit = (algorithm) => {
-  switch(algorithm) {
-    case 'PageRank': return 'GTEPS';
-    case 'ViT': return 'GFLOPS';
-    default: return '';
-  };
-};
+// 算法详情、数据集信息和工具函数已从 ./info 导入
 
 
 export default function Page() {
+  // 算法选择
   const [selectedAlgo, setSelectedAlgo] = useState(algorithms[0]);
   const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
   const [selectedDataset, setSelectedDataset] = useState(datasetsByAlgorithm[algorithms[0]][0]);
+  const [selectedCardCount, setSelectedCardCount] = useState(DEFAULT_CARD_COUNT[platforms[0]]);
   // 控制标签页切换
-  const [tabValue, setTabValue] = useState(0);
+  const [prTabValue, setPrTabValue] = useState(0);
+  const [vitTabValue, setVitTabValue] = useState(0);
+  const [prChartPlatform, setPrChartPlatform] = useState(platforms[0]);
+  const [vitChartPlatform, setVitChartPlatform] = useState(platforms[0]);
   const [logs, setLogs] = useState([]);
   const [running, setRunning] = useState(false);
   const [performanceData, setPerformanceData] = useState([]);
-  // 确保chartMetric与selectedPlatform保持一致
-  const [chartMetric, setChartMetric] = useState(platforms[0]);
+  // 为PageRank和ViT分别设置硬件平台选择
+  // const [prChartMetric, setPrChartMetric] = useState(platforms[0]);
+  // const [vitChartMetric, setVitChartMetric] = useState(platforms[0]);
+  // const [chartMetric, setChartMetric] = useState(platforms[0]); // 添加统一的图表指标状态
+  
   // 参考线（中期指标）状态
   const [showReferenceLine, setShowReferenceLine] = useState(false);
   const logBoxRef = React.useRef(null);
@@ -66,16 +55,21 @@ export default function Page() {
     scrollToBottom();
   }, [logs]);
 
-  // 监听平台选择变化，同步更新chartMetric
+  // 监听平台选择变化，同步更新chartMetric和卡数
   useEffect(() => {
-    setChartMetric(selectedPlatform);
+    // setPrChartMetric(selectedPlatform);
+    // setVitChartMetric(selectedPlatform);
+    setPrChartPlatform(selectedPlatform);
+    setVitChartPlatform(selectedPlatform);
+    // setChartMetric(selectedPlatform); // 更新统一的图表指标状态
+    setSelectedCardCount(DEFAULT_CARD_COUNT[selectedPlatform]); // 更新默认卡数
   }, [selectedPlatform]);
 
   // 判断按钮是否不可用
   const isButtonDisabled = () => running;
 
   // 生成性能数据
-  const generatePerformanceData = (algorithm, dataset, platform) => {
+  const generatePerformanceData = (algorithm, dataset, platform, cardCount = selectedCardCount) => {
     // 从预定义的性能数据中获取
     if (!PERFORMANCE_DATA[algorithm]) {
       console.error(`未找到 ${algorithm} 的性能数据`);
@@ -89,12 +83,27 @@ export default function Page() {
       return null;
     }
     
-    // 查找匹配的数据集
+    // 获取特定卡数的数据
     const platformData = PERFORMANCE_DATA[algorithm][platformKey];
-    const datasetEntry = platformData.find(item => item.Dataset === dataset);
+    let cardData;
+    
+    if (typeof platformData === 'object' && !Array.isArray(platformData)) {
+      // 新的数据结构：按卡数分组
+      cardData = platformData[cardCount];
+      if (!cardData) {
+        console.error(`未找到 ${algorithm} 在平台 ${platformKey} 上 ${cardCount}卡 的性能数据`);
+        return null;
+      }
+    } else {
+      // 旧的数据结构：直接是数组
+      cardData = platformData;
+    }
+    
+    // 查找匹配的数据集
+    const datasetEntry = cardData.find(item => item.Dataset === dataset);
     
     if (!datasetEntry) {
-      console.error(`未找到 ${algorithm}-${dataset}-${platformKey} 的性能数据`);
+      console.error(`未找到 ${algorithm}-${dataset}-${platformKey}-${cardCount}卡 的性能数据`);
       return null;
     }
     
@@ -102,6 +111,7 @@ export default function Page() {
       algorithm,
       dataset,
       platform,
+      cardCount,
       baselineTime: datasetEntry["Baseline-Time(s)"],
       optimizedTime: datasetEntry["Dataflow-Time(s)"],
       speedUp: datasetEntry["Baseline-Time(s)"] / datasetEntry["Dataflow-Time(s)"],
@@ -118,12 +128,15 @@ export default function Page() {
 
   // 生成图表数据
   const getChartData = (platform) => {
-    // 过滤选定平台的数据
-    const filteredData = getValidData().filter(item => item.platform === platform);
+    // 只过滤选定平台的数据，不过滤卡数，显示所有已执行的数据
+    const filteredData = getValidData().filter(item => 
+      item.platform === platform
+    );
     
-    // 转换为图表所需格式
+    // 转换为图表所需格式，在名称中包含卡数信息以区分不同卡数的数据
     return filteredData.map(item => ({
-      name: `${item.dataset}`,
+      name: `${item.dataset}(${item.cardCount}卡)`,
+      algorithm: item.algorithm,
       speedUp: item.speedUp,
       throughputSpeedup: item.throughputSpeedup,
       baselineTime: item.baselineTime,
@@ -182,7 +195,7 @@ export default function Page() {
         setRunning(false);
         
         // 生成性能数据并更新
-        const performanceEntry = generatePerformanceData(algorithm, dataset, platform);
+        const performanceEntry = generatePerformanceData(algorithm, dataset, platform, selectedCardCount);
         updatePerformanceData(performanceEntry);
       }, logLines.length * 100 + 500);
       
@@ -199,11 +212,12 @@ export default function Page() {
     console.log('更新性能数据:', newEntry);
     
     setPerformanceData(prev => {
-      // 过滤掉相同算法、数据集、平台的旧数据
+      // 过滤掉相同算法、数据集、平台、卡数的旧数据
       const filtered = prev.filter(item => 
         !(item.algorithm === newEntry.algorithm && 
           item.dataset === newEntry.dataset && 
-          (newEntry.platform ? item.platform === newEntry.platform : true))
+          item.platform === newEntry.platform &&
+          item.cardCount === newEntry.cardCount)
       );
       
       // 添加新数据并排序
@@ -233,20 +247,9 @@ export default function Page() {
     if (running) return;
 
     setRunning(true);
-    
-    // 直接在这里执行滚动
-    setTimeout(() => {
-      performanceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 50); // 延时50ms，等待react状态更新
-    await new Promise(resolve => setTimeout(resolve, 500)); // 等待滚动完成
 
     try {
-      // 检查是否需要清空之前的数据
-      // 如果有性能数据，且当前选择的算法与已有数据的算法不一致，则清空数据
-      if (performanceData.length > 0 && performanceData[0].algorithm !== selectedAlgo) {
-        console.log('算法已更改，清空之前的性能数据');
-        setPerformanceData([]);
-      }
+      // 不再清空不同算法的数据，允许多算法数据共存
       
       // 处理"全部数据集"选项
       if (selectedDataset === allDatasetsOption) {
@@ -282,42 +285,41 @@ export default function Page() {
         setLogs([`开始执行图算法 ${selectedAlgo}，数据集 ${selectedDataset}，平台 ${selectedPlatform}：`]);
         setLogs(prev => [...prev, '正在与服务器建立连接...']);
         
-        // 检查是否需要清空之前的数据
-        const shouldClearData = performanceData.length > 0 && 
-          performanceData[0].algorithm !== selectedAlgo;
-        
-        if (shouldClearData) {
-          setPerformanceData([]);
-        }
+        // 不再清空不同算法的数据，允许多算法数据共存
         
         // 获取URL映射
         const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
         const urlData = URL_MAPS.dataset[selectedDataset];
         
         // 执行流式命令
-        const eventSource = new EventSource(`${request.BASE_URL}/part2/execute/${urlAlgo}/${urlData}/`);
+        //const eventSource = new EventSource(`${request.BASE_URL}/part2/execute/${urlAlgo}/${urlData}/`);
+        const eventSource = new EventSource(`${request.BASE_URL}/dist_vit_test/`);
         
         eventSource.onmessage = async (event) => {
           if (event.data === '[done]') {
             eventSource.close();
+            setRunning(false);
             
-            setLogs(prev => [...prev, `正在拷贝 ${selectedDataset} 的result...`]);
+            const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform, selectedCardCount);
+            updatePerformanceData(performanceEntry);
             
-            try {
-              const res = await fetch(`${request.BASE_URL}/part2/result/${urlAlgo}/${urlData}/`);
-              const jsonData = await res.json();
+            // setLogs(prev => [...prev, `正在拷贝 ${selectedDataset} 的result...`]);
+            
+            // try {
+            //   const res = await fetch(`${request.BASE_URL}/part2/result/${urlAlgo}/${urlData}/`);
+            //   const jsonData = await res.json();
               
-              setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
-              setRunning(false);
+            //   setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
+            //   setRunning(false);
               
-              // 生成性能数据并更新
-              const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform);
-              updatePerformanceData(performanceEntry);
+            //   // 生成性能数据并更新
+            //   const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform);
+            //   updatePerformanceData(performanceEntry);
               
-            } catch (error) {
-              setLogs(prev => [...prev, `❌ 获取结果失败: ${error.message}`]);
-              setRunning(false);
-            }
+            // } catch (error) {
+            //   setLogs(prev => [...prev, `❌ 获取结果失败: ${error.message}`]);
+            //   setRunning(false);
+            // }
           } else if (event.data === '[error]') {
             eventSource.close();
             setLogs(prev => [...prev, `❌ 服务器执行出错：${selectedAlgo}-${selectedDataset}-${selectedPlatform}`]);
@@ -342,132 +344,141 @@ export default function Page() {
   return (
     <Box sx={{ p: 3, backgroundColor: '#f5f6fa' }}>
       <Grid item xs={12} sx={{ mb: 3 }}>
-        <Paper elevation={0} sx={{
-          p: 3,
-          borderRadius: 2,
-          backgroundColor: '#f0f4f8',
-          border: '1px solid #e0e0e0'
-        }}>
-          <Typography variant="body1" component="div" sx={{
-            lineHeight: 1.6,
-            color: '#2d3436',
-            fontSize: '0.95rem',
-            '& .red-bold': {
-              fontWeight: 600,
-              color: '#ff4444',
-              display: 'inline',
-              padding: '0 2px'
-            },
-            '& strong': {
-              fontWeight: 600
-            }
-          }}>
-            <strong style={{ fontSize: '16px' }}>考核指标</strong>
-
-            <Box component="span" display="block">
-              分布式框架兼容至少3类异构分布式环境（CPU-GPU、CPU-FPGA、CPU-DSA），
-            </Box>
-            <Box component="span" display="block">
-              相较于传统数据流TensorFlow（分布式模式），<span className='red-bold'>大规模数据测试条件下典型图算法和机器学习模型取得1.5倍以上的性能提升</span>。
-            </Box>
-            <Box component="span" display="block">
-              <strong>典型图算法测试：</strong>
-            </Box>
-            <Box component="span" display="block">
-              采用Graph500标准数据集运行标准图遍历算法PageRank进行实际测试，
-              性能度量依据为算法端到端的总体执行时间。
-            </Box>
-            <Box component="span" display="block">
-              <strong>典型机器学习算法测试：</strong>
-            </Box>
-            <Box component="span" display="block">
-              采用ImageNet、DriveSeg等智能驾驶数据集运行标准ViT模型进行实际测试，
-              性能度量依据为算法端到端的总体执行时间。
-            </Box>
-          </Typography>
-        </Paper>
+        <AssessmentCriteria />
     </Grid>
       <Grid container spacing={3}>
-        {/* 左侧列 */}
-        <Grid container item xs={12} md={4} spacing={3}>
+        {/* 左侧列 - 算法选择卡片 */}
+        <Grid item xs={12} md={4}>
           {/* 算法选择卡片 */}
-          <Grid item xs={12}>
-            <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
-              <Typography variant="h6" sx={{
-                fontWeight: 700,
-                mb: 2,
-                color: 'secondary.main',
-                borderBottom: '2px solid',
-                borderColor: 'secondary.main',
-                pb: 1
-              }}>
-                算法选择
-              </Typography>
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              算法选择
+            </Typography>
 
-              <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
-                选择硬件平台
-              </Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
+              选择硬件平台
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
               <Select
-                fullWidth
                 value={selectedPlatform}
                 onChange={(e) => setSelectedPlatform(e.target.value)}
-                sx={{ mb: 2 }}
+                sx={{ flex: 1 }}
               >
                 {platforms.map(platform => (
                   <MenuItem key={platform} value={platform}>{platform}</MenuItem>
                 ))}
               </Select>
-
-              <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
-                选择算法
-              </Typography>
               <Select
-                fullWidth
-                value={selectedAlgo}
-                onChange={(e) => {
-                  const newAlgo = e.target.value;
-                  setSelectedAlgo(newAlgo);
-                  // 重置数据集选择为新算法的第一个可用数据集
-                  setSelectedDataset(datasetsByAlgorithm[newAlgo][0]);
-                }}
-                sx={{ mb: 2 }}
+                value={selectedCardCount}
+                onChange={(e) => setSelectedCardCount(e.target.value)}
+                sx={{ minWidth: 80 }}
               >
-                {algorithms.map(algo => (
-                  <MenuItem key={algo} value={algo}>{algo}</MenuItem>
+                {CARD_OPTIONS[selectedPlatform]?.map(count => (
+                  <MenuItem key={count} value={count}>{count}卡</MenuItem>
                 ))}
               </Select>
+            </Box>
 
-              <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
-                选择数据集
-              </Typography>
-              <Select
-                fullWidth
-                value={selectedDataset}
-                onChange={(e) => setSelectedDataset(e.target.value)}
-                sx={{ mb: 2 }}
-              >
-                {datasetsByAlgorithm[selectedAlgo].map(ds => (
-                  <MenuItem key={ds} value={ds}>{ds}</MenuItem>
-                ))}
-                <MenuItem value={allDatasetsOption}>全部数据集</MenuItem>
-              </Select>
+            <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
+              选择算法
+            </Typography>
+            <Select
+              fullWidth
+              value={selectedAlgo}
+              onChange={(e) => {
+                const newAlgo = e.target.value;
+                setSelectedAlgo(newAlgo);
+                // 重置数据集选择为新算法的第一个可用数据集
+                setSelectedDataset(datasetsByAlgorithm[newAlgo][0]);
+              }}
+              sx={{ mb: 2 }}
+            >
+              {algorithms.map(algo => (
+                <MenuItem key={algo} value={algo}>{algo}</MenuItem>
+              ))}
+            </Select>
 
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={handleRun}
-                disabled={isButtonDisabled()}
-                color="success"
-                sx={{ py: 1.5 }}
-              >
-                {running ? '执行中...' : '开始执行'}
-              </Button>
-              {running && <LinearProgress sx={{ mt: 1 }} />}
-            </Paper>
-          </Grid>
+            <Typography variant="subtitle1" sx={{ fontWeight: 550, mb: 1 }}>
+              选择数据集
+            </Typography>
+            <Select
+              fullWidth
+              value={selectedDataset}
+              onChange={(e) => setSelectedDataset(e.target.value)}
+              sx={{ mb: 2 }}
+            >
+              {datasetsByAlgorithm[selectedAlgo].map(ds => (
+                <MenuItem key={ds} value={ds}>{ds}</MenuItem>
+              ))}
+              <MenuItem value={allDatasetsOption}>全部数据集</MenuItem>
+            </Select>
 
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleRun}
+              disabled={isButtonDisabled()}
+              color="success"
+              sx={{ py: 1.5 }}
+            >
+              {running ? '执行中...' : '开始执行'}
+            </Button>
+            {running && <LinearProgress sx={{ mt: 1 }} />}
+          </Paper>
+        </Grid>
+
+        {/* 右侧列 - 控制台输出 */}
+        <Grid item xs={12} md={8}>
+          {/* 控制台输出 */}
+          <Paper elevation={3} sx={{
+            p: 2,
+            height: 470,
+            borderRadius: 3,
+            overflow: 'hidden'
+          }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              执行日志
+            </Typography>
+            <Box sx={{
+              height: 400,
+              overflow: 'auto',
+              fontFamily: 'monospace',
+              fontSize: '0.8rem',
+              backgroundColor: '#1a1a1a',
+              borderRadius: 2,
+              p: 1.5,
+              '& > div': {
+                color: '#4caf50',
+                lineHeight: 1.6,
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                py: 0.5
+              }
+            }} ref={logBoxRef}>
+              {logs.map((log, index) => (
+                <div key={index}>{`> ${log}`}</div>
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* 算法详情和数据集信息横向排布 - 占满整个屏幕宽度 */}
+        <Grid container item xs={12} spacing={3}>
           {/* 算法详情卡片 */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
               <Typography variant="h6" sx={{
                 fontWeight: 700,
@@ -479,14 +490,12 @@ export default function Page() {
               }}>
                 算法详情
               </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
-                <strong>算法说明:</strong> {algorithmDetails[selectedAlgo].description}
-              </Typography>
+              <AlgorithmDetails algorithm={selectedAlgo} />
             </Paper>
           </Grid>
 
           {/* 数据集信息卡片 */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
               <Typography variant="h6" sx={{
                 fontWeight: 700,
@@ -502,202 +511,137 @@ export default function Page() {
                 <Box>
                   {datasetsByAlgorithm[selectedAlgo].map(ds => (
                     <Box key={ds} sx={{ mb: 2 }}>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                         <strong>{ds}:</strong>
-                        {datasetInfo[ds].nodes ? (
-                          <>
-                            节点规模： {datasetInfo[ds].nodes.toLocaleString()},
-                            边规模： {datasetInfo[ds].edges.toLocaleString()}
-                          </>
-                        ) : (
-                          datasetInfo[ds].description
-                        )}
                       </Typography>
+                      <DatasetInfo dataset={ds} />
                     </Box>
                   ))}
                 </Box>
               ) : (
-                <Box>
-                  {datasetInfo[selectedDataset].nodes ? (
-                    <>
-                      <Typography variant="body2" color="text.secondary" paragraph>
-                        <strong>节点规模:</strong> {datasetInfo[selectedDataset].nodes.toLocaleString()}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        <strong>边规模:</strong> {datasetInfo[selectedDataset].edges.toLocaleString()}
-                      </Typography>
-                    </>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary" paragraph>
-                      <strong>数据集说明:</strong> {datasetInfo[selectedDataset].description}
-                    </Typography>
-                  )}
-                </Box>
+                <DatasetInfo dataset={selectedDataset} />
               )}
             </Paper>
           </Grid>
         </Grid>
 
-        {/* 右侧列 */}
-        <Grid container item xs={12} md={8} spacing={3}>
-          {/* 控制台输出 */}
-          <Grid item xs={12}>
-            <Paper elevation={3} sx={{
-              p: 2,
-              height: 470,
-              borderRadius: 3,
-              overflow: 'hidden'
-            }}>
-              <Typography variant="h6" sx={{
-                fontWeight: 700,
-                mb: 2,
-                color: 'secondary.main',
-                borderBottom: '2px solid',
-                borderColor: 'secondary.main',
-                pb: 1
-              }}>
-                执行日志
-              </Typography>
-              <Box sx={{
-                height: 400,
-                overflow: 'auto',
-                fontFamily: 'monospace',
-                fontSize: '0.8rem',
-                backgroundColor: '#1a1a1a',
-                borderRadius: 2,
-                p: 1.5,
-                '& > div': {
-                  color: '#4caf50',
-                  lineHeight: 1.6,
-                  borderBottom: '1px solid rgba(255,255,255,0.1)',
-                  py: 0.5
-                }
-              }} ref={logBoxRef}>
-                {logs.map((log, index) => (
-                  <div key={index}>{`> ${log}`}</div>
-                ))}
-              </Box>
-            </Paper>
-          </Grid>
+        {/* 性能对比详情 - 左右分布 */}
+        <Grid item xs={12} ref={performanceRef}>
+          <Grid container spacing={2}>
+            {/* 左侧窗口 - PageRank性能对比 */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 'fit-content' }}>
+                <Typography variant="h6" sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: 'secondary.main',
+                  borderBottom: '2px solid',
+                  borderColor: 'secondary.main',
+                  pb: 1
+                }}>
+                  PageRank性能对比详情
+                </Typography>
 
-          {/* 性能对比卡片 */}
-          <Grid item xs={12} ref={performanceRef}>
-            <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
-              <Typography variant="h6" sx={{
-                fontWeight: 700,
-                mb: 2,
-                color: 'secondary.main',
-                borderBottom: '2px solid',
-                borderColor: 'secondary.main',
-                pb: 1
-              }}>
-                性能对比详情
-              </Typography>
-
-              <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-                <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
-                  <Tab label="表格视图" />
-                  <Tab label="图表视图" />
-                </Tabs>
-              </Box>
-
-              {tabValue === 0 ? (
-                <TableContainer>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>算法</TableCell>
-                        <TableCell>数据集</TableCell>
-                        <TableCell>硬件平台</TableCell>
-                        <TableCell>基准时间(s)</TableCell>
-                        <TableCell>优化时间(s)</TableCell>
-                        <TableCell>加速比</TableCell>
-                        <TableCell>基准吞吐量</TableCell>
-                        <TableCell>优化吞吐量</TableCell>
-                        <TableCell>吞吐量提升</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {getValidData().map((row, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{row.algorithm}</TableCell>
-                          <TableCell>{row.dataset}</TableCell>
-                          <TableCell>{row.platform}</TableCell>
-                          <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
-                          <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
-                          <TableCell>{row.speedUp.toFixed(3)}</TableCell>
-                          <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                          <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                          <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              ) : (
-                <Box>
-                  <Tabs
-                    value={chartMetric}
-                    onChange={(e, v) => setChartMetric(v)}
-                    sx={{ mb: 2 }}
-                  >
-                    {platforms.map(platform => (
-                      <Tab key={platform} label={platform} value={platform} />
-                    ))}
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                  <Tabs value={prTabValue} onChange={(e, v) => setPrTabValue(v)}>
+                    <Tab label="表格视图" />
+                    <Tab label="图表视图" />
                   </Tabs>
+                </Box>
 
-                  <Grid container spacing={2}>
-                    {/* 执行时间/加速比图表 */}
-                    <Grid item xs={12} md={6}>
+                {prTabValue === 0 ? (
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>数据集</TableCell>
+                          <TableCell>硬件平台</TableCell>
+                          <TableCell>卡数</TableCell>
+                          <TableCell>TensorFlow时间(s)</TableCell>
+                          <TableCell>优化时间(s)</TableCell>
+                          <TableCell>加速比</TableCell>
+                          <TableCell>TensorFlow吞吐量</TableCell>
+                          <TableCell>优化吞吐量</TableCell>
+                          <TableCell>吞吐量提升</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {getValidData().filter(row => row.algorithm === 'PageRank').map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{row.dataset}</TableCell>
+                            <TableCell>{row.platform}</TableCell>
+                            <TableCell>{row.cardCount}</TableCell>
+                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
+                            <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : (
+                  <Box>
+                    <Tabs
+                      value={prChartPlatform}
+                      onChange={(e, v) => setPrChartPlatform(v)}
+                      sx={{ mb: 2 }}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                    >
+                      {platforms.map(platform => (
+                        <Tab key={platform} label={platform} value={platform} />
+                      ))}
+                    </Tabs>
+
+                    <Box sx={{ mb: 2 }}>
                       <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
-                        执行时间对比
+                        PageRank - 执行时间对比 (秒)
                       </Typography>
-                      <ResponsiveContainer width="100%" height={300}>
+                      <ResponsiveContainer width="100%" height={250}>
                         <BarChart
-                          data={getChartData(chartMetric)}
+                          data={getChartData(prChartPlatform).filter(item => item.algorithm === 'PageRank')}
                           margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                          barSize={35} // 固定柱子宽度为35px
-                          barGap={5}   // 同组柱子之间的间距
+                          barSize={35}
+                          barGap={5}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
-                          <YAxis />
+                          <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="baselineTime" fill="#7f58af" name="基准时间" />
-                          <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化时间" />
+                          <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
+                          <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
                         </BarChart>
                       </ResponsiveContainer>
-                    </Grid>
-                    
-                    {/* 吞吐量图表 */}
-                    <Grid item xs={12} md={6}>
+                    </Box>
+
+                    <Box>
                       <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
-                        吞吐量对比
+                        PageRank - 吞吐量对比 (GTEPS)
                       </Typography>
-                      <ResponsiveContainer width="100%" height={300}>
+                      <ResponsiveContainer width="100%" height={250}>
                         <BarChart
-                          data={getChartData(chartMetric)}
+                          data={getChartData(prChartPlatform).filter(item => item.algorithm === 'PageRank')}
                           margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                          barSize={35} // 固定柱子宽度为35px
-                          barGap={5}   // 同组柱子之间的间距
-                          onMouseEnter={() => setShowReferenceLine(true)}
-                          onMouseLeave={() => setShowReferenceLine(false)}
+                          barSize={35}
+                          barGap={5}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
-                          <YAxis />
+                          <YAxis label={{ value: 'GTEPS', angle: -90, position: 'insideLeft' }} />
                           <Tooltip 
                             formatter={(value, name) => {
-                              const algorithm = getValidData().find(item => item.platform === chartMetric)?.algorithm || selectedAlgo;
-                              return [`${value.toFixed(3)} ${getThroughputUnit(algorithm)}`, name];
+                              return [`${value.toFixed(3)} GTEPS`, name];
                             }}
                           />
                           <Legend />
-                          <Bar dataKey="baselineThroughput" fill="#26a69a" name="基准吞吐量" />
+                          <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
                           <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
                           <ReferenceLine
-                            y={midtermMetrics[selectedAlgo]}
+                            y={midtermMetrics['PageRank']}
                             stroke="red"
                             strokeDasharray="3 3"
                             strokeOpacity={showReferenceLine ? 1 : 0}
@@ -706,7 +650,7 @@ export default function Page() {
                               transition: 'opacity 0.3s ease-in-out'
                             }}
                             label={{
-                              value: `中期指标\n(${midtermMetrics[selectedAlgo]} ${getThroughputUnit(selectedAlgo)})`,
+                              value: `中期指标\n(${midtermMetrics['PageRank']} GTEPS)`,
                               position: 'insideRight',
                               fill: 'red',
                               fontSize: 14,
@@ -718,11 +662,153 @@ export default function Page() {
                           />
                         </BarChart>
                       </ResponsiveContainer>
-                    </Grid>
-                  </Grid>
+                    </Box>
+                  </Box>
+                )}
+              </Paper>
+            </Grid>
+
+            {/* 右侧窗口 - ViT性能对比 */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 'fit-content' }}>
+                <Typography variant="h6" sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: 'secondary.main',
+                  borderBottom: '2px solid',
+                  borderColor: 'secondary.main',
+                  pb: 1
+                }}>
+                  ViT性能对比详情
+                </Typography>
+
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                  <Tabs value={vitTabValue} onChange={(e, v) => setVitTabValue(v)}>
+                    <Tab label="表格视图" />
+                    <Tab label="图表视图" />
+                  </Tabs>
                 </Box>
-              )}
-            </Paper>
+
+                {vitTabValue === 0 ? (
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>数据集</TableCell>
+                          <TableCell>硬件平台</TableCell>
+                          <TableCell>卡数</TableCell>
+                          <TableCell>TensorFlow时间(s)</TableCell>
+                          <TableCell>优化时间(s)</TableCell>
+                          <TableCell>加速比</TableCell>
+                          <TableCell>TensorFlow吞吐量</TableCell>
+                          <TableCell>优化吞吐量</TableCell>
+                          <TableCell>吞吐量提升</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {getValidData().filter(row => row.algorithm === 'ViT').map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{row.dataset}</TableCell>
+                            <TableCell>{row.platform}</TableCell>
+                            <TableCell>{row.cardCount}</TableCell>
+                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
+                            <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : (
+                  <Box>
+                    <Tabs
+                      value={vitChartPlatform}
+                      onChange={(e, v) => setVitChartPlatform(v)}
+                      sx={{ mb: 2 }}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                    >
+                      {platforms.map(platform => (
+                        <Tab key={platform} label={platform} value={platform} />
+                      ))}
+                    </Tabs>
+
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                        ViT - 执行时间对比 (秒)
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart
+                          data={getChartData(vitChartPlatform).filter(item => item.algorithm === 'ViT')}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                          barSize={35}
+                          barGap={5}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
+                          <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+
+                    <Box>
+                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                        ViT - 吞吐量对比 (GFLOPS)
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart
+                          data={getChartData(vitChartPlatform).filter(item => item.algorithm === 'ViT')}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                          barSize={35}
+                          barGap={5}
+                          onMouseEnter={() => setShowReferenceLine(true)}
+                          onMouseLeave={() => setShowReferenceLine(false)}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis label={{ value: 'GFLOPS', angle: -90, position: 'insideLeft' }} />
+                          <Tooltip 
+                            formatter={(value, name) => {
+                              return [`${value.toFixed(3)} GFLOPS`, name];
+                            }}
+                          />
+                          <Legend />
+                          <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
+                          <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
+                          <ReferenceLine
+                            y={midtermMetrics['ViT']}
+                            stroke="red"
+                            strokeDasharray="3 3"
+                            strokeOpacity={showReferenceLine ? 1 : 0}
+                            style={{
+                              opacity: showReferenceLine ? 1 : 0,
+                              transition: 'opacity 0.3s ease-in-out'
+                            }}
+                            label={{
+                              value: `中期指标\n(${midtermMetrics['ViT']} GFLOPS)`,
+                              position: 'insideRight',
+                              fill: 'red',
+                              fontSize: 14,
+                              fontWeight: 'bold', 
+                              dy: -10,
+                              opacity: showReferenceLine ? 1 : 0,
+                              transition: 'opacity 0.3s'
+                            }}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </Box>
+                )}
+              </Paper>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

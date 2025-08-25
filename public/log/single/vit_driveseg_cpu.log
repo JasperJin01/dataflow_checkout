@@ -26,4 +26,4 @@ predict.py:46: FutureWarning: You are using `torch.load` with `weights_only=Fals
 Total images processed: 20
 Total execution time: 5.41s 
 Average inference time: 0.1608s/image (9.20 images/s)
-Throughput: 115.41 GFLOPS
+Throughput: 98.43 GFLOPS

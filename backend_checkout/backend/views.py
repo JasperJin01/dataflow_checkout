@@ -8,33 +8,71 @@ import time
 from pathlib import Path
 from .ssh_pool import SSHConnectionPool
 
-
 # KEY_PATH = '/home/jasper/Developer/PyCharm/id_rsa_hust_server'
 KEY_PATH = '/Users/jiminj/.ssh/id_rsa_hust_server'
-# KEY_PATH = '/home/jinjm/.ssh/id_rsa_hust_server'
 
-SERVER86 = 'jinjm@222.20.98.153'
+
+lab84qch = SSHConnectionPool(
+    hostname='192.168.165.231',
+    username='qch',
+    key_filename='/Users/jiminj/.ssh/id_rsa_qch',
+    port=22222,
+    max_connections=5
+)
+
 
 # 创建SSH连接池
 pool84 = SSHConnectionPool(
-    # hostname='192.168.165.231',
-    hostname='222.20.98.153',
+    hostname='192.168.165.231',
+    # hostname='222.20.98.153',
     username='jinjm',
     key_filename=KEY_PATH,
-    port=21700,
+    port=22222,
+    # port=21700,
     max_connections=5
 )
 
-# 把86替换为新服务器
 pool86 = SSHConnectionPool(
-    # hostname='192.168.165.232',
-    hostname='222.20.98.153',
+    hostname='192.168.165.232',
     username='jinjm',
     key_filename=KEY_PATH,
-    # port=22222,
-    port=21700,
+    port=22222,
     max_connections=5
 )
+
+work1 = SSHConnectionPool(
+    hostname='222.20.95.34',
+    username='jinjm',
+    key_filename=KEY_PATH,
+    port=50017,
+    max_connections=5
+)
+
+work2 = SSHConnectionPool(
+    hostname='222.20.95.34',
+    username='jinjm',
+    key_filename=KEY_PATH,
+    port=50020,
+    max_connections=5
+)
+
+work3 = SSHConnectionPool(
+    hostname='222.20.95.34',
+    username='jinjm',
+    key_filename=KEY_PATH,
+    port=50024,
+    max_connections=5
+)
+
+work4 = SSHConnectionPool(
+    hostname='222.20.95.34',
+    username='jinjm',
+    key_filename=KEY_PATH,
+    port=50027,
+    max_connections=5
+)
+
+
 
 def execute_ssh_command(pool, command):
     """使用连接池执行SSH命令"""
@@ -72,9 +110,9 @@ def stream_ssh_command(pool, command, slp=True):
         if client:
             pool.return_connection(client)
 
-def hello(request):
-    print("debug: hello")
-    return HttpResponse("Hello world ! ")
+
+
+
 
 
 """
@@ -510,6 +548,53 @@ def stream_test(request):
     except Exception as e:
         print(f"[stream_test] 响应创建失败: {str(e)}")
         raise
+
+def dist_vit_test(request):
+    print("[dist_vit_test] 收到请求")
+    cmd = f'/home/jinjm/anaconda3/envs/pt38/bin/python -u \
+            /home/jinjm/dev/pytorch-vit/master.py \
+            --host 0.0.0.0 \
+            --port 5000 \
+            --folder /home/jinjm/dev/data/flower_photos/roses/ \
+            --num_images 30 \
+            --slave_config /home/jinjm/dev/pytorch-vit/slave_config.json \
+            --ssh_key ~/.ssh/id_rsa_hust_server'
+    try:
+        response = StreamingHttpResponse(
+            stream_ssh_command(work1, cmd),
+            content_type='text/event-stream',
+        )
+        response['Cache-Control'] = 'no-cache'
+        return response
+    except Exception as e:
+        print(f"[dist_vit_test] 响应创建失败: {str(e)}")
+        return JsonResponse(
+            {"status": 500, "error": str(e)},
+            status=500
+        )
+
+def stream_power_trend(request, dataset):
+    """流式输出功耗趋势数据"""
+    print(f"[stream_power_trend] 收到请求，数据集: {dataset}")
+    
+    my_command = f'source /tools/Xilinx/Vitis/2023.2/settings64.sh;source /opt/xilinx/xrt/setup.sh;/home/qch/src/pf2 /home/qch/src/pf100MHz.xclbin {dataset} 0.0001'
+    print(f"[stream_power_trend] 执行命令: {my_command}")
+    
+    try:
+        response = StreamingHttpResponse(
+            # stream_ssh_command(lab84qch, my_command, slp=False),
+            stream_ssh_command(pool84, my_command, slp=False),
+            content_type='text/event-stream',
+        )
+        response['Cache-Control'] = 'no-cache'
+        return response
+        
+    except Exception as e:
+        print(f"[stream_power_trend] 响应创建失败: {str(e)}")
+        return JsonResponse(
+            {"status": 500, "error": str(e)},
+            status=500
+        )
 
 
 def read_log_file(request, filename):

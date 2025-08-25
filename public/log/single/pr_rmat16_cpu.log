@@ -1,5 +1,13 @@
+================================ SYSTEM INFO =======================================
+                Python Version: 3.8.20
+                PyTorch Version: 2.4.1+cu118
+================================ SYSTEM INFO =======================================
+start loading data...
+load data complete...
 shape of matrix: [174148, 174148], num_nodes=174148
-1. Printing top 20 node ids with their ranks
+start calculating pagerank...
+calculate complete...
+printing top 20 node ids with their ranks:
 S No.    Node Id         Rank
 1        1       0.003471294
 2        159453          0.0014315245
@@ -21,6 +29,8 @@ S No.    Node Id         Rank
 18       74854   0.0013234324
 19       2       0.0013085783
 20       48718   0.00059129915
-
-Pagerank calculation took 18.9 seconds for 45604176 edges
-GTEPS: 0.0148415 GETPS
+================================ DATAFLOW METHOD =======================================
+                Graph: nodes:174148, edges:45604176
+                GTEPS: 0.014431 GFLOPS
+                Total Cost: 18.434 seconds
+================================ DATAFLOW METHOD =======================================

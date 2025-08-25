@@ -9,7 +9,7 @@ import { PlayArrow, Pause } from '@mui/icons-material';
 // 场景配置
 const scenes = [
   {
-    name: "场景1",
+    name: "城市道路场景",
     description: "城市道路环境下的自动驾驶场景演示",
     // description: "城市道路环境下的自动驾驶场景演示，包含多车道、交通信号灯、行人过街等复杂城市交通元素",
     images: Array.from({length: 40}, (_, i) => 
@@ -17,7 +17,7 @@ const scenes = [
     )
   },
   {
-    name: "场景2",
+    name: "高车流量场景",
     description: "高车流量十字路口环境下的自动驾驶场景演示", 
     // description: "高车流量十字路口环境下的自动驾驶场景演示，展示在繁忙交叉路口的精准导航和避障能力", 
     images: Array.from({length: 41}, (_, i) => 
@@ -25,7 +25,7 @@ const scenes = [
     )
   },
   {
-    name: "场景3",
+    name: "窄路场景",
     // description: "单车道窄路环境下的自动驾驶场景演示，测试在受限空间中的精确控制和路径规划能力",
     description: "窄路环境下的自动驾驶场景演示",
     images: Array.from({length: 40}, (_, i) => 
@@ -33,7 +33,7 @@ const scenes = [
     )
   },
   {
-    name: "场景4",
+    name: "露天停车场场景",
     // description: "露天停车场环境下的自动驾驶场景演示，展示自动泊车、车位识别和精确停车的先进技术",
     description: "露天停车场环境下的自动驾驶场景演示",
     images: Array.from({length: 41}, (_, i) => 
@@ -48,60 +48,113 @@ export default function AutonomousDrivingDemo() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   
+  // 融合前区域状态
+  const [beforeImageIndex, setBeforeImageIndex] = useState(0);
+  const [isBeforePlaying, setIsBeforePlaying] = useState(false);
+  
+  // 融合后区域状态
+  const [afterImageIndex, setAfterImageIndex] = useState(0);
+  const [isAfterPlaying, setIsAfterPlaying] = useState(false);
+  
   const intervalRef = useRef(null);
+  const beforeIntervalRef = useRef(null);
+  const afterIntervalRef = useRef(null);
   const imageRef = useRef(null);
 
-  // 固定播放速度为100ms
-  const playbackSpeed = 150;
+  // 播放速度设置
+  const beforePlaybackSpeed = 150; // 融合前播放速度
+  const afterPlaybackSpeed = 60;   // 融合后播放速度
 
-  // 自动播放功能
+  // NOTE 融合前区域自动播放功能
   useEffect(() => {
-    if (isPlaying) {
-      intervalRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => {
+    if (isBeforePlaying) {
+      beforeIntervalRef.current = setInterval(() => {
+        setBeforeImageIndex(prev => {
+          // const nextIndex = prev + 1;
           const nextIndex = prev + 1;
           if (nextIndex >= scenes[currentScene].images.length) {
-            // 播放完毕后停止，不切换到下一个场景
-            setIsPlaying(false);
+            // 播放完毕后停止
+            setIsBeforePlaying(false);
             return prev;
           }
           return nextIndex;
         });
-      }, playbackSpeed);
+      }, beforePlaybackSpeed);
     } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+      if (beforeIntervalRef.current) {
+        clearInterval(beforeIntervalRef.current);
       }
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+      if (beforeIntervalRef.current) {
+        clearInterval(beforeIntervalRef.current);
       }
     };
-  }, [isPlaying, currentScene, playbackSpeed]);
+  }, [isBeforePlaying, currentScene, beforePlaybackSpeed]);
 
-  // 更新进度
+  // 融合后区域自动播放功能
+  useEffect(() => {
+    if (isAfterPlaying) {
+      afterIntervalRef.current = setInterval(() => {
+        setAfterImageIndex(prev => {
+          const nextIndex = prev + 1;
+          if (nextIndex >= scenes[currentScene].images.length) {
+            // 播放完毕后停止
+            setIsAfterPlaying(false);
+            return prev;
+          }
+          return nextIndex;
+        });
+      }, afterPlaybackSpeed);
+    } else {
+      if (afterIntervalRef.current) {
+        clearInterval(afterIntervalRef.current);
+      }
+    }
+
+    return () => {
+      if (afterIntervalRef.current) {
+        clearInterval(afterIntervalRef.current);
+      }
+    };
+  }, [isAfterPlaying, currentScene, afterPlaybackSpeed]);
+
+  // 更新进度（基于融合后区域的进度）
   useEffect(() => {
     const totalImages = scenes[currentScene].images.length;
-    const progressPercent = ((currentImageIndex + 1) / totalImages) * 100;
+    const progressPercent = ((afterImageIndex + 1) / totalImages) * 100;
     setProgress(progressPercent);
-  }, [currentImageIndex, currentScene]);
+  }, [afterImageIndex, currentScene]);
 
-  // 场景切换时重置图片索引
+  // 场景切换时重置所有图片索引
   useEffect(() => {
     setCurrentImageIndex(0);
+    setBeforeImageIndex(0);
+    setAfterImageIndex(0);
     setIsPlaying(false);
+    setIsBeforePlaying(false);
+    setIsAfterPlaying(false);
   }, [currentScene]);
 
   const handleRun = () => {
-    if (isPlaying) {
+    const anyPlaying = isBeforePlaying || isAfterPlaying;
+    if (anyPlaying) {
+      // 停止所有播放
+      setIsBeforePlaying(false);
+      setIsAfterPlaying(false);
       setIsPlaying(false);
     } else {
       // 如果已经是最后一张照片，重新开始播放
-      if (currentImageIndex === scenes[currentScene].images.length - 1) {
-        setCurrentImageIndex(0);
+      if (beforeImageIndex === scenes[currentScene].images.length - 1) {
+        setBeforeImageIndex(0);
       }
+      if (afterImageIndex === scenes[currentScene].images.length - 1) {
+        setAfterImageIndex(0);
+      }
+      // 开始播放两个区域
+      setIsBeforePlaying(true);
+      setIsAfterPlaying(true);
       setIsPlaying(true);
     }
   };
@@ -109,11 +162,12 @@ export default function AutonomousDrivingDemo() {
   const handleSceneChange = (sceneIndex) => {
     setCurrentScene(sceneIndex);
     setCurrentImageIndex(0);
+    setBeforeImageIndex(0);
+    setAfterImageIndex(0);
     setIsPlaying(false);
+    setIsBeforePlaying(false);
+    setIsAfterPlaying(false);
   };
-
-  const currentImage = scenes[currentScene].images[currentImageIndex];
-  const imagePath = `/dirve_visualize/${currentImage}`;
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#f5f6fa' }}>
@@ -158,27 +212,15 @@ export default function AutonomousDrivingDemo() {
               variant="contained"
               color="primary"
               onClick={handleRun}
-              startIcon={isPlaying ? <Pause /> : <PlayArrow />}
+              startIcon={(isBeforePlaying || isAfterPlaying) ? <Pause /> : <PlayArrow />}
               sx={{ minWidth: '100px' }}
             >
-              {isPlaying ? '暂停' : '运行'}
+              {(isBeforePlaying || isAfterPlaying) ? '暂停' : '运行'}
             </Button>
           </Box>
 
-                      {/* 进度显示 */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
-              <LinearProgress 
-                variant="determinate" 
-                value={progress} 
-                sx={{ flex: 1, height: 8, borderRadius: 4 }}
-              />
-              <Typography variant="body2" sx={{ minWidth: '40px' }}>
-                {Math.round(progress)}%
-              </Typography>
-            </Box>
-
           {/* 当前场景信息 */}
-          <Box sx={{ textAlign: 'right', minWidth: '200px' }}>
+          <Box sx={{ textAlign: 'left', minWidth: '200px' }}>
             <Typography variant="body2" color="text.secondary">
               <strong>{scenes[currentScene].name}</strong>
             </Typography>
@@ -191,84 +233,124 @@ export default function AutonomousDrivingDemo() {
 
       {/* 图像显示区域 */}
       <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
-        <Typography variant="h6" sx={{
-          fontWeight: 700,
-          mb: 2,
-          color: 'secondary.main',
-          borderBottom: '2px solid',
-          borderColor: 'secondary.main',
-          pb: 1
-        }}>
-          自动驾驶场景演示
-        </Typography>
-        
-        <Box sx={{ 
-          position: 'relative',
-          width: '100%',
-          height: 500,
-          backgroundColor: '#000',
-          borderRadius: 2,
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <img
-            ref={imageRef}
-            src={imagePath}
-            alt={`自动驾驶场景 ${currentImage}`}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-              objectFit: 'contain'
-            }}
-            onError={(e) => {
-              console.error(`Failed to load image: ${imagePath}`);
-              e.target.style.display = 'none';
-            }}
-          />
-          
-          {/* 图像信息覆盖层 */}
-          <Box sx={{
-            position: 'absolute',
-            bottom: 16,
-            left: 16,
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            color: 'white',
-            padding: '8px 12px',
-            borderRadius: 1,
-            fontSize: '0.875rem'
-          }}>
-            <Typography variant="body2">
-              {scenes[currentScene].name} 
+
+        {/* 左右分割的标题 */}
+        <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+          {/* 左侧标题 */}
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1,
+              textAlign: 'center'
+            }}>
+              自动驾驶场景演示（融合前）
             </Typography>
           </Box>
+          
+          {/* 右侧标题 */}
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1,
+              textAlign: 'center'
+            }}>
+              自动驾驶场景演示（融合后）
+            </Typography>
+          </Box>
+        </Box>
 
-          {/* 播放状态指示器 */}
-          {isPlaying && (
+        
+        {/* 左右分割的图像显示区域 */}
+        <Box sx={{ display: 'flex', gap: 2, height: 500 }}>
+          {/* 左侧：融合前区域 */}
+          <Box sx={{ 
+            flex: 1,
+            position: 'relative',
+            backgroundColor: '#000',
+            borderRadius: 2,
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <img
+              src={`/drive_visual/combined/combined_${scenes[currentScene].images[beforeImageIndex]}`}
+              alt={`融合前场景 ${scenes[currentScene].images[beforeImageIndex]}`}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                console.error(`Failed to load before image: ${e.target.src}`);
+                e.target.style.display = 'none';
+              }}
+            />
+
+            {/* 左侧图像信息 */}
             <Box sx={{
               position: 'absolute',
-              top: 16,
-              right: 16,
-              backgroundColor: 'rgba(76, 175, 80, 0.9)',
+              bottom: 16,
+              left: 16,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
               color: 'white',
-              padding: '4px 8px',
+              padding: '8px 12px',
               borderRadius: 1,
-              fontSize: '0.75rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5
+              fontSize: '0.875rem'
             }}>
-              <Box sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: 'white',
-                animation: 'pulse 1s infinite'
-              }} />
-              播放中
+              <Typography variant="body2">
+                {scenes[currentScene].name} - 融合前
+              </Typography>
             </Box>
-          )}
+          </Box>
+
+          {/* 右侧：融合后区域 */}
+          <Box sx={{ 
+            flex: 1,
+            position: 'relative',
+            backgroundColor: '#000',
+            borderRadius: 2,
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <img
+              src={`/drive_visual/combined/combined_${scenes[currentScene].images[afterImageIndex]}`}
+              alt={`融合后场景 ${scenes[currentScene].images[afterImageIndex]}`}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                console.error(`Failed to load after image: ${e.target.src}`);
+                e.target.style.display = 'none';
+              }}
+            />
+
+            {/* 右侧图像信息 */}
+            <Box sx={{
+              position: 'absolute',
+              bottom: 16,
+              left: 16,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              color: 'white',
+              padding: '8px 12px',
+              borderRadius: 1,
+              fontSize: '0.875rem'
+            }}>
+              <Typography variant="body2">
+                {scenes[currentScene].name} - 融合后
+              </Typography>
+            </Box>
+          </Box>
         </Box>
 
         {/* 场景描述 */}
@@ -279,9 +361,9 @@ export default function AutonomousDrivingDemo() {
           <Typography variant="body2" color="text.secondary">
             <strong>算法：</strong>视觉Transformer (ViT) - 自动驾驶场景分割
           </Typography>
-          {/* <Typography variant="body2" color="text.secondary">
-            <strong>处理速度：</strong>实时处理，每帧间隔 {playbackSpeed}ms
-          </Typography> */}
+          <Typography variant="body2" color="text.secondary">
+            <strong>显示模式：</strong>左侧融合前区域（播放速度：150ms），右侧融合后区域（播放速度：60ms）
+          </Typography>
         </Box>
       </Paper>
 

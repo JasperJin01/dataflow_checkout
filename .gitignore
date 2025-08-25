@@ -4,7 +4,11 @@
 /node_modules
 /.pnp
 .pnp.js
-
+**/drive_visual/
+**/drive_visualize/
+**/drive_visualize_copy/
+**/up/
+**/down/
 # testing
 /coverage
 

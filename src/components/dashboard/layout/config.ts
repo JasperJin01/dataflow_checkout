@@ -2,12 +2,7 @@ import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
 
 export const navItems = [
-  { key: '理论演示', title: '数据流理论演示', href: paths.dashboard.dataflow_theory, icon: 'code', 
-    subItems: [
-      {key: '子项一', title: 'PageRank算法', href: paths.dashboard.dataflow_theory_pagerank},
-      {key: '子项二', title: '典型机器学习算法', href: paths.dashboard.dataflow_theory_ml},
-    ]
-  },
+  { key: '理论演示', title: '数据流理论演示', href: paths.dashboard.dataflow_theory, icon: 'code'},
   { key: '课题一', title: '单机环境性能演示', href: paths.dashboard.part1, icon: 'chart-pie' },
   { key: '课题二', title: '异构分布式性能展示', href: paths.dashboard.part2, icon: 'users' },
   { key: '课题三', title: '应用验证', href: paths.dashboard.part3, icon: 'plugs-connected',

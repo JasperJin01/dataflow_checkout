@@ -2,9 +2,7 @@ export const paths = {
   home: '/',
   auth: { signIn: '/auth/sign-in', signUp: '/auth/sign-up', resetPassword: '/auth/reset-password' },
   dashboard: {
-    dataflow_theory: '/dashboard/dataflow_theory/pagerank',
-    dataflow_theory_pagerank: '/dashboard/dataflow_theory/pagerank',
-    dataflow_theory_ml: '/dashboard/dataflow_theory/ml',
+    dataflow_theory: '/dashboard/dataflow_theory',
     part1: '/dashboard/part1',
     part2: '/dashboard/part2',
     part2_sub1: '/dashboard/part2/sub1',

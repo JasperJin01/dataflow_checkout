@@ -14,6 +14,14 @@ module.exports = {
   parserOptions: {
     project,
   },
+  overrides: [
+    {
+      files: ['*.jsx'],
+      rules: {
+        '@typescript-eslint/restrict-template-expressions': 'off',
+      },
+    },
+  ],
   settings: {
     'import/resolver': {
       typescript: {

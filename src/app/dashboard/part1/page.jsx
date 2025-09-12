@@ -500,43 +500,12 @@ export default function Page() {
 
                 <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
                   <Tabs value={prTabValue} onChange={(e, v) => setPrTabValue(v)}>
-                    <Tab label="表格视图" />
                     <Tab label="图表视图" />
+                    <Tab label="表格视图" />
                   </Tabs>
                 </Box>
 
                 {prTabValue === 0 ? (
-                  <TableContainer>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>数据集</TableCell>
-                          <TableCell>硬件平台</TableCell>
-                          <TableCell>TensorFlow时间(s)</TableCell>
-                          <TableCell>优化时间(s)</TableCell>
-                          <TableCell>加速比</TableCell>
-                          <TableCell>TensorFlow吞吐量</TableCell>
-                          <TableCell>优化吞吐量</TableCell>
-                          <TableCell>吞吐量提升</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {getValidData().filter(row => row.algorithm === 'PageRank').map((row, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{row.dataset}</TableCell>
-                            <TableCell>{row.platform}</TableCell>
-                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
-                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
-                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
-                            <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                            <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                            <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
                   <Box>
                     <Tabs
                       value={prChartPlatform}
@@ -598,6 +567,37 @@ export default function Page() {
                       </ResponsiveContainer>
                     </Box>
                   </Box>
+                ) : (
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>数据集</TableCell>
+                          <TableCell>硬件平台</TableCell>
+                          <TableCell>TensorFlow时间(s)</TableCell>
+                          <TableCell>优化时间(s)</TableCell>
+                          <TableCell>加速比</TableCell>
+                          <TableCell>TensorFlow吞吐量</TableCell>
+                          <TableCell>优化吞吐量</TableCell>
+                          <TableCell>吞吐量提升</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {getValidData().filter(row => row.algorithm === 'PageRank').map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{row.dataset}</TableCell>
+                            <TableCell>{row.platform}</TableCell>
+                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
+                            <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 )}
               </Paper>
             </Grid>
@@ -618,43 +618,12 @@ export default function Page() {
 
                 <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
                   <Tabs value={vitTabValue} onChange={(e, v) => setVitTabValue(v)}>
-                    <Tab label="表格视图" />
                     <Tab label="图表视图" />
+                    <Tab label="表格视图" />
                   </Tabs>
                 </Box>
 
                 {vitTabValue === 0 ? (
-                  <TableContainer>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>数据集</TableCell>
-                          <TableCell>硬件平台</TableCell>
-                          <TableCell>TensorFlow时间(s)</TableCell>
-                          <TableCell>优化时间(s)</TableCell>
-                          <TableCell>加速比</TableCell>
-                          <TableCell>TensorFlow吞吐量</TableCell>
-                          <TableCell>优化吞吐量</TableCell>
-                          <TableCell>吞吐量提升</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {getValidData().filter(row => row.algorithm === 'ViT').map((row, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{row.dataset}</TableCell>
-                            <TableCell>{row.platform}</TableCell>
-                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
-                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
-                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
-                            <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                            <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                            <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
                   <Box>
                     <Tabs
                       value={vitChartPlatform}
@@ -716,6 +685,37 @@ export default function Page() {
                       </ResponsiveContainer>
                     </Box>
                   </Box>
+                ) : (
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>数据集</TableCell>
+                          <TableCell>硬件平台</TableCell>
+                          <TableCell>TensorFlow时间(s)</TableCell>
+                          <TableCell>优化时间(s)</TableCell>
+                          <TableCell>加速比</TableCell>
+                          <TableCell>TensorFlow吞吐量</TableCell>
+                          <TableCell>优化吞吐量</TableCell>
+                          <TableCell>吞吐量提升</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {getValidData().filter(item => item.algorithm === 'ViT').map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{row.dataset}</TableCell>
+                            <TableCell>{row.platform}</TableCell>
+                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.speedup.toFixed(2)}x</TableCell>
+                            <TableCell>{row.baselineThroughput.toFixed(3)} {getThroughputUnit('ViT')}</TableCell>
+                            <TableCell>{row.optimizedThroughput.toFixed(3)} {getThroughputUnit('ViT')}</TableCell>
+                            <TableCell>{row.throughputImprovement.toFixed(2)}x</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 )}
               </Paper>
             </Grid>

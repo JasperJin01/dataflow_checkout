@@ -27,26 +27,26 @@ const algorithms = ['潮流计算','状态估计'];
 const datasets = [
   'Case10790',
   'IEEE118',
-  'sc_20171128_174550',
-  'sc_20171207_06300',
-  'sc_20171207_08000',
-  'sc_20171207_09150',
-  'sc_20171207_10000',
-  'sc_20171207_11100',
-  'sc_20171208_11100'
+  'hn_20171128_174550',
+  'hn_20171207_06300',
+  'hn_20171207_08000',
+  'hn_20171207_09150',
+  'hn_20171207_10000',
+  'hn_20171207_11100',
+  'hn_20171208_11100'
 ];
 
 // 算法与数据集组合配置，用于选项框的展示
 const configCombinations = {
   '潮流计算': ['Case10790', 'IEEE118'],
   '状态估计': [
-    'sc_20171128_174550',
-    'sc_20171207_06300',
-    'sc_20171207_08000',
-    'sc_20171207_09150',
-    'sc_20171207_10000',
-    'sc_20171207_11100',
-    'sc_20171208_11100'
+    'hn_20171128_174550',
+    'hn_20171207_06300',
+    'hn_20171207_08000',
+    'hn_20171207_09150',
+    'hn_20171207_10000',
+    'hn_20171207_11100',
+    'hn_20171208_11100'
   ]
 }
 
@@ -54,26 +54,26 @@ const configCombinations = {
 const allowedCombinations = {
   '潮流计算': ['Case10790', 'IEEE118'],
   '状态估计': [
-    'sc_20171128_174550',
-    'sc_20171207_06300',
-    'sc_20171207_08000',
-    'sc_20171207_09150',
-    'sc_20171207_10000',
-    'sc_20171207_11100',
-    'sc_20171208_11100'
+    'hn_20171128_174550',
+    'hn_20171207_06300',
+    'hn_20171207_08000',
+    'hn_20171207_09150',
+    'hn_20171207_10000',
+    'hn_20171207_11100',
+    'hn_20171208_11100'
   ]
 };
 
 const datasetInfo = {
   'Case10790': { nodes: '10,790', edges: '36,608' },
   'IEEE118': { nodes: '118', edges: '176' },
-  'sc_20171128_174550': { nodes: '2,703', edges: '5,806' },
-  'sc_20171207_06300': { nodes: '2,637', edges: '5,584' },
-  'sc_20171207_08000': { nodes: '2,654', edges: '5,614' },
-  'sc_20171207_09150': { nodes: '2,651', edges: '5,608' },
-  'sc_20171207_10000': { nodes: '2,654', edges: '5,614' },
-  'sc_20171207_11100': { nodes: '2,647', edges: '5,600' },
-  'sc_20171208_11100': { nodes: '2,433', edges: '5,156' }
+  'hn_20171128_174550': { nodes: '2,703', edges: '5,806' },
+  'hn_20171207_06300': { nodes: '2,637', edges: '5,584' },
+  'hn_20171207_08000': { nodes: '2,654', edges: '5,614' },
+  'hn_20171207_09150': { nodes: '2,651', edges: '5,608' },
+  'hn_20171207_10000': { nodes: '2,654', edges: '5,614' },
+  'hn_20171207_11100': { nodes: '2,647', edges: '5,600' },
+  'hn_20171208_11100': { nodes: '2,433', edges: '5,156' }
 };
 
 export default function Page() {
@@ -86,21 +86,14 @@ export default function Page() {
   const [chartMetric, setChartMetric] = useState('time');
   const [progress, setProgress] = useState(0);
   const [showReferenceLine, setShowReferenceLine] = useState(false);
-  const [codeContent, setCodeContent] = useState('');
+  // 移除代码内容状态，改为显示图片
   const [showGraphDisplay, setShowGraphDisplay] = useState(false); // 新增状态控制图形显示
   const logBoxRef = React.useRef(null);
   const leftPanelRef = React.useRef(null);
-  const codeDisplayRef = React.useRef(null);
+  // 移除代码显示引用，改为显示图片
   const performanceRef = React.useRef(null);  // 添加性能对比区域的ref
 
-  // 加载代码内容
-  useEffect(() => {
-    const codeFile = selectedAlgo === '潮流计算' ? 'power-flow-code.txt' : 'state-esti-code.txt';
-    fetch(`/power/${codeFile}`)
-      .then(response => response.text())
-      .then(text => setCodeContent(text))
-      .catch(error => console.error('Error loading code:', error));
-  }, [selectedAlgo]);
+  // 移除代码加载逻辑，改为显示图片
 
   // 自动滚动到底部
   const scrollToBottom = () => {
@@ -490,28 +483,27 @@ export default function Page() {
               borderColor: 'secondary.main',
               pb: 1
             }}>
-              顶层代码模块展示
+              异质数据流映射展示
             </Typography>
-            <Box ref={codeDisplayRef} sx={{
-              height: '600px',
-              overflow: 'auto',
-              backgroundColor: '#f9f9f9',
+            <Box sx={{
+              height: '400px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              
               borderRadius: 2,
-              p: 1.5,
-              fontFamily: '"Fira Code", "Consolas", monospace',
-              fontSize: '0.95rem',
-              lineHeight: 1.6,
-              '& pre.code-content': {
-                margin: 0,
-                padding: 0
-              },
-              '& div.code-title': {
-                margin: 0,
-                padding: 0
-              }
-            }} 
-            dangerouslySetInnerHTML={{ __html: codeContent }}
-            />
+              p: 1.5
+            }}>
+              <img 
+                src="/flow.png" 
+                alt="Flow Diagram" 
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+            </Box>
           </Paper>
         </Grid>
 

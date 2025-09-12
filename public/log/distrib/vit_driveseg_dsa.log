@@ -1,0 +1,85 @@
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:549: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:549: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+[2025-07-31 11:22:28] dataflow.train INFO - We recommend installing `termcolor` via `pip install termcolor` and setup logger by `set_logger(..., color=True)`
+trainer_factory: require_customized_train: True
+trainer_factory customized train
+[WARNING] ME(1553986:281473230602272,MainProcess):2025-07-31-11:22:35.176.794 [mindspore/run_check/_check_version.py:305] The version 7.6 used for compiling the custom operator does not match Ascend AI software package version 7.5 in the current environment.
+[2025-07-31 11:22:36] dataflow.train INFO - Essential Experiment Configurations:
+MindSpore mode[GRAPH(0)/PYNATIVE(1)]: 0
+Distributed mode: False
+Number of devices: 1
+Number of training samples: 3000
+Number of validation samples: 500
+Number of classes: 13
+Number of batches: 94
+Batch size: 32
+Auto augment: randaug-m9-mstd0.5
+MixUp: 0.8
+CutMix: 1.0
+Model: vit_b_16_224
+Model parameters: 87966106
+Number of epochs: 5
+Optimizer: adamw
+Learning rate: 0.0016
+LR Scheduler: cosine_decay
+Momentum: 0.9
+Weight decay: 0.3
+Auto mixed precision: O2
+Loss scale: 1024(fixed)
+[2025-07-31 11:22:36] dataflow.train INFO - Start training
+...[2025-07-31 11:27:03] dataflow.utils.callbacks INFO - Epoch: [1/5], batch: [94/94], loss: 2.564538, lr: 0.000000, time: 112.257879s
+..[2025-07-31 11:27:40] dataflow.utils.callbacks INFO - Validation SegAccuracy: 93.0000%, time: 37.189075s
+[2025-07-31 11:27:40] dataflow.utils.callbacks INFO - => New best val acc: 93.0000%
+[2025-07-31 11:27:44] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_94.ckpt
+[2025-07-31 11:27:46] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_94.ckpt     0.9300000071525574
+[2025-07-31 11:27:46] dataflow.utils.callbacks INFO - Total time since last epoch: 310.115742(train: 266.297490, val: 37.189075)s, GFLOPS: 126.25       ETA: 1240.462968s
+[2025-07-31 11:27:46] dataflow.utils.callbacks INFO - --------------------------------------------------------------------------------
+[2025-07-31 11:28:39] dataflow.utils.callbacks INFO - Epoch: [2/5], batch: [94/94], loss: 2.564158, lr: 0.000000, time: 52.289168s
+[2025-07-31 11:28:57] dataflow.utils.callbacks INFO - Validation SegAccuracy: 93.0000%, time: 17.967621s
+[2025-07-31 11:28:59] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_94.ckpt
+[2025-07-31 11:29:02] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_94.ckpt     0.9300000071525574
+[2025-07-31 11:29:02] dataflow.utils.callbacks INFO - Total time since last epoch: 74.487184(train: 52.301843, val: 17.967621)s, GFLOPS: 642.83 ETA: 223.461551s
+[2025-07-31 11:29:02] dataflow.utils.callbacks INFO - --------------------------------------------------------------------------------
+[2025-07-31 11:30:09] dataflow.utils.callbacks INFO - Epoch: [3/5], batch: [94/94], loss: 2.564292, lr: 0.000000, time: 67.597816s
+[2025-07-31 11:30:27] dataflow.utils.callbacks INFO - Validation SegAccuracy: 93.0000%, time: 17.933267s
+[2025-07-31 11:30:28] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_94.ckpt
+[2025-07-31 11:30:31] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_94.ckpt     0.9300000071525574
+[2025-07-31 11:30:31] dataflow.utils.callbacks INFO - Total time since last epoch: 89.180451(train: 67.610232, val: 17.933267)s, GFLOPS: 497.28 ETA: 178.360901s
+[2025-07-31 11:30:31] dataflow.utils.callbacks INFO - --------------------------------------------------------------------------------
+[2025-07-31 11:31:36] dataflow.utils.callbacks INFO - Epoch: [4/5], batch: [94/94], loss: 2.564781, lr: 0.000000, time: 65.171955s
+[2025-07-31 11:31:55] dataflow.utils.callbacks INFO - Validation SegAccuracy: 93.0000%, time: 18.681627s
+[2025-07-31 11:31:58] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_94.ckpt
+[2025-07-31 11:32:00] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_94.ckpt     0.9300000071525574
+[2025-07-31 11:32:00] dataflow.utils.callbacks INFO - Total time since last epoch: 89.546755(train: 65.182648, val: 18.681627)s, GFLOPS: 515.80 ETA: 89.546755s
+[2025-07-31 11:32:00] dataflow.utils.callbacks INFO - --------------------------------------------------------------------------------
+[2025-07-31 11:33:05] dataflow.utils.callbacks INFO - Epoch: [5/5], batch: [94/94], loss: 2.565496, lr: 0.000000, time: 64.962993s
+[2025-07-31 11:33:24] dataflow.utils.callbacks INFO - Validation SegAccuracy: 93.0000%, time: 18.089741s
+[2025-07-31 11:33:24] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-5_94.ckpt
+[2025-07-31 11:33:27] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_94.ckpt     0.9300000071525574
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-5_94.ckpt     0.9300000071525574
+[2025-07-31 11:33:27] dataflow.utils.callbacks INFO - Total time since last epoch: 86.138562(train: 64.970971, val: 18.089741)s, GFLOPS: 517.48 ETA: 0.000000s
+[2025-07-31 11:33:27] dataflow.utils.callbacks INFO - --------------------------------------------------------------------------------
+[2025-07-31 11:33:27] dataflow.utils.callbacks INFO - Finish training!
+[2025-07-31 11:33:27] dataflow.utils.callbacks INFO - Average calculate time: 88.2886 seconds, GFLOPS: 510.1878
+[2025-07-31 11:33:27] dataflow.utils.callbacks INFO - ======================================== DataFlow Method ========================================
+[2025-07-31 11:33:27] dataflow.train INFO -                     Total E2E Time: 659.2081 second

@@ -4,12 +4,19 @@
 3. 执行 npm run dev
 * 后端接口修改路径：middle_check/src/lib/request/request.js 中，修改 BASE_URL 即可
 
-# 启动（开发模式）
+# old
+启动（开发模式）
 npm run dev
-
-# 编译与启动（生产模式）
+编译与启动（生产模式）
 npm run build
 npm run start
+
+# new
+# 编译
+npm run build-web
+# 启动
+cd web-build
+python3 -m http.server 3001
 
 
 # log的目录：public/log/

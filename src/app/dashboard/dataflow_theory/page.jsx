@@ -11,6 +11,7 @@ export default function DataflowTheory() {
   const [showRightPanel, setShowRightPanel] = useState(false);
   const [showLargePanel, setShowLargePanel] = useState(false);
   const [largePanelImage, setLargePanelImage] = useState('');
+  const [largePanelTitle, setLargePanelTitle] = useState('');
   const [middlePanelImage, setMiddlePanelImage] = useState('');
   const [rightPanelImage, setRightPanelImage] = useState('');
   const [flowDiagramImage, setFlowDiagramImage] = useState('/dataflow/overall1.png');
@@ -66,36 +67,42 @@ export default function DataflowTheory() {
         setShowMiddlePanel(false);
         setShowRightPanel(false);
         setLargePanelImage('/dataflow/yingshe.png');
+        setLargePanelTitle('异质数据流图到异质数据流抽象机模型的映射过程');
         break;
       case '异质数据流抽象机':
         setShowLargePanel(true);
         setShowMiddlePanel(false);
         setShowRightPanel(false);
         setLargePanelImage('/dataflow/abstract.png');
+        setLargePanelTitle('异质数据流抽象逻辑结构');
         break;
       case 'CPU单机系统':
         setShowLargePanel(true);
         setShowMiddlePanel(false);
         setShowRightPanel(false);
         setLargePanelImage('/dataflow/cpu.png');
+        setLargePanelTitle('异质数据流抽象机到CPU计算平台的映射过程');
         break;
       case 'GPU单机系统':
         setShowLargePanel(true);
         setShowMiddlePanel(false);
         setShowRightPanel(false);
         setLargePanelImage('/dataflow/gpu.png');
+        setLargePanelTitle('异质数据流抽象机到GPU计算平台的映射过程');
         break;
       case 'CPU-GPU异构系统':
         setShowLargePanel(true);
         setShowMiddlePanel(false);
         setShowRightPanel(false);
         setLargePanelImage('/dataflow/cpugpu.png');
+        setLargePanelTitle('异质数据流抽象机到CPU-GPU异构计算平台的映射过程');
         break;
       case 'CPU-DSA异构系统':
         setShowLargePanel(true);
         setShowMiddlePanel(false);
         setShowRightPanel(false);
         setLargePanelImage('/dataflow/cpudsa.png');
+        setLargePanelTitle('异质数据流抽象机到CPU-DSA异构计算平台的映射过程');
         break;
       default:
         break;
@@ -113,13 +120,13 @@ export default function DataflowTheory() {
   };
 
   return (
-    <Box sx={{ height: '100vh', p: 2 }}>
+    <Box sx={{ height: '100vh', p: 1 }}>
 
       
-      <Grid container spacing={2} sx={{ height: 'calc(100vh - 120px)' }}>
+      <Grid container spacing={1} sx={{ height: 'calc(100vh - 120px)' }}>
         {/* 左侧面板 - 固定显示 */}
         <Grid item xs={4}>
-          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 1 }}>
 
             <Box sx={{ flex: 1 }}>
               <FlowDiagram 
@@ -135,9 +142,18 @@ export default function DataflowTheory() {
         {showLargePanel ? (
           /* 大面板模式 - 占据中间和右侧 */
           <Grid item xs={8}>
-            <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: '100%' }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'secondary.main' }}>
-                详细展示
+            <Paper elevation={3} sx={{ p: 1, borderRadius: 3, height: '100%' }}>
+              <Typography variant="h6" sx={{ 
+                fontWeight: 700, 
+                mb: 2,
+                mt: 1,
+                color: 'secondary.main',
+                textAlign: 'center',
+                borderBottom: '2px solid',
+                borderColor: 'secondary.main',
+                pb: 1
+              }}>
+                {largePanelTitle}
               </Typography>
               <Box sx={{ textAlign: 'center', height: 'calc(100% - 40px)' }}>
                 <img
@@ -158,10 +174,20 @@ export default function DataflowTheory() {
             {/* 中间面板 */}
             <Grid item xs={4}>
               {showMiddlePanel ? (
-                <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: '100%' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'secondary.main' }}>
-                    {selectedMainModule} 算法
+                <Paper elevation={3} sx={{ p: 1, borderRadius: 3, height: '100%' }}>
+                  <Typography variant="h6" sx={{
+                    fontWeight: 700,
+                    mt: 1,
+                    mx: 1,
+                    mb: 2,
+                    color: 'secondary.main',
+                    borderBottom: '2px solid',
+                    borderColor: 'secondary.main',
+                    pb: 1
+                  }}>
+                    {selectedMainModule} 指令级数据流图
                   </Typography>
+
                   <Box sx={{ textAlign: 'center', height: 'calc(100% - 40px)' }}>
                      <img
                        src={middlePanelImage}
@@ -175,7 +201,7 @@ export default function DataflowTheory() {
                    </Box>
                 </Paper>
               ) : (
-                <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Paper elevation={3} sx={{ p: 1, borderRadius: 3, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Typography variant="body1" color="text.secondary">
                     请点击 PageRank 或 ViT 开始
                   </Typography>
@@ -186,10 +212,21 @@ export default function DataflowTheory() {
             {/* 右侧面板 */}
             <Grid item xs={4}>
               {showRightPanel ? (
-                <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: '100%' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'secondary.main' }}>
-                    层级详情
+                <Paper elevation={3} sx={{ p: 1, borderRadius: 3, height: '100%' }}>
+                  <Typography variant="h6" sx={{
+                    fontWeight: 700,
+                    mb: 2,
+                    mt: 1,
+                    mx: 1,
+                    color: 'secondary.main',
+                    borderBottom: '2px solid',
+                    borderColor: 'secondary.main',
+                    pb: 1
+                  }}>
+                    {selectedMainModule} 异质数据流图
                   </Typography>
+
+
                   <Box sx={{ textAlign: 'center', height: 'calc(100% - 40px)' }}>
                      <img
                        src={rightPanelImage}
@@ -203,7 +240,7 @@ export default function DataflowTheory() {
                    </Box>
                 </Paper>
               ) : (
-                <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Paper elevation={3} sx={{ p: 1, borderRadius: 3, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Typography variant="body1" color="text.secondary">
                     请点击指令级、程序块级或线程级
                   </Typography>

@@ -10,6 +10,7 @@
 **/up/
 **/down/
 **/dist/
+**/web-build/
 
 # testing
 /coverage

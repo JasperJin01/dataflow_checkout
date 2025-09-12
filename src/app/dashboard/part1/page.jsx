@@ -25,11 +25,13 @@ export default function Page() {
   const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
   const [selectedDataset, setSelectedDataset] = useState(datasetsByAlgorithm[algorithms[0]][0]);
   // 控制标签页切换
-  const [tabValue, setTabValue] = useState(0);
+  const [prTabValue, setPrTabValue] = useState(0);
+  const [vitTabValue, setVitTabValue] = useState(0);
+  const [prChartPlatform, setPrChartPlatform] = useState(platforms[0]);
+  const [vitChartPlatform, setVitChartPlatform] = useState(platforms[0]);
   const [logs, setLogs] = useState([]);
   const [running, setRunning] = useState(false);
   const [performanceData, setPerformanceData] = useState([]);
-  // 为PageRank和ViT分别设置硬件平台选择
   const [chartMetric, setChartMetric] = useState(platforms[0]);
   const logBoxRef = React.useRef(null);
   const performanceRef = React.useRef(null);
@@ -43,6 +45,8 @@ export default function Page() {
 
   // 监听平台选择变化，同步更新chartMetric
   useEffect(() => {
+    setPrChartPlatform(selectedPlatform);
+    setVitChartPlatform(selectedPlatform);
     setChartMetric(selectedPlatform);
   }, [selectedPlatform]);
 
@@ -304,7 +308,7 @@ export default function Page() {
   };
 
   return (
-    <Box sx={{ p: 3, backgroundColor: '#f5f6fa' }}>
+    <Box sx={{ p: 2, backgroundColor: '#f5f6fa' }}>
       <Grid item xs={12} sx={{ mb: 3 }}>
         <AssessmentCriteria />
       </Grid>
@@ -477,178 +481,245 @@ export default function Page() {
           </Grid>
         </Grid>
 
-        {/* 性能对比卡片 - 占满整个屏幕宽度 */}
+        {/* 性能对比卡片 - 左右分布 */}
         <Grid item xs={12} ref={performanceRef}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
-            <Typography variant="h6" sx={{
-              fontWeight: 700,
-              mb: 2,
-              color: 'secondary.main',
-              borderBottom: '2px solid',
-              borderColor: 'secondary.main',
-              pb: 1
-            }}>
-              性能对比详情
-            </Typography>
+          <Grid container spacing={2}>
+            {/* 左侧窗口 - PageRank性能对比 */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 'fit-content' }}>
+                <Typography variant="h6" sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: 'secondary.main',
+                  borderBottom: '2px solid',
+                  borderColor: 'secondary.main',
+                  pb: 1
+                }}>
+                  PageRank性能对比详情
+                </Typography>
 
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-              <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
-                <Tab label="表格视图" />
-                <Tab label="图表视图" />
-              </Tabs>
-            </Box>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                  <Tabs value={prTabValue} onChange={(e, v) => setPrTabValue(v)}>
+                    <Tab label="表格视图" />
+                    <Tab label="图表视图" />
+                  </Tabs>
+                </Box>
 
-            {tabValue === 0 ? (
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>算法</TableCell>
-                      <TableCell>数据集</TableCell>
-                      <TableCell>硬件平台</TableCell>
-                      <TableCell>TensorFlow时间(s)</TableCell>
-                      <TableCell>优化时间(s)</TableCell>
-                      <TableCell>加速比</TableCell>
-                      <TableCell>TensorFlow吞吐量</TableCell>
-                      <TableCell>优化吞吐量</TableCell>
-                      <TableCell>吞吐量提升</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {getValidData().map((row, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{row.algorithm}</TableCell>
-                        <TableCell>{row.dataset}</TableCell>
-                        <TableCell>{row.platform}</TableCell>
-                        <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
-                        <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
-                        <TableCell>{row.speedUp.toFixed(3)}</TableCell>
-                        <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                        <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
-                        <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            ) : (
-              <Box>
-                <Tabs
-                  value={chartMetric}
-                  onChange={(e, v) => setChartMetric(v)}
-                  sx={{ mb: 2 }}
-                  variant="scrollable"
-                  scrollButtons="auto"
-                >
-                  {platforms.map(platform => (
-                    <Tab key={platform} label={platform} value={platform} />
-                  ))}
-                </Tabs>
+                {prTabValue === 0 ? (
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>数据集</TableCell>
+                          <TableCell>硬件平台</TableCell>
+                          <TableCell>TensorFlow时间(s)</TableCell>
+                          <TableCell>优化时间(s)</TableCell>
+                          <TableCell>加速比</TableCell>
+                          <TableCell>TensorFlow吞吐量</TableCell>
+                          <TableCell>优化吞吐量</TableCell>
+                          <TableCell>吞吐量提升</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {getValidData().filter(row => row.algorithm === 'PageRank').map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{row.dataset}</TableCell>
+                            <TableCell>{row.platform}</TableCell>
+                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
+                            <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : (
+                  <Box>
+                    <Tabs
+                      value={prChartPlatform}
+                      onChange={(e, v) => setPrChartPlatform(v)}
+                      sx={{ mb: 2 }}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                    >
+                      {platforms.map(platform => (
+                        <Tab key={platform} label={platform} value={platform} />
+                      ))}
+                    </Tabs>
 
-                <Grid container spacing={2}>
-                  {/* PageRank图表 */}
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
-                      PageRank - 执行时间对比 (秒)
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <BarChart
-                        data={getChartData(chartMetric).filter(item => item.algorithm === 'PageRank')}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                        barSize={35}
-                        barGap={5}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
-                        <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Grid>
-                  
-                  {/* ViT图表 */}
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
-                      ViT - 执行时间对比 (秒)
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <BarChart
-                        data={getChartData(chartMetric).filter(item => item.algorithm === 'ViT')}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                        barSize={35}
-                        barGap={5}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
-                        <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Grid>
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                        PageRank - 执行时间对比 (秒)
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart
+                          data={getChartData(prChartPlatform).filter(item => item.algorithm === 'PageRank')}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                          barSize={35}
+                          barGap={5}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
+                          <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
 
-                  {/* PageRank吞吐量图表 */}
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
-                      PageRank - 吞吐量对比 (GTEPS)
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <BarChart
-                        data={getChartData(chartMetric).filter(item => item.algorithm === 'PageRank')}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                        barSize={35}
-                        barGap={5}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis label={{ value: 'GTEPS', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip 
-                          formatter={(value, name) => {
-                            return [`${value.toFixed(3)} GTEPS`, name];
-                          }}
-                        />
-                        <Legend />
-                        <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
-                        <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Grid>
+                    <Box>
+                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                        PageRank - 吞吐量对比 (GTEPS)
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart
+                          data={getChartData(prChartPlatform).filter(item => item.algorithm === 'PageRank')}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                          barSize={35}
+                          barGap={5}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis label={{ value: 'GTEPS', angle: -90, position: 'insideLeft' }} />
+                          <Tooltip 
+                            formatter={(value, name) => {
+                              return [`${value.toFixed(3)} GTEPS`, name];
+                            }}
+                          />
+                          <Legend />
+                          <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
+                          <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </Box>
+                )}
+              </Paper>
+            </Grid>
 
-                  {/* ViT吞吐量图表 */}
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
-                      ViT - 吞吐量对比 (GFLOPS)
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <BarChart
-                        data={getChartData(chartMetric).filter(item => item.algorithm === 'ViT')}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                        barSize={35}
-                        barGap={5}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis label={{ value: 'GFLOPS', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip 
-                          formatter={(value, name) => {
-                            return [`${value.toFixed(3)} GFLOPS`, name];
-                          }}
-                        />
-                        <Legend />
-                        <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
-                        <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Grid>
-                </Grid>
-              </Box>
-            )}
-          </Paper>
+            {/* 右侧窗口 - ViT性能对比 */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: 'fit-content' }}>
+                <Typography variant="h6" sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: 'secondary.main',
+                  borderBottom: '2px solid',
+                  borderColor: 'secondary.main',
+                  pb: 1
+                }}>
+                  ViT性能对比详情
+                </Typography>
+
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                  <Tabs value={vitTabValue} onChange={(e, v) => setVitTabValue(v)}>
+                    <Tab label="表格视图" />
+                    <Tab label="图表视图" />
+                  </Tabs>
+                </Box>
+
+                {vitTabValue === 0 ? (
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>数据集</TableCell>
+                          <TableCell>硬件平台</TableCell>
+                          <TableCell>TensorFlow时间(s)</TableCell>
+                          <TableCell>优化时间(s)</TableCell>
+                          <TableCell>加速比</TableCell>
+                          <TableCell>TensorFlow吞吐量</TableCell>
+                          <TableCell>优化吞吐量</TableCell>
+                          <TableCell>吞吐量提升</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {getValidData().filter(row => row.algorithm === 'ViT').map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{row.dataset}</TableCell>
+                            <TableCell>{row.platform}</TableCell>
+                            <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
+                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
+                            <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
+                            <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : (
+                  <Box>
+                    <Tabs
+                      value={vitChartPlatform}
+                      onChange={(e, v) => setVitChartPlatform(v)}
+                      sx={{ mb: 2 }}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                    >
+                      {platforms.map(platform => (
+                        <Tab key={platform} label={platform} value={platform} />
+                      ))}
+                    </Tabs>
+
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                        ViT - 执行时间对比 (秒)
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart
+                          data={getChartData(vitChartPlatform).filter(item => item.algorithm === 'ViT')}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                          barSize={35}
+                          barGap={5}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
+                          <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+
+                    <Box>
+                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                        ViT - 吞吐量对比 (GFLOPS)
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart
+                          data={getChartData(vitChartPlatform).filter(item => item.algorithm === 'ViT')}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                          barSize={35}
+                          barGap={5}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis label={{ value: 'GFLOPS', angle: -90, position: 'insideLeft' }} />
+                          <Tooltip 
+                            formatter={(value, name) => {
+                              return [`${value.toFixed(3)} GFLOPS`, name];
+                            }}
+                          />
+                          <Legend />
+                          <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
+                          <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </Box>
+                )}
+              </Paper>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Box>

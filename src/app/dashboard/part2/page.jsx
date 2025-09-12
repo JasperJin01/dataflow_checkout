@@ -342,7 +342,7 @@ export default function Page() {
   };
 
   return (
-    <Box sx={{ p: 3, backgroundColor: '#f5f6fa' }}>
+    <Box sx={{ p: 2, backgroundColor: '#f5f6fa' }}>
       <Grid item xs={12} sx={{ mb: 3 }}>
         <AssessmentCriteria />
     </Grid>

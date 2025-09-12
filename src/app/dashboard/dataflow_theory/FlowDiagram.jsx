@@ -8,21 +8,21 @@ const FlowDiagram = ({ onModuleClick, onModuleHover, imageSrc = '/dataflow/overa
   const [scaleFactor, setScaleFactor] = useState({ scaleX: 1, scaleY: 1 });
   
   // 原始图片尺寸（根据实际图片尺寸设置）
-  const originalImageDimensions = { width: 480, height: 540 };
+  const originalImageDimensions = { width: 480, height: 700 };
 
   // 定义按钮坐标和尺寸 - 基于原始图片尺寸
   const modules = {
-    'PageRank': { x: 123, y: 20, width: 84, height: 39.6 },
-    'ViT': { x: 278, y: 20, width: 205.2, height: 28.8 },
-    '指令级': { x: 140, y: 127, width: 72, height: 75.6 },
-    '程序块级': { x: 242, y: 130, width: 99.6, height: 28.8 },
-    '线程级': { x: 363, y: 130, width: 126, height: 36 },
-    '转换': { x: 222, y: 193, width: 30, height: 36 },
-    '异质数据流抽象机': { x: 2, y: 234, width: 300, height: 36 },
-    'CPU单机系统': { x: 26, y: 467, width: 66, height: 28.8 },
-    'GPU单机系统': { x: 112, y: 463, width: 42, height: 39.6 },
-    'CPU-GPU异构系统': { x: 205, y: 464, width: 74.4, height: 39.6 },
-    'CPU-DSA异构系统': { x: 339, y: 465, width: 64.8, height: 28.8 }
+    'PageRank': { x: 123, y: 20, width: 124, height: 39.6 },
+    'ViT': { x: 278, y: 20, width: 115.2, height: 38.8 },
+    '指令级': { x: 140, y: 160, width: 82, height: 40 },
+    '程序块级': { x: 242, y: 165, width: 99.6, height: 40 },
+    '线程级': { x: 360, y: 165, width: 126, height: 40 },
+    '转换': { x: 228, y: 236, width: 30, height: 44 },
+    '异质数据流抽象机': { x: 2, y: 295, width: 450, height: 50 },
+    'CPU单机系统': { x: 28, y: 610, width: 66, height: 40 },
+    'GPU单机系统': { x: 112, y: 610, width: 42, height: 40 },
+    'CPU-GPU异构系统': { x: 205, y: 610, width: 110, height: 40 },
+    'CPU-DSA异构系统': { x: 339, y: 610, width: 110, height: 40 }
   };
 
   // 计算当前缩放比例
@@ -161,11 +161,11 @@ const FlowDiagram = ({ onModuleClick, onModuleHover, imageSrc = '/dataflow/overa
       }}
     >
       <Typography variant="h6" sx={{ 
-        fontWeight: 700, mb: 2, color: 'primary.main'
+        fontWeight: 700, mb: 2, color: 'secondary.main', borderBottom: '2px solid', pb: 1
       }}>
         流程展示
       </Typography>
-      <Box sx={{ textAlign: 'center', height: '100%', overflow: 'hidden' }}>
+      <Box sx={{ textAlign: 'center', height: '100%', overflow: 'hidden', mt:1 }}>
         <img
           ref={imageRef}
           src={imageSrc}

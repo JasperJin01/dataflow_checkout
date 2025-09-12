@@ -1,0 +1,29 @@
+2.4.1+cu118
+Start predicting...
+predict.py:46: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(model_weight_path, map_location=device)
+[1/20] Result for 14267691818_301aceda07.jpg from worker 1 | Class: retriever | Prob: 0.555 | Time: 0.8324s | GFLOPS: 20.255
+[2/20] Result for 5060519573_c628547e20_n.jpg from worker 0 | Class: cat | Prob: 0.434 | Time: 0.8926s | GFLOPS: 18.89
+[3/20] Result for 8388497874_1fe750cc95_m.jpg from worker 1 | Class: eagle | Prob: 0.560 | Time: 0.1440s | GFLOPS: 117.005
+[4/20] Result for 12395698413_c0388278f7.jpg from worker 1 | Class: shark | Prob: 0.527 | Time: 0.1296s | GFLOPS: 130.185
+[5/20] Result for 8853083579_dd1dfa3188.jpg from worker 0 | Class: butterfly | Prob: 0.371 | Time: 0.1502s | GFLOPS: 112.24
+[6/20] Result for 3560426426_1c66cb8330.jpg from worker 1 | Class: elephant | Prob: 0.557 | Time: 0.1300s | GFLOPS: 129.725
+[7/20] Result for 459042023_6273adc312_n.jpg from worker 0 | Class: panda | Prob: 0.538 | Time: 0.1460s | GFLOPS: 115.465
+[8/20] Result for 6936225976_a91b60d8c2_m.jpg from worker 1 | Class: snow leopard | Prob: 0.615 | Time: 0.1292s | GFLOPS: 130.565
+[9/20] Result for 17990320484_93bba345d2_m.jpg from worker 0 | Class: peacock | Prob: 0.567 | Time: 0.1450s | GFLOPS: 116.295
+[10/20] Result for 8742493617_c2a9bf854f_m.jpg from worker 1 | Class: koala | Prob: 0.532 | Time: 0.1294s | GFLOPS: 130.19
+[11/20] Result for 2675221506_5286c0595f.jpg from worker 0 | Class: hummingbird | Prob: 0.511 | Time: 0.1464s | GFLOPS: 115165
+[12/20] Result for 6347847065_83cf87333b_n.jpg from worker 1 | Class: octopus | Prob: 0.507 | Time: 0.1304s | GFLOPS: 129.27
+[13/20] Result for 3407482427_49d5c75291_m.jpg from worker 0 | Class: jellyfish | Prob: 0.418 | Time: 0.1464s | GFLOPS: 115.185
+[14/20] Result for 15419696882_9394168a10_n.jpg from worker 1 | Class: sunflower | Prob: 0.213 | Time: 0.1326s | GFLOPS: 127.19
+[15/20] Result for 3554620445_082dd0bec4_n.jpg from worker 0 | Class: flamingo | Prob: 0.547 | Time: 0.1464s | GFLOPS: 115.155
+[16/20] Result for 15319767030_e6c5602a77_m.jpg from worker 1 | Class: gorilla | Prob: 0.305 | Time: 0.1320s | GFLOPS: 127.725
+[17/20] Result for 2536282942_b5ca27577e.jpg from worker 0 | Class: tulip | Prob: 0.369 | Time: 0.1472s | GFLOPS: 114.54
+[18/20] Result for 475936554_a2b38aaa8e.jpg from worker 1 | Class: rhinoceros | Prob: 0.286 | Time: 0.1334s | GFLOPS: 126.425
+[19/20] Result for 4588034197_e300b0872a_n.jpg from worker 0 | Class: orchid | Prob: 0.338 | Time: 0.1492s | GFLOPS: 112.965
+[20/20] Result for 2389205905_17ce9e6936.jpg from worker 1 | Class: zebra | Prob: 0.489 | Time: 0.1302s | GFLOPS: 129.525
+===== Summary (PyTorch Method) =====
+Total images processed: 20
+Total execution time: 5.41s 
+Average inference time: 0.1608s/image (9.20 images/s)
+Throughput: 115.41 GFLOPS

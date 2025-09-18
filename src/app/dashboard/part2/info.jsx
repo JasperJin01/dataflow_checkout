@@ -116,6 +116,17 @@ export const DatasetInfo = ({ dataset }) => {
       </div>
     );
   }
+
+  // TODO: 数据集Rmat-19的信息需要调整
+  if (dataset === 'Rmat-19') {
+    return (
+      <div>
+        <div>节点规模：262,144</div>
+        <div>边规模：4,194,304</div>
+        <div>内存大小：300MB</div>
+      </div>
+    );
+  }
   
   if (dataset === 'Rmat-20') {
     return (

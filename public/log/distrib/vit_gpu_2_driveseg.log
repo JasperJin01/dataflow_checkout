@@ -1,0 +1,37 @@
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+| distributed init (rank 0): env://
+| distributed init (rank 1): env://
+Namespace(batch_size=8, data_path='/gemini/code/DriveSeg', device='cuda', dist_backend='nccl', dist_url='env://', distributed=True, epochs=5, freeze_layers=True, gpu=0, local_rank=None, lr=0.002, lrf=0.01, num_classes=13, pre_calflops=1310.21, rank=0, syncBN=True, use_pre_calflops=True, weights='./vit_base_patch16_224_in21k.pth', world_size=2)
+Using 8 dataloader workers every process
+Training head.weight
+Training head.bias
+Training head.weight
+Training head.bias
+=============== CompileTime: 2.26 second
+[train epoch 1] loss: 0.036, acc: 0.903: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 250/250 [00:13<00:00, 18.30it/s]
+[valid epoch 1] loss: 0.000, acc: 0.910: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 63/63 [00:04<00:00, 14.32it/s]
+5000
+EPOCH1 GFLOPS: 340.70 GFLOPS, TIME: 18.21 seconds.
+[train epoch 2] loss: 0.000, acc: 0.910: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 250/250 [00:13<00:00, 18.53it/s]
+[valid epoch 2] loss: 0.000, acc: 0.910: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 63/63 [00:04<00:00, 14.21it/s]
+5000
+EPOCH2 GFLOPS: 343.72 GFLOPS, TIME: 18.05 seconds.
+[train epoch 3] loss: 0.000, acc: 0.910: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 250/250 [00:13<00:00, 18.73it/s]
+[valid epoch 3] loss: 0.000, acc: 0.910: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 63/63 [00:04<00:00, 14.18it/s]
+5000
+EPOCH3 GFLOPS: 347.93 GFLOPS, TIME: 17.83 seconds.
+[train epoch 4] loss: 0.000, acc: 0.910: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 250/250 [00:16<00:00, 15.15it/s]
+[valid epoch 4] loss: 0.000, acc: 0.910: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 63/63 [00:04<00:00, 14.31it/s]
+5000
+EPOCH4 GFLOPS: 296.15 GFLOPS, TIME: 20.95 seconds.
+[train epoch 5] loss: 0.000, acc: 0.910: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 250/250 [00:13<00:00, 18.38it/s]
+[valid epoch 5] loss: 0.000, acc: 0.910: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 63/63 [00:04<00:00, 13.46it/s]
+5000
+EPOCH5 GFLOPS: 339.26 GFLOPS, TIME: 18.29 seconds.
+======================== DataFlow ======================== 
+                Total E2E time: 115.81 seconds
+                 Average Time Per Epoch: 19.02 seconds, 
+                AVG Calculate GFLOPS: 327.78 GFLOPS
+======================== DataFlow ======================== 

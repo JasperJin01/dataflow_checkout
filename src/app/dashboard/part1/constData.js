@@ -6,6 +6,7 @@ export const URL_MAPS = {
   dataset: {
     'Rmat-16': 'rmat16',
     'Rmat-18': 'rmat18',
+    'Rmat-19': 'rmat19',
     'Rmat-20': 'rmat20',
     'ImageNet': 'imagenet',
     'DriveSeg': 'driveseg'
@@ -77,24 +78,24 @@ export const PERFORMANCE_DATA = {
     'FPGA': [
       {
         'Dataset': 'Rmat-16',
-        'Baseline-Time(s)': 9,
-        'Dataflow-Time(s)': 4.2,
-        'Baseline-Throughput': 3, // GTEPS
-        'Dataflow-Throughput': 7.5 // GTEPS
+        'Baseline-Time(s)': 0.0077,
+        'Dataflow-Time(s)': 0.004,
+        'Baseline-Throughput': 0.98, // GTEPS
+        'Dataflow-Throughput': 1.86 // GTEPS
       },
       {
         'Dataset': 'Rmat-18',
-        'Baseline-Time(s)': 29.8,
-        'Dataflow-Time(s)': 15.1,
-        'Baseline-Throughput': 3.2, // GTEPS
-        'Dataflow-Throughput': 5.8 // GTEPS
+        'Baseline-Time(s)': 0.032,
+        'Dataflow-Time(s)': 0.017,
+        'Baseline-Throughput': 0.966, // GTEPS
+        'Dataflow-Throughput': 1.811 // GTEPS
       },
       {
         'Dataset': 'Rmat-20',
-        'Baseline-Time(s)': 58.5,
-        'Dataflow-Time(s)': 5.1,
-        'Baseline-Throughput': 3.3, // GTEPS
-        'Dataflow-Throughput': 38.6 // GTEPS
+        'Baseline-Time(s)': 0.125,
+        'Dataflow-Time(s)': 0.066,
+        'Baseline-Throughput': 1.0203, // GTEPS
+        'Dataflow-Throughput': 1.954 // GTEPS
       }
     ],
 
@@ -135,17 +136,17 @@ export const PERFORMANCE_DATA = {
     'FPGA': [
       {
         'Dataset': 'ImageNet',
-        'Baseline-Time(s)': 0.0338,
-        'Dataflow-Time(s)': 0.0154,
-        'Baseline-Throughput': 27.673, // GFLOPS
-        'Dataflow-Throughput': 62.882  // GFLOPS
+        'Baseline-Time(s)': 0.338,
+        'Dataflow-Time(s)': 0.154,
+        'Baseline-Throughput': 47.673, // GFLOPS
+        'Dataflow-Throughput': 111.32  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
-        'Baseline-Time(s)': 0.0348,
-        'Dataflow-Time(s)': 0.0158,
-        'Baseline-Throughput': 25.823, // GFLOPS
-        'Dataflow-Throughput': 61.238  // GFLOPS
+        'Baseline-Time(s)': 0.348,
+        'Dataflow-Time(s)': 0.158,
+        'Baseline-Throughput': 55.823, // GFLOPS
+        'Dataflow-Throughput': 101.38  // GFLOPS
       }
     ],
 

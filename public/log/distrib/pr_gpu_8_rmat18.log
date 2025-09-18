@@ -1,0 +1,22 @@
+================= CONFIG =================
+Graph name : Rmat-18
+Card num   : 8
+Root path  : /gemini/code/graph
+==========================================
+Compiling...
+Compile Finished
+Running init_graph.py to preprocess graph...
+===> nodes = 174147, edges = 7600696
+Graph node: 174147, edges: 7600696
+Init Graph: 12.6900 seconds
+Start calculating...
+DataStruct: CSR
+Start Warm Up GPU .... 
+I/O time usage: 0.1113 seconds
+WARMUP time usage: 3.8856 seconds
+Cal time usage: 0.6654 seconds, GTEPS: 0.5483
+================================ DATAFLOW METHOD =======================================
+                Graph nodes = 174147, edges = 7600696, Env_Cards: 8
+                GTEPS: 0.5483
+                Total Cost: 24.477 seconds
+================================ DATAFLOW METHOD =======================================

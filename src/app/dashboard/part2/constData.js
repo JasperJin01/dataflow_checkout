@@ -30,6 +30,7 @@ export const URL_MAPS = {
   dataset: {
     'Rmat-16': 'rmat16',
     'Rmat-18': 'rmat18',
+    'Rmat-19': 'rmat19',
     'Rmat-20': 'rmat20',
     'ImageNet': 'imagenet',
     'DriveSeg': 'driveseg'
@@ -57,14 +58,14 @@ export const PERFORMANCE_DATA = {
     'GPU': {
       1: [
         {
-          'Dataset': 'Rmat-16',
+          'Dataset': 'Rmat-18',
           'Baseline-Time(s)': 36.0,
           'Dataflow-Time(s)': 12.0,
           'Baseline-Throughput': 0.0004, // GTEPS
           'Dataflow-Throughput': 0.0009  // GTEPS
         },
         {
-          'Dataset': 'Rmat-18',
+          'Dataset': 'Rmat-19',
           'Baseline-Time(s)': 119.2,
           'Dataflow-Time(s)': 53.6,
           'Baseline-Throughput': 0.8, // GTEPS
@@ -80,14 +81,14 @@ export const PERFORMANCE_DATA = {
       ],
       2: [
         {
-          'Dataset': 'Rmat-16',
+          'Dataset': 'Rmat-18',
           'Baseline-Time(s)': 18.0,
           'Dataflow-Time(s)': 6.0,
           'Baseline-Throughput': 0.0008, // GTEPS
           'Dataflow-Throughput': 0.0018  // GTEPS
         },
         {
-          'Dataset': 'Rmat-18',
+          'Dataset': 'Rmat-19',
           'Baseline-Time(s)': 59.6,
           'Dataflow-Time(s)': 26.8,
           'Baseline-Throughput': 1.6, // GTEPS
@@ -103,14 +104,14 @@ export const PERFORMANCE_DATA = {
       ],
       4: [
         {
-          'Dataset': 'Rmat-16',
+          'Dataset': 'Rmat-18',
           'Baseline-Time(s)': 9,
           'Dataflow-Time(s)': 3,
           'Baseline-Throughput': 0.001606, // GTEPS
           'Dataflow-Throughput': 0.003606  // GTEPS
         },
         {
-          'Dataset': 'Rmat-18',
+          'Dataset': 'Rmat-19',
           'Baseline-Time(s)': 29.8,
           'Dataflow-Time(s)': 13.4,
           'Baseline-Throughput': 3.2, // GTEPS
@@ -126,14 +127,14 @@ export const PERFORMANCE_DATA = {
       ],
       8: [
         {
-          'Dataset': 'Rmat-16',
+          'Dataset': 'Rmat-18',
           'Baseline-Time(s)': 4.5,
           'Dataflow-Time(s)': 1.5,
           'Baseline-Throughput': 0.03212, // GTEPS
           'Dataflow-Throughput': 0.1212  // GTEPS
         },
         {
-          'Dataset': 'Rmat-18',
+          'Dataset': 'Rmat-19',
           'Baseline-Time(s)': 14.9,
           'Dataflow-Time(s)': 6.7,
           'Baseline-Throughput': 0.064, // GTEPS
@@ -148,217 +149,286 @@ export const PERFORMANCE_DATA = {
         }
       ]
     },
+
+    'DSA': {
+      1: [
+        {
+          'Dataset': 'Rmat-18',
+          'Baseline-Time(s)': 70.629,
+          'Dataflow-Time(s)': 20.740,
+          'Baseline-Throughput': 0.013313, // GTEPS
+          'Dataflow-Throughput': 0.040072 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-19',
+          'Baseline-Time(s)': 128.409 ,
+          'Dataflow-Time(s)': 35.695,
+          'Baseline-Throughput': 0.021782, // GTEPS
+          'Dataflow-Throughput': 0.061618 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-20',
+          'Baseline-Time(s)': 287.210,
+          'Dataflow-Time(s)': 67.054,
+          'Baseline-Throughput': 0.028851, // GTEPS
+          'Dataflow-Throughput': 0.082105 // GTEPS
+        }
+      ],
+      2: [
+        {
+          'Dataset': 'Rmat-18',
+          'Baseline-Time(s)': 47.628,
+          'Dataflow-Time(s)': 21.151,
+          'Baseline-Throughput': 0.009588, // GTEPS
+          'Dataflow-Throughput': 0.027982 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-19',
+          'Baseline-Time(s)': 90.815,
+          'Dataflow-Time(s)': 37.789,
+          'Baseline-Throughput': 0.015390, // GTEPS
+          'Dataflow-Throughput': 0.052945 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-20',
+          'Baseline-Time(s)': 179.492,
+          'Dataflow-Time(s)': 70.678,
+          'Baseline-Throughput': 0.023772, // GTEPS
+          'Dataflow-Throughput': 0.062850 // GTEPS
+        }
+      ],
+      4: [
+        {
+          'Dataset': 'Rmat-18',
+          'Baseline-Time(s)': 47.643,
+          'Dataflow-Time(s)': 22.893,
+          'Baseline-Throughput': 0.010117, // GTEPS
+          'Dataflow-Throughput': 0.017280 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-19',
+          'Baseline-Time(s)': 92.230,
+          'Dataflow-Time(s)': 40.628,
+          'Baseline-Throughput': 0.019847, // GTEPS
+          'Dataflow-Throughput': 0.037072 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-20',
+          'Baseline-Time(s)': 184.639,
+          'Dataflow-Time(s)': 72.351,
+          'Baseline-Throughput': 0.032640, // GTEPS
+          'Dataflow-Throughput': 0.075041 // GTEPS
+        }
+      ],
+      8: [
+        {
+          'Dataset': 'Rmat-18',
+          'Baseline-Time(s)': 56.674,
+          'Dataflow-Time(s)': 26.595,
+          'Baseline-Throughput': 0.003269, // GTEPS
+          'Dataflow-Throughput': 0.009900 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-19',
+          'Baseline-Time(s)': 100.653,
+          'Dataflow-Time(s)': 46.535,
+          'Baseline-Throughput': 0.007846, // GTEPS
+          'Dataflow-Throughput': 0.020744 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-20',
+          'Baseline-Time(s)': 202.137,
+          'Dataflow-Time(s)': 83.413,
+          'Baseline-Throughput': 0.008283, // GTEPS
+          'Dataflow-Throughput': 0.037729 // GTEPS
+        }
+      ]
+    },
     'FPGA': {
       1: [
         {
           'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 36.0,
-          'Dataflow-Time(s)': 16.8,
-          'Baseline-Throughput': 0.75, // GTEPS
-          'Dataflow-Throughput': 1.88 // GTEPS
+          'Baseline-Time(s)': 0.0077,
+          'Dataflow-Time(s)': 0.004,
+          'Baseline-Throughput': 0.98, // GTEPS
+          'Dataflow-Throughput': 1.86 // GTEPS
         },
         {
           'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 119.2,
-          'Dataflow-Time(s)': 60.4,
-          'Baseline-Throughput': 0.8, // GTEPS
-          'Dataflow-Throughput': 1.45 // GTEPS
+          'Baseline-Time(s)': 0.032,
+          'Dataflow-Time(s)': 0.017,
+          'Baseline-Throughput': 0.966, // GTEPS
+          'Dataflow-Throughput': 1.811 // GTEPS
         },
         {
           'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 234.0,
-          'Dataflow-Time(s)': 20.4,
-          'Baseline-Throughput': 0.83, // GTEPS
-          'Dataflow-Throughput': 9.65 // GTEPS
+          'Baseline-Time(s)': 0.125,
+          'Dataflow-Time(s)': 0.066,
+          'Baseline-Throughput': 1.0203, // GTEPS
+          'Dataflow-Throughput': 1.954 // GTEPS
         }
       ],
       4: [
         {
           'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 9,
-          'Dataflow-Time(s)': 4.2,
-          'Baseline-Throughput': 3, // GTEPS
-          'Dataflow-Throughput': 7.5 // GTEPS
+          'Baseline-Time(s)': 0.003,
+          'Dataflow-Time(s)': 0.001,
+          'Baseline-Throughput': 2.466, // GTEPS
+          'Dataflow-Throughput': 4.52 // GTEPS
         },
         {
           'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 29.8,
-          'Dataflow-Time(s)': 15.1,
-          'Baseline-Throughput': 3.2, // GTEPS
-          'Dataflow-Throughput': 5.8 // GTEPS
+          'Baseline-Time(s)': 0.009,
+          'Dataflow-Time(s)': 0.005,
+          'Baseline-Throughput': 3.29, // GTEPS
+          'Dataflow-Throughput': 6.14 // GTEPS
         },
         {
           'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 58.5,
-          'Dataflow-Time(s)': 5.1,
-          'Baseline-Throughput': 3.3, // GTEPS
-          'Dataflow-Throughput': 38.6 // GTEPS
+          'Baseline-Time(s)': 0.035,
+          'Dataflow-Time(s)': 0.018,
+          'Baseline-Throughput': 3.58, // GTEPS
+          'Dataflow-Throughput': 6.82 // GTEPS
         }
       ]
     },
-    'DSA': {
-      1: [
-        {
-          'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 392,
-          'Dataflow-Time(s)': 191.2,
-          'Baseline-Throughput': 0.00152, // GTEPS
-          'Dataflow-Throughput': 0.00253 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 119.2,
-          'Dataflow-Time(s)': 48.4,
-          'Baseline-Throughput': 0.8, // GTEPS
-          'Dataflow-Throughput': 1.78 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 234.0,
-          'Dataflow-Time(s)': 14.0,
-          'Baseline-Throughput': 0.83, // GTEPS
-          'Dataflow-Throughput': 13.95 // GTEPS
-        }
-      ],
-      2: [
-        {
-          'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 196,
-          'Dataflow-Time(s)': 95.6,
-          'Baseline-Throughput': 0.00304, // GTEPS
-          'Dataflow-Throughput': 0.00506 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 59.6,
-          'Dataflow-Time(s)': 24.2,
-          'Baseline-Throughput': 1.6, // GTEPS
-          'Dataflow-Throughput': 3.55 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 117.0,
-          'Dataflow-Time(s)': 7.0,
-          'Baseline-Throughput': 1.65, // GTEPS
-          'Dataflow-Throughput': 27.9 // GTEPS
-        }
-      ],
-      4: [
-        {
-          'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 98,
-          'Dataflow-Time(s)': 47.8,
-          'Baseline-Throughput': 0.00607, // GTEPS
-          'Dataflow-Throughput': 0.010117 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 29.8,
-          'Dataflow-Time(s)': 12.1,
-          'Baseline-Throughput': 3.2, // GTEPS
-          'Dataflow-Throughput': 7.1 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 58.5,
-          'Dataflow-Time(s)': 3.5,
-          'Baseline-Throughput': 3.3, // GTEPS
-          'Dataflow-Throughput': 55.8 // GTEPS
-        }
-      ],
-      8: [
-        {
-          'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 49,
-          'Dataflow-Time(s)': 23.9,
-          'Baseline-Throughput': 0.01214, // GTEPS
-          'Dataflow-Throughput': 0.020234 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 14.9,
-          'Dataflow-Time(s)': 6.05,
-          'Baseline-Throughput': 6.4, // GTEPS
-          'Dataflow-Throughput': 14.2 // GTEPS
-        },
-        {
-          'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 29.25,
-          'Dataflow-Time(s)': 1.75,
-          'Baseline-Throughput': 6.6, // GTEPS
-          'Dataflow-Throughput': 111.6 // GTEPS
-        }
-      ]
-    }
+
   },
   'ViT': {
-
     'GPU': {
       1: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 1452.28,
-          'Dataflow-Time(s)': 324.68,
-          'Baseline-Throughput': 4.5, // GFLOPS
-          'Dataflow-Throughput': 16.15, // GFLOPS
+          'Baseline-Time(s)': 580.42,
+          'Dataflow-Time(s)': 246.73,
+          'Baseline-Throughput': 547.53, // GFLOPS
+          'Dataflow-Throughput': 1279.22, // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 312.0,
-          'Dataflow-Time(s)': 196.0,
-          'Baseline-Throughput': 105, // GFLOPS
-          'Dataflow-Throughput': 172.5  // GFLOPS
+          'Baseline-Time(s)': 401.39,
+          'Dataflow-Time(s)': 190.20,
+          'Baseline-Throughput': 95.01, // GFLOPS
+          'Dataflow-Throughput': 176.44  // GFLOPS
         }
       ],
       2: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 726.14,
-          'Dataflow-Time(s)': 162.34,
-          'Baseline-Throughput': 9.0, // GFLOPS
-          'Dataflow-Throughput': 32.3, // GFLOPS
+          'Baseline-Time(s)': 447.43,
+          'Dataflow-Time(s)': 191.33,
+          'Baseline-Throughput': 797.59, // GFLOPS
+          'Dataflow-Throughput': 2163.43, // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 156.0,
-          'Dataflow-Time(s)': 98.0,
-          'Baseline-Throughput': 210, // GFLOPS
-          'Dataflow-Throughput': 345  // GFLOPS
+          'Baseline-Time(s)': 322.17 ,
+          'Dataflow-Time(s)': 115.81,
+          'Baseline-Throughput': 173.96, // GFLOPS
+          'Dataflow-Throughput': 327.78  // GFLOPS
         }
       ],
       4: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 363.07,
-          'Dataflow-Time(s)': 81.17,
-          'Baseline-Throughput': 17.98, // GFLOPS
-          'Dataflow-Throughput': 64.58, // GFLOPS
+          'Baseline-Time(s)': 390.12,
+          'Dataflow-Time(s)': 133.97,
+          'Baseline-Throughput': 1052.73, // GFLOPS
+          'Dataflow-Throughput': 3524.31, // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 78.0,
-          'Dataflow-Time(s)': 49.0,
-          'Baseline-Throughput': 420, // GFLOPS
-          'Dataflow-Throughput': 690  // GFLOPS
+          'Baseline-Time(s)': 352.74,
+          'Dataflow-Time(s)': 71.83,
+          'Baseline-Throughput': 284.94, // GFLOPS
+          'Dataflow-Throughput': 534.07  // GFLOPS
         }
       ],
       8: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 181.54,
-          'Dataflow-Time(s)': 40.59,
-          'Baseline-Throughput': 335.96, // GFLOPS
-          'Dataflow-Throughput': 729.16, // GFLOPS
+          'Baseline-Time(s)': 448.53,
+          'Dataflow-Time(s)': 128.07,
+          'Baseline-Throughput': 1069.68, // GFLOPS
+          'Dataflow-Throughput': 4434.44 , // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 39.0,
-          'Dataflow-Time(s)': 24.5,
-          'Baseline-Throughput': 284, // GFLOPS
-          'Dataflow-Throughput': 838  // GFLOPS
+          'Baseline-Time(s)': 615.99,
+          'Dataflow-Time(s)': 73.58,
+          'Baseline-Throughput': 289.62, // GFLOPS
+          'Dataflow-Throughput': 516.97  // GFLOPS
         }
       ]
     },
+
+    'DSA': {
+      1: [
+        {
+          'Dataset': 'ImageNet',
+          'Baseline-Time(s)': 1350.0834,
+          'Dataflow-Time(s)': 796.9242,
+          'Baseline-Throughput': 383.59, // GFLOPS
+          'Dataflow-Throughput': 761.56  // GFLOPS
+        },
+        {
+          'Dataset': 'DriveSeg',
+          'Baseline-Time(s)': 1179.5193,
+          'Dataflow-Time(s)': 659.2081,
+          'Baseline-Throughput': 199.66, // GFLOPS
+          'Dataflow-Throughput': 510.1878  // GFLOPS
+        }
+      ],
+      2: [
+        {
+          'Dataset': 'ImageNet',
+          'Baseline-Time(s)': 847.2315,
+          'Dataflow-Time(s)': 510.2872,
+          'Baseline-Throughput': 657.57, // GFLOPS
+          'Dataflow-Throughput': 1429.8162  // GFLOPS
+        },
+        {
+          'Dataset': 'DriveSeg',
+          'Baseline-Time(s)': 1219.9593,
+          'Dataflow-Time(s)': 690.2182,
+          'Baseline-Throughput': 180.13, // GFLOPS
+          'Dataflow-Throughput': 470.1951  // GFLOPS
+        }
+      ],
+      4: [
+        {
+          'Dataset': 'ImageNet',
+          'Baseline-Time(s)': 620.0197,
+          'Dataflow-Time(s)': 343.8584,
+          'Baseline-Throughput': 973.75, // GFLOPS
+          'Dataflow-Throughput': 2742.6734  // GFLOPS
+        },
+        {
+          'Dataset': 'DriveSeg',
+          'Baseline-Time(s)': 1321.1231,
+          'Dataflow-Time(s)': 700.2182,
+          'Baseline-Throughput': 157.43, // GFLOPS
+          'Dataflow-Throughput': 430.5138  // GFLOPS
+        }
+      ],
+      8: [
+        {
+          'Dataset': 'ImageNet',
+          'Baseline-Time(s)': 512.0332,
+          'Dataflow-Time(s)': 241.6504,
+          'Baseline-Throughput': 1249.52, // GFLOPS
+          'Dataflow-Throughput': 4960.2964  // GFLOPS
+        },
+        {
+          'Dataset': 'DriveSeg',
+          'Baseline-Time(s)': 1479.6131,
+          'Dataflow-Time(s)': 740.4568,
+          'Baseline-Throughput': 140.85, // GFLOPS
+          'Dataflow-Throughput': 400.1234  // GFLOPS
+        }
+      ]
+    },
+    
     'FPGA': {
       1: [
         {
@@ -379,86 +449,21 @@ export const PERFORMANCE_DATA = {
       4: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 110.0,
-          'Dataflow-Time(s)': 72.0,
-          'Baseline-Throughput': 580, // GFLOPS
-          'Dataflow-Throughput': 880  // GFLOPS
+          'Baseline-Time(s)': 0.175,
+          'Dataflow-Time(s)': 0.088,
+          'Baseline-Throughput': 220.36, // GFLOPS
+          'Dataflow-Throughput': 421.34  // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 78.0,
-          'Dataflow-Time(s)': 52.0,
-          'Baseline-Throughput': 82, // GFLOPS
-          'Dataflow-Throughput': 165  // GFLOPS
+          'Baseline-Time(s)': 0.173,
+          'Dataflow-Time(s)': 0.093,
+          'Baseline-Throughput': 197.95, // GFLOPS
+          'Dataflow-Throughput': 401.28  // GFLOPS
         }
       ]
     },
-    'DSA': {
-      1: [
-        {
-          'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 440.0,
-          'Dataflow-Time(s)': 260.0,
-          'Baseline-Throughput': 145, // GFLOPS
-          'Dataflow-Throughput': 237.5  // GFLOPS
-        },
-        {
-          'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 312.0,
-          'Dataflow-Time(s)': 188.0,
-          'Baseline-Throughput': 105, // GFLOPS
-          'Dataflow-Throughput': 177.5  // GFLOPS
-        }
-      ],
-      2: [
-        {
-          'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 220.0,
-          'Dataflow-Time(s)': 130.0,
-          'Baseline-Throughput': 290, // GFLOPS
-          'Dataflow-Throughput': 475  // GFLOPS
-        },
-        {
-          'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 156.0,
-          'Dataflow-Time(s)': 94.0,
-          'Baseline-Throughput': 210, // GFLOPS
-          'Dataflow-Throughput': 355  // GFLOPS
-        }
-      ],
-      4: [
-        {
-          'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 110.0,
-          'Dataflow-Time(s)': 65.0,
-          'Baseline-Throughput': 580, // GFLOPS
-          'Dataflow-Throughput': 950  // GFLOPS
-        },
-        {
-          'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 78.0,
-          'Dataflow-Time(s)': 47.0,
-          'Baseline-Throughput': 420, // GFLOPS
-          'Dataflow-Throughput': 710  // GFLOPS
-        }
-      ],
-      8: [
-        {
-          'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 55.0,
-          'Dataflow-Time(s)': 32.5,
-          'Baseline-Throughput': 1160, // GFLOPS
-          'Dataflow-Throughput': 1900  // GFLOPS
-        },
-        {
-          'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 39.0,
-          'Dataflow-Time(s)': 23.5,
-          'Baseline-Throughput': 840, // GFLOPS
-          'Dataflow-Throughput': 1420  // GFLOPS
-        }
-      ]
-    }
+
   }
 };
 

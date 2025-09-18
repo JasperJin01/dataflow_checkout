@@ -1,0 +1,106 @@
+Current compile soc version is Ascend910B3
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_2_0/build
+[  2%] Creating directories for 'ascendc_kernels_npu_preprocess'
+[  5%] No download step for 'ascendc_kernels_npu_preprocess'
+[  8%] No update step for 'ascendc_kernels_npu_preprocess'
+[ 11%] No patch step for 'ascendc_kernels_npu_preprocess'
+[ 13%] Performing configure step for 'ascendc_kernels_npu_preprocess'
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_2_0/build/ascendc_kernels_npu_preprocess-prefix/src/ascendc_kernels_npu_preprocess-build
+[ 16%] Performing build step for 'ascendc_kernels_npu_preprocess'
+[100%] Building CXX object CMakeFiles/aiv_obj.dir/root/tmp/pagerank/PageRank_v_2_0/pagerank_custom.cpp.o
+[100%] Building CXX object CMakeFiles/aic_obj.dir/root/tmp/pagerank/PageRank_v_2_0/pagerank_custom.cpp.o
+[100%] Building CXX object CMakeFiles/preprocess_obj.dir/root/tmp/pagerank/PageRank_v_2_0/pagerank_custom.cpp.o
+[100%] Built target preprocess_obj
+[100%] Built target aic_obj
+[100%] Built target aiv_obj
+[100%] Built target _host_cpp
+[ 19%] No install step for 'ascendc_kernels_npu_preprocess'
+[ 22%] Completed 'ascendc_kernels_npu_preprocess'
+[ 22%] Built target ascendc_kernels_npu_preprocess
+[ 27%] Creating directories for 'ascendc_kernels_npu_aic_device'
+[ 27%] Creating directories for 'ascendc_kernels_npu_host'
+[ 30%] Creating directories for 'ascendc_kernels_npu_aiv_device'
+[ 36%] No download step for 'ascendc_kernels_npu_host'
+[ 36%] No download step for 'ascendc_kernels_npu_aic_device'
+[ 38%] No download step for 'ascendc_kernels_npu_aiv_device'
+[ 44%] No update step for 'ascendc_kernels_npu_aiv_device'
+[ 47%] No update step for 'ascendc_kernels_npu_host'
+[ 47%] No update step for 'ascendc_kernels_npu_aic_device'
+[ 55%] No patch step for 'ascendc_kernels_npu_aiv_device'
+[ 55%] No patch step for 'ascendc_kernels_npu_aic_device'
+[100%] Linking CXX executable ascendc_kernels_bbit
+[100%] Built target ascendc_kernels_bbit
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-19, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-20, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-21, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-22, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-29, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-30, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-31, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+================================ DATAFLOW METHOD =======================================
+		Graph: nodes:645820, edges:31361722
+		GTEPS: 0.082105
+		Total Cost: 67.054 seconds 
+================================ DATAFLOW METHOD =======================================
+2bcfef439ec51b8d2dbddfc00a9a49de  output/value.bin
+
+Printing top 20 node ids with their ranks
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.002135
+   2 |  330702 | 0.000838
+   3 |  326638 | 0.000831
+   4 |    9341 | 0.000829
+   5 |  426482 | 0.000828
+   6 |  101769 | 0.000825
+   7 |  139132 | 0.000824
+   8 |  544219 | 0.000823
+   9 |  194455 | 0.000823
+  10 |   34541 | 0.000820
+  11 |  261692 | 0.000817
+  12 |  141625 | 0.000807
+  13 |   64385 | 0.000799
+  14 |   36022 | 0.000798
+  15 |  433913 | 0.000784
+  16 |  199033 | 0.000783
+  17 |  530778 | 0.000782
+  18 |  254027 | 0.000780
+  19 |   97431 | 0.000778
+  20 |       2 | 0.000775

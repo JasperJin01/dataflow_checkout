@@ -35,9 +35,9 @@ Current compile soc version is Ascend910B3
 -- Generating done
 -- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_preprocess-prefix/src/ascendc_kernels_npu_preprocess-build
 [ 16%] Performing build step for 'ascendc_kernels_npu_preprocess'
+[ 33%] Building CXX object CMakeFiles/preprocess_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
+[ 66%] Building CXX object CMakeFiles/aic_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
 [100%] Building CXX object CMakeFiles/aiv_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
-[100%] Building CXX object CMakeFiles/preprocess_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
-[100%] Building CXX object CMakeFiles/aic_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
 [100%] Built target preprocess_obj
 [100%] Built target aic_obj
 [100%] Built target aiv_obj
@@ -45,21 +45,21 @@ Current compile soc version is Ascend910B3
 [ 19%] No install step for 'ascendc_kernels_npu_preprocess'
 [ 22%] Completed 'ascendc_kernels_npu_preprocess'
 [ 22%] Built target ascendc_kernels_npu_preprocess
-[ 30%] Creating directories for 'ascendc_kernels_npu_host'
-[ 30%] Creating directories for 'ascendc_kernels_npu_aic_device'
+[ 25%] Creating directories for 'ascendc_kernels_npu_aic_device'
+[ 27%] Creating directories for 'ascendc_kernels_npu_host'
 [ 30%] Creating directories for 'ascendc_kernels_npu_aiv_device'
-[ 38%] No download step for 'ascendc_kernels_npu_aic_device'
+[ 36%] No download step for 'ascendc_kernels_npu_aic_device'
+[ 36%] No download step for 'ascendc_kernels_npu_host'
 [ 38%] No download step for 'ascendc_kernels_npu_aiv_device'
-[ 38%] No download step for 'ascendc_kernels_npu_host'
+[ 41%] No update step for 'ascendc_kernels_npu_aiv_device'
 [ 47%] No update step for 'ascendc_kernels_npu_aic_device'
-[ 47%] No update step for 'ascendc_kernels_npu_aiv_device'
 [ 47%] No update step for 'ascendc_kernels_npu_host'
 [ 55%] No patch step for 'ascendc_kernels_npu_aiv_device'
-[ 55%] No patch step for 'ascendc_kernels_npu_aic_device'
 [ 55%] No patch step for 'ascendc_kernels_npu_host'
-[ 63%] Performing configure step for 'ascendc_kernels_npu_host'
-[ 63%] Performing configure step for 'ascendc_kernels_npu_aiv_device'
+[ 55%] No patch step for 'ascendc_kernels_npu_aic_device'
 [ 63%] Performing configure step for 'ascendc_kernels_npu_aic_device'
+[ 63%] Performing configure step for 'ascendc_kernels_npu_aiv_device'
+[ 63%] Performing configure step for 'ascendc_kernels_npu_host'
 -- The C compiler identification is GNU 10.3.1
 -- The C compiler identification is GNU 10.3.1
 -- The C compiler identification is GNU 10.3.1
@@ -74,43 +74,43 @@ Current compile soc version is Ascend910B3
 -- Detecting C compiler ABI info - done
 -- Check for working C compiler: /usr/bin/cc - skipped
 -- Detecting C compile features
+-- Detecting C compile features - done
 -- Check for working C compiler: /usr/bin/cc - skipped
 -- Detecting C compile features
--- Detecting C compile features - done
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info
 -- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features - done
 -- Detecting C compile features
 -- Detecting C compile features - done
 -- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
 -- Detecting CXX compiler ABI info - done
 -- Detecting CXX compiler ABI info - done
 -- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compiler ABI info - done
--- Detecting CXX compile features
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features - done
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Configuring done
--- Configuring done
--- Generating done
--- Generating done
--- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_host-prefix/src/ascendc_kernels_npu_host-build
--- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aiv_device-prefix/src/ascendc_kernels_npu_aiv_device-build
 -- Check for working CXX compiler: /usr/bin/c++ - skipped
 -- Detecting CXX compile features
+-- Detecting CXX compile features
 -- Detecting CXX compile features - done
+-- Detecting CXX compile features - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
 -- Configuring done
+-- Configuring done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
 -- Generating done
 -- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aic_device-prefix/src/ascendc_kernels_npu_aic_device-build
-[ 66%] Performing build step for 'ascendc_kernels_npu_host'
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aiv_device-prefix/src/ascendc_kernels_npu_aiv_device-build
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_host-prefix/src/ascendc_kernels_npu_host-build
 [ 69%] Performing build step for 'ascendc_kernels_npu_aiv_device'
-[ 72%] Performing build step for 'ascendc_kernels_npu_aic_device'
+[ 69%] Performing build step for 'ascendc_kernels_npu_aic_device'
+[ 72%] Performing build step for 'ascendc_kernels_npu_host'
+[ 75%] No install step for 'ascendc_kernels_npu_aic_device'
 [100%] Building CXX object CMakeFiles/device_aiv_obj.dir/root/tmp/pagerank/PageRank_v_3_0/build/auto_gen/ascendc_kernels_npu/auto_gen_pagerank_custom.cpp.o
 [100%] Building CXX object CMakeFiles/host_bisheng_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
-[ 75%] No install step for 'ascendc_kernels_npu_aic_device'
 [ 77%] Completed 'ascendc_kernels_npu_aic_device'
 [ 77%] Built target ascendc_kernels_npu_aic_device
 [100%] Built target host_bisheng_obj
@@ -152,7 +152,7 @@ recompile: /usr/bin/c++ -fPIC -g -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack -sha
 -- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_aggregate_msg_split.h
 -- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_aggregate_msg.h
 -- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/bin/ascendc_kernels_bbit
-Graph: nodes:645820, edges:31361722
+Graph: nodes:335318, edges:15459350
 opType=compute_msg, DumpHead: AIV-0, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048408, block_initial_space=1048576, rsv=0, magic=5aa5bccd
 CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
 Compute Message ...
@@ -6004,30 +6004,30 @@ CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
 opType=reset_value, DumpHead: AIV-31, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
 CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
 ================================ DATAFLOW METHOD =======================================
-		Graph: nodes:645820, edges:31361722
-		GTEPS: 0.075041
-		Total Cost: 72.351 seconds 
+		Graph: nodes:335318, edges:15459350
+		GTEPS: 0.052945
+		Total Cost: 37.789 seconds 
 ================================ DATAFLOW METHOD =======================================
-4f9a72d4f2ab5cab8371802b8a46dd9c  output/value.bin
+04ecd3fb84b8063ea78c2e235bc16c99  output/value.bin
 Rank | Node ID | Score
 ------------------------------
-   1 |       1 | 0.004184
-   2 |  330702 | 0.001640
-   3 |  326638 | 0.001625
-   4 |    9341 | 0.001622
-   5 |  426482 | 0.001618
-   6 |  101769 | 0.001614
-   7 |  139132 | 0.001611
-   8 |  544219 | 0.001610
-   9 |  194455 | 0.001609
-  10 |   34541 | 0.001604
-  11 |  261692 | 0.001598
-  12 |  141625 | 0.001578
-  13 |   64385 | 0.001561
-  14 |   36022 | 0.001561
-  15 |  433913 | 0.001532
-  16 |  199033 | 0.001530
-  17 |  530778 | 0.001528
-  18 |  254027 | 0.001525
-  19 |   97431 | 0.001521
-  20 |       2 | 0.001515
+   1 |       1 | 0.005250
+   2 |  120991 | 0.002109
+   3 |    2259 | 0.002084
+   4 |  170570 | 0.002072
+   5 |  289915 | 0.002071
+   6 |  302985 | 0.002063
+   7 |   21751 | 0.002063
+   8 |  118851 | 0.002063
+   9 |   84954 | 0.002062
+  10 |  232019 | 0.002051
+  11 |   50099 | 0.002039
+  12 |   23044 | 0.002035
+  13 |  318268 | 0.002034
+  14 |  319671 | 0.002027
+  15 |  303790 | 0.002006
+  16 |  174501 | 0.001961
+  17 |   80958 | 0.001935
+  18 |       2 | 0.001934
+  19 |   52496 | 0.001930
+  20 |  224968 | 0.001923

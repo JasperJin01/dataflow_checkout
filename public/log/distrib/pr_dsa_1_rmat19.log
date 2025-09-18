@@ -1,0 +1,249 @@
+Current compile soc version is Ascend910B3
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_2_0/build
+[  2%] Creating directories for 'ascendc_kernels_npu_preprocess'
+[  5%] No download step for 'ascendc_kernels_npu_preprocess'
+[  8%] No update step for 'ascendc_kernels_npu_preprocess'
+[ 11%] No patch step for 'ascendc_kernels_npu_preprocess'
+[ 13%] Performing configure step for 'ascendc_kernels_npu_preprocess'
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_2_0/build/ascendc_kernels_npu_preprocess-prefix/src/ascendc_kernels_npu_preprocess-build
+[ 16%] Performing build step for 'ascendc_kernels_npu_preprocess'
+[ 33%] Building CXX object CMakeFiles/aic_obj.dir/root/tmp/pagerank/PageRank_v_2_0/pagerank_custom.cpp.o
+[100%] Building CXX object CMakeFiles/aiv_obj.dir/root/tmp/pagerank/PageRank_v_2_0/pagerank_custom.cpp.o
+[100%] Building CXX object CMakeFiles/preprocess_obj.dir/root/tmp/pagerank/PageRank_v_2_0/pagerank_custom.cpp.o
+[100%] Built target preprocess_obj
+[100%] Built target aic_obj
+[100%] Built target aiv_obj
+[100%] Built target _host_cpp
+[ 19%] No install step for 'ascendc_kernels_npu_preprocess'
+[ 22%] Completed 'ascendc_kernels_npu_preprocess'
+[ 22%] Built target ascendc_kernels_npu_preprocess
+[ 25%] Creating directories for 'ascendc_kernels_npu_aic_device'
+[ 27%] Creating directories for 'ascendc_kernels_npu_host'
+[ 30%] Creating directories for 'ascendc_kernels_npu_aiv_device'
+[ 36%] No download step for 'ascendc_kernels_npu_aiv_device'
+[ 36%] No download step for 'ascendc_kernels_npu_aic_device'
+[ 38%] No download step for 'ascendc_kernels_npu_host'
+[ 47%] No update step for 'ascendc_kernels_npu_host'
+[ 47%] No update step for 'ascendc_kernels_npu_aiv_device'
+[ 47%] No update step for 'ascendc_kernels_npu_aic_device'
+[ 55%] No patch step for 'ascendc_kernels_npu_aic_device'
+[ 55%] No patch step for 'ascendc_kernels_npu_host'
+[ 55%] No patch step for 'ascendc_kernels_npu_aiv_device'
+[100%] Built target ascendc_kernels_bbit
+opType=reset_value, DumpHead: AIV-25, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-26, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-27, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-28, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-29, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-30, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-31, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-0, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048408, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+Compute Message ...
+opType=compute_msg, DumpHead: AIV-1, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-2, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-3, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-4, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-5, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-6, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-7, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-8, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-9, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-10, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-11, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-12, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-13, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-14, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-15, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-16, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-17, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-18, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-19, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-20, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-21, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-22, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-23, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-24, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-25, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-26, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-27, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-28, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-29, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-30, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-31, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-0, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048408, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+Aggregate Message ...
+opType=aggregate_msg_split, DumpHead: AIV-1, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-2, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-3, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-4, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-5, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-6, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-7, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-8, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-9, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-10, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-11, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-12, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-13, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-14, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-15, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-16, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-17, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-18, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-19, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-20, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-21, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-22, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-23, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-24, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-25, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-26, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=aggregate_msg_split, DumpHead: AIV-27, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+opType=reset_value, DumpHead: AIV-20, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-21, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-22, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-23, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-24, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-25, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-26, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-27, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-28, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-29, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-30, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=reset_value, DumpHead: AIV-31, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+================================ DATAFLOW METHOD =======================================
+		Graph: nodes:335318, edges:15459350
+		GTEPS: 0.061618
+		Total Cost: 35.695 seconds 
+================================ DATAFLOW METHOD =======================================
+6a6b9770786546b6ba3493331b5e67b2  output/value.bin
+
+Printing top 20 node ids with their ranks
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.002684
+   2 |  120991 | 0.001080
+   3 |    2259 | 0.001068
+   4 |  170570 | 0.001062
+   5 |  289915 | 0.001061
+   6 |  302985 | 0.001058
+   7 |   21751 | 0.001058
+   8 |  118851 | 0.001057
+   9 |   84954 | 0.001057
+  10 |  232019 | 0.001051
+  11 |   50099 | 0.001045
+  12 |  318268 | 0.001043
+  13 |   23044 | 0.001042
+  14 |  319671 | 0.001039
+  15 |  303790 | 0.001028
+  16 |  174501 | 0.001005
+  17 |   80958 | 0.000992
+  18 |       2 | 0.000992
+  19 |   52496 | 0.000990
+  20 |  224968 | 0.000986

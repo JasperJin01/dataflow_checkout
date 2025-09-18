@@ -182,16 +182,16 @@ const FlowDiagram = ({ onModuleClick, onModuleHover, imageSrc = '/dataflow/overa
           }}
         />
         {hoveredModule && (
-          <Typography variant="h5" color="primary" sx={{ mt: 1 }}>
+          <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
             {hoveredModule}
           </Typography>
         )}
         {/* 鼠标位置、缩放、原始坐标，用于调试 */}
-        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+        {/* <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
           鼠标位置: ({mousePosition.x.toFixed(0)}, {mousePosition.y.toFixed(0)}) 
           缩放: ({scaleFactor.scaleX.toFixed(2)}, {scaleFactor.scaleY.toFixed(2)}) 
           原始坐标: ({mousePosition.originalX?.toFixed(1) || 0}, {mousePosition.originalY?.toFixed(1) || 0})
-        </Typography>
+        </Typography> */}
       </Box>
     </Paper>
   );

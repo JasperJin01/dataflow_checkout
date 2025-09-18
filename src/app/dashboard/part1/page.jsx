@@ -12,10 +12,31 @@ const algorithms = ['PageRank', 'ViT'];
 const platforms = ['CPU', 'GPU', 'FPGA', 'DSA'];
 const allDatasetsOption = 'all-datasets';
 
-// 不同算法对应的数据集
+// 不同算法对应的数据集（保留兼容性）
 const datasetsByAlgorithm = {
   'PageRank': ['Rmat-16', 'Rmat-18', 'Rmat-20'],
   'ViT': ['ImageNet', 'DriveSeg']
+};
+
+// 不同算法-平台组合对应的数据集
+const datasetsByAlgorithmAndPlatform = {
+  'PageRank': {
+    'CPU': ['Rmat-16', 'Rmat-18', 'Rmat-20'],
+    'GPU': ['Rmat-18', 'Rmat-19', 'Rmat-20'],
+    'FPGA': ['Rmat-16', 'Rmat-18', 'Rmat-20'],
+    'DSA': ['Rmat-18', 'Rmat-19', 'Rmat-20']
+  },
+  'ViT': {
+    'CPU': ['ImageNet', 'DriveSeg'],
+    'GPU': ['ImageNet', 'DriveSeg'],
+    'FPGA': ['ImageNet', 'DriveSeg'],
+    'DSA': ['ImageNet', 'DriveSeg']
+  }
+};
+
+// 获取当前算法-平台组合的可用数据集
+const getAvailableDatasets = (algorithm, platform) => {
+  return datasetsByAlgorithmAndPlatform[algorithm]?.[platform] || [];
 };
 
 // 算法详情、数据集信息和工具函数已从 ./info 导入
@@ -23,7 +44,7 @@ const datasetsByAlgorithm = {
 export default function Page() {
   const [selectedAlgo, setSelectedAlgo] = useState(algorithms[0]);
   const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
-  const [selectedDataset, setSelectedDataset] = useState(datasetsByAlgorithm[algorithms[0]][0]);
+  const [selectedDataset, setSelectedDataset] = useState(getAvailableDatasets(algorithms[0], platforms[0])[0]);
   // 控制标签页切换
   const [prTabValue, setPrTabValue] = useState(0);
   const [vitTabValue, setVitTabValue] = useState(0);
@@ -40,6 +61,13 @@ export default function Page() {
   const scrollToBottom = () => {
     if (logBoxRef.current) {
       logBoxRef.current.scrollTop = logBoxRef.current.scrollHeight;
+    }
+  };
+
+  // 滚动到性能对比区域
+  const scrollToPerformance = () => {
+    if (performanceRef.current) {
+      performanceRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -67,7 +95,7 @@ export default function Page() {
       const platformUrl = URL_MAPS.platform[platform];
       
       // 构建日志文件路径
-      const logFilePath = `/log/single/${algoUrl}_${datasetUrl}_${platformUrl}.log`;
+      const logFilePath = `/log/single/${algoUrl}_${platformUrl}_${datasetUrl}.log`;
       console.log(logFilePath);
       
       // 读取日志文件
@@ -104,6 +132,9 @@ export default function Page() {
         // 生成性能数据并更新
         const performanceEntry = generatePerformanceData(algorithm, dataset, platform);
         updatePerformanceData(performanceEntry);
+        
+        // 执行完成后滚动到性能对比区域
+        setTimeout(() => scrollToPerformance(), 500);
       }, logLines.length * 100 + 500);
       
     } catch (error) {
@@ -220,8 +251,8 @@ export default function Page() {
       if (selectedDataset === allDatasetsOption) {
         setLogs(['正在加载全部数据集...']);
         
-        // 获取当前选中算法的所有数据集
-        const datasetsToProcess = datasetsByAlgorithm[selectedAlgo];
+        // 获取当前选中算法-平台组合的所有数据集
+        const datasetsToProcess = getAvailableDatasets(selectedAlgo, selectedPlatform);
         
         // 依次处理每个数据集
         for (const dataset of datasetsToProcess) {
@@ -282,6 +313,9 @@ export default function Page() {
               const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform);
               updatePerformanceData(performanceEntry);
               
+              // 执行完成后滚动到性能对比区域
+              setTimeout(() => scrollToPerformance(), 500);
+              
             } catch (error) {
               setLogs(prev => [...prev, `❌ 获取结果失败: ${error.message}`]);
               setRunning(false);
@@ -334,7 +368,15 @@ export default function Page() {
             <Select
               fullWidth
               value={selectedPlatform}
-              onChange={(e) => setSelectedPlatform(e.target.value)}
+              onChange={(e) => {
+                const newPlatform = e.target.value;
+                setSelectedPlatform(newPlatform);
+                // 重置数据集选择为新平台-算法组合的第一个可用数据集
+                const availableDatasets = getAvailableDatasets(selectedAlgo, newPlatform);
+                if (availableDatasets.length > 0) {
+                  setSelectedDataset(availableDatasets[0]);
+                }
+              }}
               sx={{ mb: 2 }}
             >
               {platforms.map(platform => (
@@ -351,8 +393,11 @@ export default function Page() {
               onChange={(e) => {
                 const newAlgo = e.target.value;
                 setSelectedAlgo(newAlgo);
-                // 重置数据集选择为新算法的第一个可用数据集
-                setSelectedDataset(datasetsByAlgorithm[newAlgo][0]);
+                // 重置数据集选择为新算法-平台组合的第一个可用数据集
+                const availableDatasets = getAvailableDatasets(newAlgo, selectedPlatform);
+                if (availableDatasets.length > 0) {
+                  setSelectedDataset(availableDatasets[0]);
+                }
               }}
               sx={{ mb: 2 }}
             >
@@ -370,7 +415,7 @@ export default function Page() {
               onChange={(e) => setSelectedDataset(e.target.value)}
               sx={{ mb: 2 }}
             >
-              {datasetsByAlgorithm[selectedAlgo].map(ds => (
+              {getAvailableDatasets(selectedAlgo, selectedPlatform).map(ds => (
                 <MenuItem key={ds} value={ds}>{ds}</MenuItem>
               ))}
               <MenuItem value={allDatasetsOption}>全部数据集</MenuItem>
@@ -465,7 +510,7 @@ export default function Page() {
               </Typography>
               {selectedDataset === allDatasetsOption ? (
                 <Box>
-                  {datasetsByAlgorithm[selectedAlgo].map(ds => (
+                  {getAvailableDatasets(selectedAlgo, selectedPlatform).map(ds => (
                     <Box key={ds} sx={{ mb: 2 }}>
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                         <strong>{ds}:</strong>

@@ -217,6 +217,9 @@ export default function Page() {
         // 生成性能数据并更新
         const performanceEntry = generatePerformanceData(algorithm, dataset, platform, selectedCardCount);
         updatePerformanceData(performanceEntry);
+        
+        // 执行完成后滚动到性能对比区域
+        setTimeout(() => scrollToPerformance(), 500);
       }, logLines.length * 100 + 500);
       
     } catch (error) {
@@ -322,6 +325,9 @@ export default function Page() {
             
             const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform, selectedCardCount);
             updatePerformanceData(performanceEntry);
+            
+            // 执行完成后滚动到性能对比区域
+            setTimeout(() => scrollToPerformance(), 500);
             
             // setLogs(prev => [...prev, `正在拷贝 ${selectedDataset} 的result...`]);
             

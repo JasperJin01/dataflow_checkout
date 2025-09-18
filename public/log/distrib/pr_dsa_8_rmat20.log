@@ -1,0 +1,228 @@
+Current compile soc version is Ascend910B3
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build
+[  2%] Creating directories for 'ascendc_kernels_npu_preprocess'
+[  5%] No download step for 'ascendc_kernels_npu_preprocess'
+[  8%] No update step for 'ascendc_kernels_npu_preprocess'
+[ 11%] No patch step for 'ascendc_kernels_npu_preprocess'
+[ 13%] Performing configure step for 'ascendc_kernels_npu_preprocess'
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_preprocess-prefix/src/ascendc_kernels_npu_preprocess-build
+[ 16%] Performing build step for 'ascendc_kernels_npu_preprocess'
+[100%] Building CXX object CMakeFiles/aiv_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
+[100%] Building CXX object CMakeFiles/aic_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
+[100%] Building CXX object CMakeFiles/preprocess_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
+[100%] Built target preprocess_obj
+[100%] Built target aic_obj
+[100%] Built target aiv_obj
+[100%] Built target _host_cpp
+[ 19%] No install step for 'ascendc_kernels_npu_preprocess'
+[ 22%] Completed 'ascendc_kernels_npu_preprocess'
+[ 22%] Built target ascendc_kernels_npu_preprocess
+[ 30%] Creating directories for 'ascendc_kernels_npu_host'
+[ 30%] Creating directories for 'ascendc_kernels_npu_aic_device'
+[ 30%] Creating directories for 'ascendc_kernels_npu_aiv_device'
+[ 36%] No download step for 'ascendc_kernels_npu_host'
+[ 36%] No download step for 'ascendc_kernels_npu_aiv_device'
+[ 38%] No download step for 'ascendc_kernels_npu_aic_device'
+[ 47%] No update step for 'ascendc_kernels_npu_aic_device'
+[ 47%] No update step for 'ascendc_kernels_npu_aiv_device'
+[ 47%] No update step for 'ascendc_kernels_npu_host'
+[ 52%] No patch step for 'ascendc_kernels_npu_host'
+[ 52%] No patch step for 'ascendc_kernels_npu_aiv_device'
+[ 55%] No patch step for 'ascendc_kernels_npu_aic_device'
+[ 63%] Performing configure step for 'ascendc_kernels_npu_aiv_device'
+[ 63%] Performing configure step for 'ascendc_kernels_npu_aic_device'
+[ 63%] Performing configure step for 'ascendc_kernels_npu_host'
+-- The C compiler identification is GNU 10.3.1
+-- The C compiler identification is GNU 10.3.1
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compiler ABI info - done
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting CXX compile features - done
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Configuring done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aic_device-prefix/src/ascendc_kernels_npu_aic_device-build
+-- Generating done
+-- Generating done
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_host-prefix/src/ascendc_kernels_npu_host-build
+-- Build files have been written to: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aiv_device-prefix/src/ascendc_kernels_npu_aiv_device-build
+[ 72%] Performing build step for 'ascendc_kernels_npu_host'
+[ 72%] Performing build step for 'ascendc_kernels_npu_aiv_device'
+[ 72%] Performing build step for 'ascendc_kernels_npu_aic_device'
+[ 75%] No install step for 'ascendc_kernels_npu_aic_device'
+[100%] Building CXX object CMakeFiles/device_aiv_obj.dir/root/tmp/pagerank/PageRank_v_3_0/build/auto_gen/ascendc_kernels_npu/auto_gen_pagerank_custom.cpp.o
+[100%] Building CXX object CMakeFiles/host_bisheng_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
+[ 77%] Completed 'ascendc_kernels_npu_aic_device'
+[ 77%] Built target ascendc_kernels_npu_aic_device
+[100%] Built target host_bisheng_obj
+[ 80%] Performing install step for 'ascendc_kernels_npu_host'
+Consolidate compiler generated dependencies of target host_bisheng_obj
+[100%] Building CXX object CMakeFiles/host_bisheng_obj.dir/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
+[100%] Built target host_bisheng_obj
+Install the project...
+-- Install configuration: "Debug"
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_host_dir/./objects-Debug/host_bisheng_obj/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o
+[ 83%] Completed 'ascendc_kernels_npu_host'
+[ 83%] Built target ascendc_kernels_npu_host
+[100%] Built target device_aiv_obj
+/usr/local/Ascend/ascend-toolkit/latest/tools/ccec_compiler/bin/ld.lld  -m aicorelinux -r  -Ttext=0 /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aiv_device-prefix/src/ascendc_kernels_npu_aiv_device-build/CMakeFiles/device_aiv_obj.dir/root/tmp/pagerank/PageRank_v_3_0/build/auto_gen/ascendc_kernels_npu/auto_gen_pagerank_custom.cpp.o -static -o /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aiv_device_dir/device_aiv.o
+[100%] Built target merge_aiv_device_obj
+[ 86%] No install step for 'ascendc_kernels_npu_aiv_device'
+[ 88%] Completed 'ascendc_kernels_npu_aiv_device'
+[ 88%] Built target ascendc_kernels_npu_aiv_device
+/usr/local/Ascend/ascend-toolkit/latest/tools/ccec_compiler/bin/ld.lld  -m aicorelinux   -Ttext=0 /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_aiv_device_dir/device_aiv.o -static -o /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_merge_obj_dir/device_aiv.o
+[ 88%] Built target ascendc_kernels_npu_merge_obj
+[ 91%] Building CXX object CMakeFiles/ascendc_kernels_npu_host_stub_obj.dir/auto_gen/ascendc_kernels_npu/host_stub.cpp.o
+[ 91%] Built target ascendc_kernels_npu_host_stub_obj
+[ 94%] Linking CXX shared library lib/libascendc_kernels_npu.so
+/usr/local/Ascend/ascend-toolkit/latest/bin/ascendc_pack_kernel /root/tmp/pagerank/PageRank_v_3_0/build/CMakeFiles/ascendc_kernels_npu_host_stub_obj.dir/auto_gen/ascendc_kernels_npu/host_stub.cpp.o /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_merge_obj_dir/device_aiv.o 1 /root/tmp/pagerank/PageRank_v_3_0/build/CMakeFiles/ascendc_kernels_npu_host_stub_obj.dir/auto_gen/ascendc_kernels_npu/host_stub.cpp.o
+recompile: /usr/bin/c++ -fPIC -g -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack -shared -Wl,-soname,libascendc_kernels_npu.so -o lib/libascendc_kernels_npu.so CMakeFiles/ascendc_kernels_npu_host_stub_obj.dir/auto_gen/ascendc_kernels_npu/host_stub.cpp.o /root/tmp/pagerank/PageRank_v_3_0/build/ascendc_kernels_npu_host_dir/objects-Debug/host_bisheng_obj/root/tmp/pagerank/PageRank_v_3_0/pagerank_custom.cpp.o    -L/usr/local/Ascend/ascend-toolkit/latest/lib64  -L/usr/local/Ascend/ascend-toolkit/latest/tools/simulator/Ascend910B3/lib  /usr/local/Ascend/ascend-toolkit/latest/lib64/libascendc_runtime.a -lascend_dump -lc_sec
+[ 94%] Built target ascendc_kernels_npu
+[ 97%] Building CXX object CMakeFiles/ascendc_kernels_bbit.dir/main.cpp.o
+[100%] Linking CXX executable ascendc_kernels_bbit
+[100%] Built target ascendc_kernels_bbit
+-- Install configuration: "Debug"
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/lib64/libascendc_kernels_npu.so
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_kernelTmp.h
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_foo_float.h
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_triple_chevrons_func.h
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_reset_value.h
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_compute_msg.h
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_aggregate_msg_split.h
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/include/ascendc_kernels_npu/aclrtlaunch_aggregate_msg.h
+-- Installing: /root/tmp/pagerank/PageRank_v_3_0/out/bin/ascendc_kernels_bbit
+Graph: nodes:645820, edges:31361722
+opType=compute_msg, DumpHead: AIV-0, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048408, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+Compute Message ...
+opType=compute_msg, DumpHead: AIV-1, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-2, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-3, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-4, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-5, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-6, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-7, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-8, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-9, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-10, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-11, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-12, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-13, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-14, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-15, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-16, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-17, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-18, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-19, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-20, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+opType=compute_msg, DumpHead: AIV-21, CoreType=AIV, block dim=32, total_block_num=32, block_remain_len=1048448, block_initial_space=1048576, rsv=0, magic=5aa5bccd
+CANN Version: 8.0.RC3, TimeStamp: 20241026152044625
+================================ DATAFLOW METHOD =======================================
+		Graph: nodes:645820, edges:31361722
+		GTEPS: 0.037729
+		Total Cost: 83.413 seconds 
+================================ DATAFLOW METHOD =======================================
+f1157e58564cc30b450cf30b658dcdd8  output/value.bin
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.016260
+   2 |  330702 | 0.006358
+   3 |  326638 | 0.006296
+   4 |    9341 | 0.006286
+   5 |  426482 | 0.006271
+   6 |  101769 | 0.006254
+   7 |  139132 | 0.006242
+   8 |  544219 | 0.006240
+   9 |  194455 | 0.006234
+  10 |   34541 | 0.006215
+  11 |  261692 | 0.006194
+  12 |  141625 | 0.006117
+  13 |   36022 | 0.006052
+  14 |   64385 | 0.006047
+  15 |  433913 | 0.005936
+  16 |  199033 | 0.005927
+  17 |  530778 | 0.005916
+  18 |  254027 | 0.005903
+  19 |   97431 | 0.005886
+  20 |       2 | 0.005865

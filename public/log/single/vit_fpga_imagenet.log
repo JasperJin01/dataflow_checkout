@@ -1,0 +1,60 @@
+jinjm@ubuntu86:~/Documents/ViT-Accelerator/host/build$ ./bin/vit -d 1 -m ../vit.gguf -i ../tench.jpg
+main: seed = 1757637410
+[device 1 info] Name: xilinx_u280_gen3x16_xdma_base_1
+[device 1 info] BDF: 0000:b1:00.1
+Loaded xclbin: /home/jinjm/Documents/hls_source-1/vit_accel_hw.xclbin
+vit_model_load: loading model from '../vit.gguf' - please wait
+vit_model_load: hidden_size            = 192
+vit_model_load: num_hidden_layers      = 12
+vit_model_load: num_attention_heads    = 3
+vit_model_load: patch_size             = 16
+vit_model_load: ftype                  = 1
+vit_model_load: qntvr                  = 0
+operator(): ggml ctx size =  11.13 MB
+vit_model_load: ................... donejinjm@ubuntu86:~/Documents/ViT-Accelerator/host/build$ ./bin/vit -d 1 -m ../vit.gguf -i ../tench.jpg
+main: seed = 1757637410
+[device 1 info] Name: xilinx_u280_gen3x16_xdma_base_1
+[device 1 info] BDF: 0000:b1:00.1
+Loaded xclbin: /home/jinjm/Documents/hls_source-1/vit_accel_hw.xclbin
+vit_model_load: loading model from '../vit.gguf' - please wait
+vit_model_load: hidden_size            = 192
+vit_model_load: num_hidden_layers      = 12
+vit_model_load: num_attention_heads    = 3
+vit_model_load: patch_size             = 16
+vit_model_load: ftype                  = 1
+vit_model_load: qntvr                  = 0
+operator(): ggml ctx size =  11.13 MB
+vit_model_load: ................... done
+vit_model_load: model size =    11.04 MB / num tensors = 152
+
+FPGA Kernel Execution time: 111.9 ms | GFLOPS: 87.5782
+FPGA Kernel Execution time: 118.6 ms | GFLOPS: 82.6307
+FPGA Kernel Execution time: 41.7 ms | GFLOPS: 235.012
+FPGA Kernel Execution time: 209.9 ms | GFLOPS: 46.6889
+FPGA Kernel Execution time: 32.5 ms | GFLOPS: 301.538
+FPGA Kernel Execution time: 31.5 ms | GFLOPS: 311.111
+FPGA Kernel Execution time: 32.5 ms | GFLOPS: 301.538
+FPGA Kernel Execution time: 32 ms | GFLOPS: 306.25
+FPGA Kernel Execution time: 32.6 ms | GFLOPS: 300.613
+FPGA Kernel Execution time: 149.4 ms | GFLOPS: 65.5957
+FPGA Kernel Execution time: 132.5 ms | GFLOPS: 73.9623
+FPGA Kernel Execution time: 131.3 ms | GFLOPS: 74.6382
+FPGA Kernel Execution time: 111.9 ms | GFLOPS: 87.5782
+FPGA Kernel Execution time: 118.6 ms | GFLOPS: 82.6307
+FPGA Kernel Execution time: 41.7 ms | GFLOPS: 235.012
+FPGA Kernel Execution time: 209.9 ms | GFLOPS: 46.6889
+FPGA Kernel Execution time: 32.5 ms | GFLOPS: 301.538
+FPGA Kernel Execution time: 31.5 ms | GFLOPS: 311.111
+FPGA Kernel Execution time: 32.5 ms | GFLOPS: 301.538
+FPGA Kernel Execution time: 32 ms | GFLOPS: 306.25
+FPGA Kernel Execution time: 32.6 ms | GFLOPS: 300.613
+FPGA Kernel Execution time: 149.4 ms | GFLOPS: 65.5957
+FPGA Kernel Execution time: 132.5 ms | GFLOPS: 73.9623
+FPGA Kernel Execution time: 131.3 ms | GFLOPS: 74.6382
+
+================================ DATAFLOW METHOD =======================================
+        Total inference time    =  12243.68 ms
+        Total runs batch        =      120
+        FPGA Kernel avg time    =    88.03 ms
+        Avg GFLOPS              =   111.32
+================================ DATAFLOW METHOD =======================================

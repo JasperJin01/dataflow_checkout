@@ -1,0 +1,27 @@
+ CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.launch --nproc_per_node=1 --master_port='12345' --use_env train_multi_gpu.py
+| distributed init (rank 0): env://
+Namespace(batch_size=256, data_path='/gemini/code/Mini-ImageNet-Dataset', device='cuda', dist_backend='nccl', dist_url='env://', distributed=True, epochs=5, freeze_layers=True, gpu=0, local_rank=None, lr=0.001, lrf=0.01, model_name='', num_classes=100, rank=0, syncBN=True, use_pre_calflops=True, weights='/gemini/pretrain/weights/vit_base_patch16_224_in21k.pth', world_size=1)
+Found 38400 training images.
+Found 9600 validation images.
+Using 8 dataloader workers every process
+_IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
+training head.weight
+training head.bias
+=============== CompileTime: 10.56 second
+[train epoch 0] loss: 4.557, acc: 0.184: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 150/150 [00:34<00:00,  4.38it/s]
+[valid epoch 0] loss: 4.491, acc: 0.569: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 38/38 [00:10<00:00,  3.61it/s]
+EPOCH0 GFLOPS: 1328.48 GFLOPS, TIME: 44.84 seconds.
+[train epoch 1] loss: 4.445, acc: 0.709: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 150/150 [00:34<00:00,  4.31it/s]
+[valid epoch 1] loss: 4.379, acc: 0.868: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 38/38 [00:11<00:00,  3.31it/s]
+EPOCH1 GFLOPS: 1286.72 GFLOPS, TIME: 46.29 seconds.
+[train epoch 2] loss: 4.355, acc: 0.845: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 150/150 [00:34<00:00,  4.32it/s]
+[valid epoch 2] loss: 4.299, acc: 0.912: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 38/38 [00:10<00:00,  3.51it/s]
+EPOCH2 GFLOPS: 1306.49 GFLOPS, TIME: 45.59 seconds.
+[train epoch 3] loss: 4.296, acc: 0.873: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 150/150 [00:35<00:00,  4.27it/s]
+[valid epoch 3] loss: 4.256, acc: 0.923: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 38/38 [00:13<00:00,  2.87it/s]
+EPOCH3 GFLOPS: 1231.75 GFLOPS, TIME: 48.36 seconds.
+[train epoch 4] loss: 4.270, acc: 0.881: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 150/150 [00:34<00:00,  4.33it/s]
+[valid epoch 4] loss: 4.243, acc: 0.925: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 38/38 [00:11<00:00,  3.38it/s]
+EPOCH4 GFLOPS: 1299.42 GFLOPS, TIME: 45.84 seconds.
+Total training time: 246.73 seconds
+======================== Average Calculate Time: 46.59 seconds, AVG CAL GFLOPS: 1279.22 GFLOPS

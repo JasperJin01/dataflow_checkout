@@ -98,7 +98,7 @@ def stream_ssh_command(pool, command, slp=True):
                 if stdout.channel.exit_status_ready():
                     break
                 continue
-            
+            print(f'[stream_ssh_command] 输出: {line.rstrip()}')
             yield f"data: {line.rstrip()}\n\n"
             if slp == True:
                 time.sleep(0.1)
@@ -573,8 +573,10 @@ def dist_vit_test(request):
             status=500
         )
 
+# 电力的两个应用
+
 def stream_power_trend(request, dataset):
-    """流式输出功耗趋势数据"""
+    """电力应用 - 潮流计算 (Power Application - Power Flow Calculation)"""
     print(f"[stream_power_trend] 收到请求，数据集: {dataset}")
     
     my_command = f'source /tools/Xilinx/Vitis/2023.2/settings64.sh;source /opt/xilinx/xrt/setup.sh;/home/qch/src/pf2 /home/qch/src/pf100MHz.xclbin {dataset} 0.0001'
@@ -582,8 +584,7 @@ def stream_power_trend(request, dataset):
     
     try:
         response = StreamingHttpResponse(
-            # stream_ssh_command(lab84qch, my_command, slp=False),
-            stream_ssh_command(pool84, my_command, slp=False),
+            stream_ssh_command(lab84qch, my_command, slp=False),
             content_type='text/event-stream',
         )
         response['Cache-Control'] = 'no-cache'
@@ -595,6 +596,36 @@ def stream_power_trend(request, dataset):
             {"status": 500, "error": str(e)},
             status=500
         )
+
+
+def stream_power_state_estimation(request, dataset):
+    """电力应用 - 状态估计 (Power Application - State Estimation)"""
+    print(f"[stream_power_state_estimation] 收到请求，数据集: {dataset}")
+    
+    # 将hn_前缀改为sc_前缀
+    if dataset.startswith('hn_'):
+        dataset = dataset.replace('hn_', 'sc_', 1)
+    
+    # 构建状态估计命令：cd se_src/src && ./se50MHz se50.xclbin sc_20171128_174550 0.0001
+    my_command = f'source /tools/Xilinx/Vitis/2023.2/settings64.sh;source /opt/xilinx/xrt/setup.sh;cd /home/qch/se_src/src && ./se50MHz se50.xclbin {dataset} 0.0001'
+    print(f"[stream_power_state_estimation] 执行命令: {my_command}")
+    
+    try:
+        response = StreamingHttpResponse(
+            stream_ssh_command(lab84qch, my_command, slp=False),
+            content_type='text/event-stream',
+        )
+        response['Cache-Control'] = 'no-cache'
+        return response
+        
+    except Exception as e:
+        print(f"[stream_power_state_estimation] 响应创建失败: {str(e)}")
+        return JsonResponse(
+            {"status": 500, "error": str(e)},
+            status=500
+        )
+
+
 
 
 def read_log_file(request, filename):

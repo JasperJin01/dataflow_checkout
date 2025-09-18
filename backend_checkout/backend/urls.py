@@ -21,6 +21,7 @@ from . import views
 
 urlpatterns = [
     path('api/usage/powertrend/<str:dataset>/', views.stream_power_trend, name='stream_power_trend'),
+    path('api/usage/stateestimation/<str:dataset>/', views.stream_power_state_estimation, name='stream_power_state_estimation'),
     
     path("admin/", admin.site.urls),
 

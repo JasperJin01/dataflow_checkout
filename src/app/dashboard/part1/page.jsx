@@ -9,7 +9,7 @@ import { AssessmentCriteria, AlgorithmDetails, DatasetInfo, getThroughputUnit } 
 
 // 定义可选项
 const algorithms = ['PageRank', 'ViT'];
-const platforms = ['CPU', 'GPU', 'FPGA', 'DSA'];
+const platforms = ['DSA', 'GPU', 'FPGA','CPU' ];
 const allDatasetsOption = 'all-datasets';
 
 // 不同算法对应的数据集（保留兼容性）
@@ -144,8 +144,36 @@ export default function Page() {
   };
 
   // 生成性能数据
-  const generatePerformanceData = (algorithm, dataset, platform) => {
-    // 从预定义的性能数据中获取
+  const generatePerformanceData = (algorithm, dataset, platform, realTimeMetrics = null) => {
+    // 如果是DSA PageRank且有实时指标，使用实时数据
+    if (platform === 'DSA' && algorithm === 'PageRank' && realTimeMetrics) {
+      const { gteps, totalCost } = realTimeMetrics;
+      
+      // 使用预设的baseline数据进行对比
+      let baselineData = null;
+      if (PERFORMANCE_DATA[algorithm] && PERFORMANCE_DATA[algorithm][platform]) {
+        const platformData = PERFORMANCE_DATA[algorithm][platform];
+        baselineData = platformData.find(item => item.Dataset === dataset);
+      }
+      
+      // 如果没有baseline数据，使用默认值
+      const baselineTime = baselineData ? baselineData['Baseline-Time(s)'] : totalCost * 2;
+      const baselineThroughput = baselineData ? baselineData['Baseline-Throughput'] : gteps * 0.5;
+      
+      return {
+        algorithm,
+        dataset,
+        platform,
+        baselineTime: baselineTime,
+        optimizedTime: totalCost,
+        speedUp: baselineTime / totalCost,
+        baselineThroughput: baselineThroughput,
+        optimizedThroughput: gteps,
+        throughputSpeedup: gteps / baselineThroughput
+      };
+    }
+    
+    // 其他情况使用预定义的性能数据
     if (!PERFORMANCE_DATA[algorithm]) {
       console.error(`未找到 ${algorithm} 的性能数据`);
       return null;
@@ -200,8 +228,13 @@ export default function Page() {
         }
         // 然后按数据集排序
         if (a.dataset !== b.dataset) {
-          return datasetsByAlgorithm[a.algorithm].indexOf(a.dataset) - 
-                 datasetsByAlgorithm[b.algorithm].indexOf(b.dataset);
+          // 获取所有可能的数据集列表（合并所有平台的数据集）
+          const allDatasets = a.algorithm === 'PageRank' 
+            ? ['Rmat-16', 'Rmat-18', 'Rmat-19', 'Rmat-20']
+            : ['ImageNet', 'DriveSeg'];
+          const aIndex = allDatasets.indexOf(a.dataset);
+          const bIndex = allDatasets.indexOf(b.dataset);
+          return aIndex - bIndex;
         }
         // 最后按平台排序
         return platforms.indexOf(a.platform) - platforms.indexOf(b.platform);
@@ -289,43 +322,94 @@ export default function Page() {
           setPerformanceData([]);
         }
         
-        // 获取URL映射
-        const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
-        const urlData = URL_MAPS.dataset[selectedDataset];
+        // 根据平台选择不同的API端点
+        let eventSource;
+        let extractedMetrics = { gteps: null, totalCost: null };
         
-        // 执行流式命令
-        const eventSource = new EventSource(`${request.BASE_URL}/part1/execute/${urlAlgo}/${urlData}/`);
+        if (selectedPlatform === 'DSA' && selectedAlgo === 'PageRank') {
+          // DSA PageRank 使用新的API端点
+          const urlPlatform = URL_MAPS.platform[selectedPlatform];
+          const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
+          const urlData = URL_MAPS.dataset[selectedDataset];
+          
+          eventSource = new EventSource(`${request.BASE_URL}/api/single/${urlPlatform}/${urlAlgo}/${urlData}/`);
+        } else {
+          // 其他情况使用原有的API端点
+          const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
+          const urlData = URL_MAPS.dataset[selectedDataset];
+          
+          eventSource = new EventSource(`${request.BASE_URL}/part1/execute/${urlAlgo}/${urlData}/`);
+        }
         
         eventSource.onmessage = async (event) => {
           if (event.data === '[done]') {
             eventSource.close();
             
-            setLogs(prev => [...prev, `正在拷贝 ${selectedDataset} 的result...`]);
-            
-            try {
-              const res = await fetch(`${request.BASE_URL}/part1/result/${urlAlgo}/${urlData}/`);
-              const jsonData = await res.json();
-              
+            if (selectedPlatform === 'DSA' && selectedAlgo === 'PageRank') {
+              // DSA PageRank 直接从日志中提取性能指标
               setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
+              
+
+              
               setRunning(false);
               
-              // 生成性能数据并更新
-              const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform);
+              // 生成性能数据并更新，传入实时提取的性能指标
+              const performanceEntry = generatePerformanceData(
+                selectedAlgo, 
+                selectedDataset, 
+                selectedPlatform, 
+                extractedMetrics.gteps && extractedMetrics.totalCost ? extractedMetrics : null
+              );
               updatePerformanceData(performanceEntry);
               
               // 执行完成后滚动到性能对比区域
               setTimeout(() => scrollToPerformance(), 500);
+            } else {
+              // 其他平台的原有逻辑
+              setLogs(prev => [...prev, `正在拷贝 ${selectedDataset} 的result...`]);
               
-            } catch (error) {
-              setLogs(prev => [...prev, `❌ 获取结果失败: ${error.message}`]);
-              setRunning(false);
+              try {
+                const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
+                const urlData = URL_MAPS.dataset[selectedDataset];
+                const res = await fetch(`${request.BASE_URL}/part1/result/${urlAlgo}/${urlData}/`);
+                const jsonData = await res.json();
+                
+                setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
+                setRunning(false);
+                
+                // 生成性能数据并更新
+                const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform);
+                updatePerformanceData(performanceEntry);
+                
+                // 执行完成后滚动到性能对比区域
+                setTimeout(() => scrollToPerformance(), 500);
+                
+              } catch (error) {
+                setLogs(prev => [...prev, `❌ 获取结果失败: ${error.message}`]);
+                setRunning(false);
+              }
             }
           } else if (event.data === '[error]') {
             eventSource.close();
             setLogs(prev => [...prev, `❌ 服务器执行出错：${selectedAlgo}-${selectedDataset}-${selectedPlatform}`]);
             setRunning(false);
           } else {
+            // 显示日志并解析性能指标（仅DSA PageRank）
             setLogs(prev => [...prev, `${event.data}`]);
+            
+            if (selectedPlatform === 'DSA' && selectedAlgo === 'PageRank') {
+              // 解析GTEPS
+              const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
+              if (gtepsMatch) {
+                extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
+              }
+              
+              // 解析Total Cost
+              const costMatch = event.data.match(/Total Cost:\s*([0-9.]+)\s*seconds/);
+              if (costMatch) {
+                extractedMetrics.totalCost = parseFloat(costMatch[1]);
+              }
+            }
           }
         };
         

@@ -92,19 +92,66 @@ def stream_ssh_command(pool, command, slp=True):
         client = pool.get_connection()
         stdin, stdout, stderr = client.exec_command(command)
         
+        # 设置非阻塞模式
+        stdout.channel.settimeout(0.1)
+        stderr.channel.settimeout(0.1)
+        
         while True:
-            line = stdout.readline()
-            if not line:
-                if stdout.channel.exit_status_ready():
-                    break
-                continue
-            print(f'[stream_ssh_command] 输出: {line.rstrip()}')
-            yield f"data: {line.rstrip()}\n\n"
-            if slp == True:
-                time.sleep(0.1)
+            # 检查命令是否已完成
+            if stdout.channel.exit_status_ready():
+                # 命令已完成，读取剩余的所有输出
+                remaining_stdout = stdout.read().decode('utf-8', errors='ignore')
+                remaining_stderr = stderr.read().decode('utf-8', errors='ignore')
+                
+                # 输出剩余的stdout内容
+                if remaining_stdout:
+                    for line in remaining_stdout.splitlines():
+                        if line.strip():
+                            print(f'[stream_ssh_command] 剩余stdout: {line}')
+                            yield f"data: {line}\n\n"
+                
+                # 输出剩余的stderr内容
+                if remaining_stderr:
+                    for line in remaining_stderr.splitlines():
+                        if line.strip():
+                            print(f'[stream_ssh_command] 剩余stderr: {line}')
+                            yield f"data: [stderr] {line}\n\n"
+                
+                break
+            
+            # 读取stdout
+            try:
+                line = stdout.readline()
+                if line:
+                    print(f'[stream_ssh_command] stdout: {line.rstrip()}')
+                    yield f"data: {line.rstrip()}\n\n"
+                    if slp:
+                        time.sleep(0.1)
+            except Exception:
+                pass
+            
+            # 读取stderr
+            try:
+                error_line = stderr.readline()
+                if error_line:
+                    print(f'[stream_ssh_command] stderr: {error_line.rstrip()}')
+                    yield f"data: [stderr] {error_line.rstrip()}\n\n"
+            except Exception:
+                pass
+            
+            # 如果没有新输出，稍作等待
+            if not line and not error_line:
+                time.sleep(0.05)
+        
+        # 获取退出状态
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status != 0:
+            print(f'[stream_ssh_command] 命令退出状态: {exit_status}')
+            yield f"data: [exit_status] {exit_status}\n\n"
         
         yield "data: [done]\n\n"
     except Exception as e:
+        print(f'[stream_ssh_command] 异常: {str(e)}')
         yield f"data: [error] {str(e)}\n\n"
     finally:
         if client:

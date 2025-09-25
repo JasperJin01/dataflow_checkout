@@ -254,6 +254,16 @@ export default function Page() {
             setProgress(0);
             setRunning(false);
             setShowGraphDisplay(false); // 执行出错时不显示图形
+          } else if (event.data.startsWith('[stderr]')) {
+            // 处理stderr输出，显示为错误信息
+            const errorMsg = event.data.replace('[stderr] ', '');
+            setLogs(prev => [...prev, `⚠️ ${errorMsg}`]);
+          } else if (event.data.startsWith('[exit_status]')) {
+            // 处理退出状态
+            const exitStatus = event.data.replace('[exit_status] ', '');
+            if (exitStatus !== '0') {
+              setLogs(prev => [...prev, `❌ 命令执行失败，退出状态: ${exitStatus}`]);
+            }
           } else {
             setLogs(prev => [...prev, event.data]);
             // 从日志中提取总时间

@@ -20,32 +20,24 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # 两个电力应用
     path('api/usage/powertrend/<str:dataset>/', views.stream_power_trend, name='stream_power_trend'),
     path('api/usage/stateestimation/<str:dataset>/', views.stream_power_state_estimation, name='stream_power_state_estimation'),
-    
-    path("admin/", admin.site.urls),
 
 
-    path('stream/', views.stream_test, name='stream'),
-    
-    path('part1/execute/<str:algo>/<str:dataset>/', views.part1, name="part1"),
-    path('part1/result/<str:algo>/<str:dataset>/', views.get_part1_result, name="part1"),
-
-    path('part3/cgafile/<str:framework>/<str:algo>/<str:rw>/', views.part3_cgafile, name="part3_cgafile"),
-    path('part3/execute/<str:framework>/<str:algo>/', views.part3_3, name="part3"),
-    path('part3/execute/<str:framework>/<str:algo>/<str:dataset>/', views.part3, name="part3"),
-    path('part3/result/<str:framework>/<str:algo>/', views.get_part3_result, name='get_part3_result'),
-    path('part3data/<str:framework>/<str:algo>/<str:data_type>/', views.part3data, name='part3data'),
-
-    path('part3editarg/moni/1/<str:algo>/<str:dataset>/<str:editarg>/',views.part3_moni_editarg, name="part3_moni_editarg"),
-    path('part3/moni/<str:framework>/<str:algo>/<str:dataset>/',views.part3_moni, name="part3_moni"),
-
-    path('part3/moni2/<str:algo>/<str:dataset>/',views.part3_moni2, name="part3_moni2"),
-    path('part3/write/1/<str:algo>/', views.part3_writecga, name='part3_writecga'),
-    
+    path('api/single/<str:platform>/<str:algo>/<str:dataset>/', views.run_single, name='run_single'),
 
     
+    
+    
+
+
+    
+    
+    
+    
+
     path('logfile/<str:filename>/', views.read_log_file, name="read_log_file"), 
-    path('dist_vit_test/', views.dist_vit_test, name="dist_vit_test"),
+
 
 ]

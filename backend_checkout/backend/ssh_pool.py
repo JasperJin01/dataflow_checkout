@@ -4,13 +4,18 @@ import threading
 import time
 
 class SSHConnectionPool:
-    def __init__(self, hostname, username, password=None, key_filename=None, port=22, max_connections=5):
+    def __init__(self, hostname, username, password=None, key_filename=None, port=22, max_connections=5, 
+                 jump_hostname=None, jump_username=None, jump_password=None, jump_port=22):
         self.hostname = hostname
         self.username = username
         self.password = password
         self.key_filename = key_filename
         self.port = port
         self.max_connections = max_connections
+        self.jump_hostname = jump_hostname
+        self.jump_username = jump_username
+        self.jump_password = jump_password
+        self.jump_port = jump_port
         self.pool = Queue(maxsize=max_connections)
         self.lock = threading.Lock()
         
@@ -23,13 +28,47 @@ class SSHConnectionPool:
         try:
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(
-                hostname=self.hostname,
-                username=self.username,
-                password=self.password,
-                key_filename=self.key_filename,
-                port=self.port
-            )
+            
+            if self.jump_hostname:
+                # 创建跳转主机连接
+                jump_client = paramiko.SSHClient()
+                jump_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                jump_client.connect(
+                    hostname=self.jump_hostname,
+                    username=self.jump_username,
+                    password=self.jump_password,
+                    key_filename=self.key_filename,
+                    port=self.jump_port
+                )
+                
+                # 通过跳转主机创建隧道
+                jump_transport = jump_client.get_transport()
+                dest_addr = (self.hostname, self.port)
+                local_addr = ('127.0.0.1', 0)
+                channel = jump_transport.open_channel("direct-tcpip", dest_addr, local_addr)
+                
+                # 通过隧道连接目标主机
+                client.connect(
+                    hostname=self.hostname,
+                    username=self.username,
+                    password=self.password,
+                    key_filename=self.key_filename,
+                    port=self.port,
+                    sock=channel
+                )
+                
+                # 保存跳转客户端引用以便后续清理
+                client._jump_client = jump_client
+            else:
+                # 直接连接
+                client.connect(
+                    hostname=self.hostname,
+                    username=self.username,
+                    password=self.password,
+                    key_filename=self.key_filename,
+                    port=self.port
+                )
+            
             self.pool.put(client)
         except Exception as e:
             print(f"创建SSH连接失败: {str(e)}")
@@ -69,6 +108,9 @@ class SSHConnectionPool:
         while not self.pool.empty():
             try:
                 client = self.pool.get_nowait()
+                # 如果有跳转客户端，也要关闭
+                if hasattr(client, '_jump_client'):
+                    client._jump_client.close()
                 client.close()
             except:
                 pass

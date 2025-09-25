@@ -677,7 +677,33 @@ export default function Page() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
-                          <Tooltip />
+                          <Tooltip 
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="custom-tooltip" style={{
+                                    backgroundColor: 'white',
+                                    padding: '10px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                  }}>
+                                    <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)}s
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       加速比: {data.speedUp ? data.speedUp.toFixed(3) + ' x' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
                           <Legend />
                           <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
                           <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
@@ -700,8 +726,30 @@ export default function Page() {
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: 'GTEPS', angle: -90, position: 'insideLeft' }} />
                           <Tooltip 
-                            formatter={(value, name) => {
-                              return [`${value.toFixed(3)} GTEPS`, name];
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="custom-tooltip" style={{
+                                    backgroundColor: 'white',
+                                    padding: '10px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                  }}>
+                                    <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)} GTEPS
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       吞吐量提升: {data.throughputSpeedup ? data.throughputSpeedup.toFixed(3) + ' x' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
                             }}
                           />
                           <Legend />
@@ -795,7 +843,33 @@ export default function Page() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
-                          <Tooltip />
+                          <Tooltip 
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="custom-tooltip" style={{
+                                    backgroundColor: 'white',
+                                    padding: '10px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                  }}>
+                                    <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)}s
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       加速比: {data.speedUp ? data.speedUp.toFixed(3) + ' x' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
                           <Legend />
                           <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
                           <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
@@ -818,8 +892,30 @@ export default function Page() {
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: 'GFLOPS', angle: -90, position: 'insideLeft' }} />
                           <Tooltip 
-                            formatter={(value, name) => {
-                              return [`${value.toFixed(3)} GFLOPS`, name];
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="custom-tooltip" style={{
+                                    backgroundColor: 'white',
+                                    padding: '10px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                  }}>
+                                    <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)} GFLOPS
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       吞吐量提升: {data.throughputSpeedup ? data.throughputSpeedup.toFixed(3) + ' x' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
                             }}
                           />
                           <Legend />

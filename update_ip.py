@@ -77,21 +77,29 @@ def update_backend_config(new_ip):
         # 查找ALLOWED_HOSTS配置并更新最后一个IP
         updated_lines = []
         in_allowed_hosts = False
+        allowed_hosts_start_line = -1
         
-        for line in lines:
+        for i, line in enumerate(lines):
             if 'ALLOWED_HOSTS = [' in line:
                 in_allowed_hosts = True
+                allowed_hosts_start_line = i
                 updated_lines.append(line)
-            elif in_allowed_hosts and ']' in line:
-                # 这是ALLOWED_HOSTS的结束行，在前面插入新IP
-                # 先移除最后一个IP行（如果存在）
-                if updated_lines and "'10." in updated_lines[-1]:
-                    updated_lines.pop()  # 移除最后一个IP行
-                
-                # 添加新的IP行
-                updated_lines.append(f"                '{new_ip}',\n")
-                updated_lines.append(line)
-                in_allowed_hosts = False
+            elif in_allowed_hosts and ']' in line and not line.strip().startswith('#'):
+                # 确保这是ALLOWED_HOSTS的结束行，而不是其他配置的结束
+                # 检查是否在ALLOWED_HOSTS开始后的合理范围内（通常不超过10行）
+                if i - allowed_hosts_start_line <= 10:
+                    # 这是ALLOWED_HOSTS的结束行，在前面插入新IP
+                    # 先移除最后一个IP行（如果存在）
+                    if updated_lines and "'10." in updated_lines[-1]:
+                        updated_lines.pop()  # 移除最后一个IP行
+                    
+                    # 添加新的IP行
+                    updated_lines.append(f"                '{new_ip}',\n")
+                    updated_lines.append(line)
+                    in_allowed_hosts = False
+                else:
+                    # 这不是ALLOWED_HOSTS的结束，继续添加
+                    updated_lines.append(line)
             else:
                 updated_lines.append(line)
         
@@ -138,12 +146,8 @@ def main():
     # 总结
     print("=" * 50)
     if frontend_success and backend_success:
-        print("🎉 所有配置文件已成功更新！")
-        print(f"📍 新IP地址: {current_ip}")
-        print()
         print("💡 提示:")
-        print("   - 前端需要重新启动开发服务器")
-        print("   - 后端需要重新启动Django服务器")
+        print("cd backend_checkout && python manage.py runserver 0.0.0.0:8200")
         return True
     else:
         print("⚠️  部分配置更新失败，请检查错误信息")

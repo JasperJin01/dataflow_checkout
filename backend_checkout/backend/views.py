@@ -17,7 +17,6 @@ lab84qch = SSHConnectionPool(
     port=22222,
     max_connections=5
 )
-print
 
 pool86 = SSHConnectionPool(
     hostname='192.168.165.232',
@@ -105,7 +104,7 @@ def stream_ssh_command(pool, command, slp=True):
                     print(f'[stream_ssh_command] stdout: {line.rstrip()}')
                     yield f"data: {line.rstrip()}\n\n"
                     if slp:
-                        time.sleep(0.1)
+                        time.sleep(0.01)
             except Exception:
                 pass
             
@@ -179,7 +178,45 @@ def run_single(request, platform, algo, dataset):
             )
             response['Cache-Control'] = 'no-cache'
             return response
+
+        elif platform.lower() == 'fpga' and algo.lower() == 'pr':
+            # FPGA PageRank执行逻辑
+            dataset_mapping = {
+                'rmat16': 'scale18',
+                'rmat18': 'scale20', 
+                'rmat20': 'scale22',
+                'rmat-16': 'scale18',
+                'rmat-18': 'scale20', 
+                'rmat-20': 'scale22'
+            }
             
+            if dataset.lower() not in dataset_mapping:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
+                    status=400
+                )
+            
+            scale_param = dataset_mapping[dataset.lower()]
+            
+            # FPGA初始化和执行命令
+            commands = [
+                'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
+                'source /opt/xilinx/xrt/setup.sh',
+                'cd /space2/qch-data/now_version',
+                f'./pagerank_single_kerel 110Mhz_28suram.xclbin {scale_param}'
+            ]
+            print(commands)
+            
+            cmd = ' && '.join(commands)
+            print(f'[run_single] FPGA PageRank执行命令: {cmd}')
+            
+            response = StreamingHttpResponse(
+                stream_ssh_command(pool86, cmd),
+                content_type='text/event-stream',
+            )
+            response['Cache-Control'] = 'no-cache'
+            return response
+
         else:
             # 其他平台的执行逻辑可以在这里添加
             return JsonResponse(

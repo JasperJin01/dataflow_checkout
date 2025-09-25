@@ -145,9 +145,9 @@ export default function Page() {
 
   // 生成性能数据
   const generatePerformanceData = (algorithm, dataset, platform, realTimeMetrics = null) => {
-    // 如果是DSA PageRank且有实时指标，使用实时数据
-    if (platform === 'DSA' && algorithm === 'PageRank' && realTimeMetrics) {
-      const { gteps, totalCost } = realTimeMetrics;
+    // 如果是DSA或FPGA PageRank且有实时指标，使用实时数据
+    if ((platform === 'DSA' || platform === 'FPGA') && algorithm === 'PageRank' && realTimeMetrics) {
+      const { gteps, totalCost, executionTime } = realTimeMetrics;
       
       // 使用预设的baseline数据进行对比
       let baselineData = null;
@@ -156,8 +156,11 @@ export default function Page() {
         baselineData = platformData.find(item => item.Dataset === dataset);
       }
       
+      // 确定实际执行时间（DSA使用totalCost，FPGA使用executionTime）
+      const actualTime = platform === 'DSA' ? totalCost : executionTime;
+      
       // 如果没有baseline数据，使用默认值
-      const baselineTime = baselineData ? baselineData['Baseline-Time(s)'] : totalCost * 2;
+      const baselineTime = baselineData ? baselineData['Baseline-Time(s)'] : actualTime * 2;
       const baselineThroughput = baselineData ? baselineData['Baseline-Throughput'] : gteps * 0.5;
       
       return {
@@ -165,8 +168,8 @@ export default function Page() {
         dataset,
         platform,
         baselineTime: baselineTime,
-        optimizedTime: totalCost,
-        speedUp: baselineTime / totalCost,
+        optimizedTime: actualTime,
+        speedUp: baselineTime / actualTime,
         baselineThroughput: baselineThroughput,
         optimizedThroughput: gteps,
         throughputSpeedup: gteps / baselineThroughput
@@ -326,8 +329,8 @@ export default function Page() {
         let eventSource;
         let extractedMetrics = { gteps: null, totalCost: null };
         
-        if (selectedPlatform === 'DSA' && selectedAlgo === 'PageRank') {
-          // DSA PageRank 使用新的API端点
+        if ((selectedPlatform === 'DSA' || selectedPlatform === 'FPGA') && selectedAlgo === 'PageRank') {
+          // DSA 和 FPGA PageRank 使用新的API端点
           const urlPlatform = URL_MAPS.platform[selectedPlatform];
           const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
           const urlData = URL_MAPS.dataset[selectedDataset];
@@ -345,11 +348,9 @@ export default function Page() {
           if (event.data === '[done]') {
             eventSource.close();
             
-            if (selectedPlatform === 'DSA' && selectedAlgo === 'PageRank') {
-              // DSA PageRank 直接从日志中提取性能指标
+            if ((selectedPlatform === 'DSA' || selectedPlatform === 'FPGA') && selectedAlgo === 'PageRank') {
+              // DSA 和 FPGA PageRank 直接从日志中提取性能指标
               setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
-              
-
               
               setRunning(false);
               
@@ -358,7 +359,7 @@ export default function Page() {
                 selectedAlgo, 
                 selectedDataset, 
                 selectedPlatform, 
-                extractedMetrics.gteps && extractedMetrics.totalCost ? extractedMetrics : null
+                extractedMetrics.gteps && (extractedMetrics.totalCost || extractedMetrics.executionTime) ? extractedMetrics : null
               );
               updatePerformanceData(performanceEntry);
               
@@ -394,20 +395,34 @@ export default function Page() {
             setLogs(prev => [...prev, `❌ 服务器执行出错：${selectedAlgo}-${selectedDataset}-${selectedPlatform}`]);
             setRunning(false);
           } else {
-            // 显示日志并解析性能指标（仅DSA PageRank）
+            // 显示日志并解析性能指标（DSA 和 FPGA PageRank）
             setLogs(prev => [...prev, `${event.data}`]);
             
-            if (selectedPlatform === 'DSA' && selectedAlgo === 'PageRank') {
-              // 解析GTEPS
-              const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
-              if (gtepsMatch) {
-                extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
-              }
-              
-              // 解析Total Cost
-              const costMatch = event.data.match(/Total Cost:\s*([0-9.]+)\s*seconds/);
-              if (costMatch) {
-                extractedMetrics.totalCost = parseFloat(costMatch[1]);
+            if ((selectedPlatform === 'DSA' || selectedPlatform === 'FPGA') && selectedAlgo === 'PageRank') {
+              if (selectedPlatform === 'DSA') {
+                // 解析DSA的GTEPS
+                const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
+                if (gtepsMatch) {
+                  extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
+                }
+                
+                // 解析DSA的Total Cost
+                const costMatch = event.data.match(/Total Cost:\s*([0-9.]+)\s*seconds/);
+                if (costMatch) {
+                  extractedMetrics.totalCost = parseFloat(costMatch[1]);
+                }
+              } else if (selectedPlatform === 'FPGA') {
+                // 解析FPGA的GTEPS
+                const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
+                if (gtepsMatch) {
+                  extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
+                }
+                
+                // 解析FPGA的执行时间（微秒转换为秒）
+                const timeMatch = event.data.match(/执行时间:\s*([0-9.]+)\s*微秒/);
+                if (timeMatch) {
+                  extractedMetrics.executionTime = parseFloat(timeMatch[1]) / 1000000; // 微秒转秒
+                }
               }
             }
           }

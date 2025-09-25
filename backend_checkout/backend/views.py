@@ -26,6 +26,14 @@ pool86 = SSHConnectionPool(
     max_connections=5
 )
 
+node8wq = SSHConnectionPool(
+    hostname='222.20.94.68',
+    port=50008,
+    username='wangqie',
+    key_filename='/Users/jiminj/.ssh/id_rsa_wq',
+    max_connections=5
+)
+
 work1 = SSHConnectionPool(
     hostname='222.20.95.34',
     username='jinjm',
@@ -240,6 +248,64 @@ def run_single(request, platform, algo, dataset):
 
 # 电力的两个应用
 
+def run_distributed(request):
+    """分布式执行API"""
+    platform = request.GET.get('platform')
+    card_count = request.GET.get('card_count')
+    algorithm = request.GET.get('algorithm')
+    dataset = request.GET.get('dataset')
+    
+    print(f'[run_distributed] 请求参数：平台={platform}, 卡数={card_count}, 算法={algorithm}, 数据集={dataset}')
+    
+    try:
+        # 检查是否为FPGA 4卡的PageRank
+        if platform == 'CPU-FPGA' and card_count == '4' and algorithm == 'PageRank':
+            # 数据集映射：前端的Rmat-16/18/20对应后端的scale18/20/22
+            dataset_mapping = {
+                'Rmat-16': 'scale18',
+                'Rmat-18': 'scale20', 
+                'Rmat-20': 'scale22'
+            }
+            
+            if dataset not in dataset_mapping:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
+                    status=400
+                )
+            
+            scale_param = dataset_mapping[dataset]
+            
+            # FPGA 4卡分布式执行命令
+            commands = [
+                'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
+                'source /opt/xilinx/xrt/setup.sh',
+                'cd /space2/qch-data/now_version',
+                f'./pagerank_4_kernel 110Mhz_28suram.xclbin {scale_param}'
+            ]
+            
+            cmd = ' && '.join(commands)
+            print(f'[run_distributed] FPGA 4卡 PageRank执行命令: {cmd}')
+            
+            response = StreamingHttpResponse(
+                stream_ssh_command(pool86, cmd),
+                content_type='text/event-stream',
+            )
+            response['Cache-Control'] = 'no-cache'
+            return response
+        else:
+            return JsonResponse(
+                {"status": 400, "error": f"不支持的分布式配置: {platform}/{card_count}卡/{algorithm}"},
+                status=400
+            )
+            
+    except Exception as e:
+        print(f'[run_distributed] 错误: {str(e)}')
+        return JsonResponse(
+            {"status": 500, "error": str(e)},
+            status=500
+        )
+
+
 def stream_power_trend(request, dataset):
     """电力应用 - 潮流计算 (Power Application - Power Flow Calculation)"""
     print(f"[stream_power_trend] 收到请求，数据集: {dataset}")
@@ -291,6 +357,51 @@ def stream_power_state_estimation(request, dataset):
         )
 
 
+# 自动驾驶应用
+def run_uniad_command(request, idx):
+    """执行UniAD命令"""
+    print(f'[run_uniad_command] 请求场景：{idx}')
+    
+    try:
+        # 验证场景索引
+        scene_idx = int(idx)
+        if scene_idx not in [1, 2, 3, 4]:
+            return JsonResponse(
+                {"status": 400, "error": f"不支持的场景索引: {idx}，支持的场景: 1, 2, 3, 4"},
+                status=400
+            )
+        
+        # 构建命令序列
+        commands = [
+            'export PATH="/home/wangqie/anaconda3/bin:$PATH"',
+            'source /home/wangqie/anaconda3/etc/profile.d/conda.sh',
+            'cd /home/wangqie/UniAD',
+            'conda activate uniad',
+            f'./tools/uniad_dist_eval_{scene_idx}.sh ./projects/configs/stage1_track_map/base_track_map.py /home/wangqie/UniAD/ckpts/uniad_base_e2e.pth 4'
+        ]
+        
+        cmd = ' && '.join(commands)
+        print(f'[run_uniad_command] 执行命令: {cmd}')
+        
+        response = StreamingHttpResponse(
+            stream_ssh_command(node8wq, cmd),
+            content_type='text/event-stream',
+        )
+        response['Cache-Control'] = 'no-cache'
+        return response
+        
+    except ValueError:
+        return JsonResponse(
+            {"status": 400, "error": f"无效的场景索引: {idx}，必须是数字"},
+            status=400
+        )
+    except Exception as e:
+        print(f'[run_uniad_command] 错误: {str(e)}')
+        return JsonResponse(
+            {"status": 500, "error": str(e)},
+            status=500
+        )
+    
 
 
 def read_log_file(request, filename):

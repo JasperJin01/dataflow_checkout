@@ -2,10 +2,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box, Grid, Button, Paper, Typography, 
-  LinearProgress, IconButton, Card, CardContent
+  LinearProgress, IconButton, Card, CardContent,
+  Select, MenuItem, Table, TableBody, TableCell, 
+  TableContainer, TableHead, TableRow
 } from '@mui/material';
 import { PlayArrow, Pause } from '@mui/icons-material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import request from '@/lib/request/request';
 
 // 场景配置
 const scenes = [
@@ -46,7 +49,7 @@ const scenes = [
 export default function AutonomousDrivingDemo() {
   const [currentScene, setCurrentScene] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
   
   // 融合前区域状态
@@ -60,10 +63,17 @@ export default function AutonomousDrivingDemo() {
   // 性能数据状态
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   
+  // 日志状态
+  const [logs, setLogs] = useState([]);
+  
+  // Throughput 数据状态
+  const [throughputData, setThroughputData] = useState(null);
+  
   const intervalRef = useRef(null);
   const beforeIntervalRef = useRef(null);
   const afterIntervalRef = useRef(null);
   const imageRef = useRef(null);
+  const performanceChartRef = useRef(null);
 
   // 性能数据
   const performanceData = [
@@ -75,7 +85,7 @@ export default function AutonomousDrivingDemo() {
     },
     {
       name: '融合后', 
-      value: 1.55,
+      value: throughputData || 1.55,
       unit: 'samples/s',
       fill: '#1976d2'
     }
@@ -83,19 +93,18 @@ export default function AutonomousDrivingDemo() {
 
   // 播放速度设置
   const beforePlaybackSpeed = 150; // 融合前播放速度
-  const afterPlaybackSpeed = 118;   // 融合后播放速度
+  const afterPlaybackSpeed = 80;   // 融合后播放速度
 
   // NOTE 融合前区域自动播放功能
   useEffect(() => {
     if (isBeforePlaying) {
       beforeIntervalRef.current = setInterval(() => {
         setBeforeImageIndex(prev => {
-          // const nextIndex = prev + 1;
           const nextIndex = prev + 1;
           if (nextIndex >= scenes[currentScene].images.length) {
-            // 播放完毕后停止
+            // 播放完毕后停止，但不控制整体流程
             setIsBeforePlaying(false);
-            return prev;
+            return scenes[currentScene].images.length - 1; // 停在最后一帧
           }
           return nextIndex;
         });
@@ -113,22 +122,34 @@ export default function AutonomousDrivingDemo() {
     };
   }, [isBeforePlaying, currentScene, beforePlaybackSpeed]);
 
-  // 检测播放完毕状态
+  // 检测两个区域都播放完毕的状态
   useEffect(() => {
-    const beforeFinished = beforeImageIndex >= scenes[currentScene].images.length - 1;
-    const afterFinished = afterImageIndex >= scenes[currentScene].images.length - 1;
-    
-    if (beforeFinished && afterFinished && !isBeforePlaying && !isAfterPlaying) {
-      setShowPerformanceChart(true);
-      // 播放完成后自动向下滑动到性能图表
+    // 只有当两个区域都停止播放时才执行完成逻辑
+    if (!isBeforePlaying && !isAfterPlaying && 
+        beforeImageIndex >= scenes[currentScene].images.length - 1 && 
+        afterImageIndex >= scenes[currentScene].images.length - 1) {
+      
+      // 播放完成后显示性能图表
       setTimeout(() => {
-        const performanceChart = document.querySelector('[data-performance-chart]');
-        if (performanceChart) {
-          performanceChart.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 500);
+        setShowPerformanceChart(true);
+        setLogs(prevLogs => [...prevLogs, `✅ ${scenes[currentScene].name} 图片播放完成，显示性能图表`]);
+        
+        // 图片播放完毕后滚动到底部展示图表
+        setTimeout(() => {
+          performanceChartRef.current?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }, 500);
+        
+        // 执行完毕，设置 running 为 false
+        setTimeout(() => {
+          setRunning(false);
+          setLogs(prevLogs => [...prevLogs, `🎉 ${scenes[currentScene].name} 执行完毕`]);
+        }, 1000);
+      }, 1000);
     }
-  }, [beforeImageIndex, afterImageIndex, isBeforePlaying, isAfterPlaying, currentScene]);
+  }, [isBeforePlaying, isAfterPlaying, beforeImageIndex, afterImageIndex, currentScene]);
 
   // 融合后区域自动播放功能
   useEffect(() => {
@@ -137,9 +158,10 @@ export default function AutonomousDrivingDemo() {
         setAfterImageIndex(prev => {
           const nextIndex = prev + 1;
           if (nextIndex >= scenes[currentScene].images.length) {
-            // 播放完毕后停止
+            // 融合后区域播放完毕
             setIsAfterPlaying(false);
-            return prev;
+            
+            return scenes[currentScene].images.length - 1; // 停在最后一帧
           }
           return nextIndex;
         });
@@ -164,35 +186,97 @@ export default function AutonomousDrivingDemo() {
     setProgress(progressPercent);
   }, [afterImageIndex, currentScene]);
 
+  // 自动滚动到日志底部
+  useEffect(() => {
+    if (logBoxRef.current) {
+      logBoxRef.current.scrollTop = logBoxRef.current.scrollHeight;
+    }
+  }, [logs]);
+
   // 场景切换时重置所有图片索引
   useEffect(() => {
     setCurrentImageIndex(0);
     setBeforeImageIndex(0);
     setAfterImageIndex(0);
-    setIsPlaying(false);
+    setRunning(false);
     setIsBeforePlaying(false);
     setIsAfterPlaying(false);
+    setThroughputData(null); // 重置吞吐量数据
   }, [currentScene]);
 
-  const handleRun = () => {
+  const handleRun = async () => {
     const anyPlaying = isBeforePlaying || isAfterPlaying;
     if (anyPlaying) {
       // 停止所有播放
       setIsBeforePlaying(false);
       setIsAfterPlaying(false);
-      setIsPlaying(false);
+      setRunning(false);
     } else {
-      // 如果已经是最后一张照片，重新开始播放
-      if (beforeImageIndex === scenes[currentScene].images.length - 1) {
-        setBeforeImageIndex(0);
+      setRunning(true);
+      setLogs([`开始执行场景 ${scenes[currentScene].name}...`]);
+      
+      try {
+        // 场景索引：城市道路场景(1)、高车流量场景(2)、窄路场景(3)、露天停车场场景(4)
+        const sceneIdx = currentScene + 1;
+        
+        // 调用后端 API
+        setLogs(prev => [...prev, '正在与服务器建立连接...']);
+        const eventSource = new EventSource(`${request.BASE_URL}/api/usage/runad/${sceneIdx}`);
+        
+        eventSource.onmessage = (event) => {
+          if (event.data === '[done]') {
+            eventSource.close();
+            
+            
+            // 先小幅滚动到自动驾驶图片播放区域
+            setTimeout(() => {
+              const imageSection = document.querySelector('.image-display-section');
+              if (imageSection) {
+                imageSection.scrollIntoView({ 
+                  behavior: 'smooth', 
+                  block: 'center' 
+                });
+                
+                // 滚动完成后再开始播放图片
+                setTimeout(() => {
+                  // 重置图片索引到开始位置
+                  setBeforeImageIndex(0);
+                  setAfterImageIndex(0);
+                  
+                  // 开始播放两个区域
+                  setIsBeforePlaying(true);
+                  setIsAfterPlaying(true);
+                }, 800); // 等待滚动动画完成
+              }
+            }, 500);
+            
+          } else if (event.data === '[error]') {
+            eventSource.close();
+            setLogs(prev => [...prev, `❌ 服务器执行出错：${scenes[currentScene].name}`]);
+            setRunning(false);
+          } else {
+            // 提取 Throughput 数据
+            const throughputMatch = event.data.match(/Throughput:\s*([\d.]+)\s*samples\/second/);
+            if (throughputMatch) {
+              const throughputValue = parseFloat(throughputMatch[1]);
+              setThroughputData(throughputValue);
+            }
+            
+            // 显示后端日志
+            setLogs(prev => [...prev, event.data]);
+          }
+        };
+        
+        eventSource.onerror = () => {
+          eventSource.close();
+          setLogs(prev => [...prev, `❌ ${scenes[currentScene].name} 连接错误`]);
+          setRunning(false);
+        };
+        
+      } catch (error) {
+        setLogs(prev => [...prev, `❌ 执行失败: ${error.message}`]);
+        setRunning(false);
       }
-      if (afterImageIndex === scenes[currentScene].images.length - 1) {
-        setAfterImageIndex(0);
-      }
-      // 开始播放两个区域
-      setIsBeforePlaying(true);
-      setIsAfterPlaying(true);
-      setIsPlaying(true);
     }
   };
 
@@ -201,11 +285,16 @@ export default function AutonomousDrivingDemo() {
     setCurrentImageIndex(0);
     setBeforeImageIndex(0);
     setAfterImageIndex(0);
-    setIsPlaying(false);
+    setRunning(false);
     setIsBeforePlaying(false);
     setIsAfterPlaying(false);
     setShowPerformanceChart(false);
+    setThroughputData(null); // 重置吞吐量数据
   };
+  const isButtonDisabled = () => {
+    if (running) return true;
+  };
+  const logBoxRef = React.useRef(null);
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#f5f6fa' }}>
@@ -226,51 +315,96 @@ export default function AutonomousDrivingDemo() {
         </Typography>
       </Paper>
 
-      {/* 播放控制区域 - 横向长条 */}
-      <Paper elevation={3} sx={{ p: 2, mb: 3, borderRadius: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-          {/* 场景选择 */}
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            {scenes.map((scene, index) => (
-              <Button
-                key={index}
-                variant={currentScene === index ? "contained" : "outlined"}
-                size="small"
-                onClick={() => handleSceneChange(index)}
-                sx={{ minWidth: '80px' }}
-              >
-                {scene.name}
-              </Button>
-            ))}
-          </Box>
+      {/* 场景选择和控制区域 */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={4}>
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              自动驾驶场景选择
+            </Typography>
 
-          {/* 播放控制 */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Select
+              fullWidth
+              value={currentScene}
+              onChange={(e) => handleSceneChange(e.target.value)}
+              sx={{ mb: 2 }}
+            >
+              {scenes.map((scene, index) => (
+                <MenuItem key={index} value={index}>{scene.name}</MenuItem>
+              ))}
+            </Select>
             <Button
               variant="contained"
-              color="primary"
+              fullWidth
               onClick={handleRun}
-              startIcon={(isBeforePlaying || isAfterPlaying) ? <Pause /> : <PlayArrow />}
-              sx={{ minWidth: '100px' }}
+              disabled={isButtonDisabled()}
+              color="success"
+              sx={{ py: 1.5 }}
             >
-              {(isBeforePlaying || isAfterPlaying) ? '暂停' : '运行'}
+              {running ? '运行中' : '运行'}
             </Button>
-          </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2, lineHeight: 1.6 }}>
+              描述：{scenes[currentScene].description}
+            </Typography>
 
-          {/* 当前场景信息 */}
-          <Box sx={{ textAlign: 'left', minWidth: '200px' }}>
-            <Typography variant="body2" color="text.secondary">
-              <strong>{scenes[currentScene].name}</strong>
+            {running && <LinearProgress value={progress} sx={{ mt: 1 }} />}
+          </Paper>
+        </Grid>
+              {/* 右侧列 */}
+        <Grid item xs={12} md={8}>
+          {/* 控制台输出 */}
+          <Paper elevation={3} sx={{
+            p: 2,
+            height: 470,
+            borderRadius: 3,
+            overflow: 'hidden'
+          }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              执行日志
             </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {scenes[currentScene].description}
-            </Typography>
-          </Box>
-        </Box>
-      </Paper>
+            <Box sx={{
+              height: 400,
+              overflow: 'auto',
+              fontFamily: 'monospace',
+              fontSize: '0.8rem',
+              backgroundColor: '#1a1a1a',
+              borderRadius: 2,
+              p: 1.5,
+              '& > div': {
+                color: '#4caf50',
+                lineHeight: 1.6,
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                py: 0.5
+              }
+            }} ref={logBoxRef}>
+              {logs.map((log, index) => (
+                <div key={index}>{`> ${log}`}</div>
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+
+
+
+
 
       {/* 图像显示区域 */}
-      <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+      <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }} className="image-display-section">
 
         {/* 左右分割的标题 */}
         <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
@@ -399,14 +533,11 @@ export default function AutonomousDrivingDemo() {
           <Typography variant="body2" color="text.secondary">
             <strong>算法：</strong>视觉Transformer (ViT) - 自动驾驶场景分割
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            <strong>显示模式：</strong>左侧融合前区域（播放速度：150ms），右侧融合后区域（播放速度：60ms）
-          </Typography>
         </Box>
       </Paper>
 
       {/* 性能图表 */}
-      <Box sx={{ mt: 4 }} data-performance-chart>
+      <Box sx={{ mt: 4 }} data-performance-chart ref={performanceChartRef}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Paper elevation={0} sx={{ p: 3, borderRadius: 2, backgroundColor: '#ffffff', border: '1px solid #e0e0e0' }}>

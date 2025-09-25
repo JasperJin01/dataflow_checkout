@@ -38,7 +38,8 @@ const datasets = [
 
 // 算法与数据集组合配置，用于选项框的展示
 const configCombinations = {
-  '潮流计算': ['Case10790', 'IEEE118'],
+  // '潮流计算': ['Case10790', 'IEEE118'],
+  '潮流计算': ['Case10790'],
   '状态估计': [
     'hn_20171128_174550',
     'hn_20171207_06300',
@@ -390,12 +391,12 @@ export default function Page() {
               fontWeight: 600
             }
           }}>
-            <strong style={{ fontSize: '16px' }}>达成指标：</strong>
+            {/* <strong style={{ fontSize: '16px' }}>达成指标：</strong>
             <Box component="span" display="block">
               ① 1万图顶点数据的<span className='red-bold'>潮流计算</span>，计算时间约为<span className='red-bold'>100ms</span>。
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               ② 省级规模电网<span className='red-bold'>状态估计</span>，计算时间不超过<span className='red-bold'>200ms</span>。
-            </Box>
+            </Box> */}
 
             <strong style={{ fontSize: '16px' }}>评测方法：</strong>
             <Box component="span" display="block">

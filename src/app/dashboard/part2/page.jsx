@@ -8,7 +8,7 @@ import { PERFORMANCE_DATA, getRunMode, URL_MAPS, midtermMetrics, CARD_OPTIONS, D
 import { AssessmentCriteria, AlgorithmDetails, DatasetInfo, getThroughputUnit } from './info';
 
 const algorithms = ['PageRank', 'ViT'];
-const platforms = ['CPU-GPU', 'CPU-FPGA', 'CPU-DSA'];
+const platforms = ['CPU-FPGA', 'CPU-DSA', 'CPU-GPU'];
 const allDatasetsOption = 'all-datasets';
 
 // 算法-平台组合对应的数据集映射
@@ -171,6 +171,55 @@ export default function Page() {
     performanceRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // 执行分布式运行命令
+  const runDistributed = async (platform, cardCount, algorithm, dataset) => {
+    try {
+      setLogs([`开始执行图算法 ${algorithm}，数据集 ${dataset}，平台 ${platform}，${cardCount}卡：`]);
+      setLogs(prev => [...prev, '正在与服务器建立连接...']);
+      
+      // 构建请求参数
+      const params = {
+        platform: platform,
+        card_count: cardCount,
+        algorithm: algorithm,
+        dataset: dataset
+      };
+      
+      // 发送执行请求
+      const eventSource = new EventSource(`${request.BASE_URL}/part2/run_distributed/?${new URLSearchParams(params)}`);
+      
+      eventSource.onmessage = async (event) => {
+        if (event.data === '[done]') {
+          eventSource.close();
+          setLogs(prev => [...prev, `✅ ${algorithm}-${dataset}-${platform} 执行完成`]);
+          setRunning(false);
+          
+          const performanceEntry = generatePerformanceData(algorithm, dataset, platform, cardCount);
+          updatePerformanceData(performanceEntry);
+          
+          // 执行完成后滚动到性能对比区域
+          setTimeout(() => scrollToPerformance(), 500);
+        } else if (event.data === '[error]') {
+          eventSource.close();
+          setLogs(prev => [...prev, `❌ 服务器执行出错：${algorithm}-${dataset}-${platform}`]);
+          setRunning(false);
+        } else {
+          setLogs(prev => [...prev, `${event.data}`]);
+        }
+      };
+      
+      eventSource.onerror = () => {
+        eventSource.close();
+        setLogs(prev => [...prev, `❌ ${algorithm}-${dataset}-${platform} 连接错误`]);
+        setRunning(false);
+      };
+      
+    } catch (error) {
+      setLogs(prev => [...prev, `❌ 执行失败: ${error.message}`]);
+      setRunning(false);
+    }
+  };
+
   // 从日志文件读取内容
   const readLogFile = async (algorithm, dataset, platform) => {
     try {
@@ -289,7 +338,7 @@ export default function Page() {
             await readLogFile(selectedAlgo, dataset, selectedPlatform);
           } else {
             // 实现run模式的逻辑
-            setLogs(prev => [...prev, `暂不支持 ${selectedAlgo}-${dataset}-${selectedPlatform} 的run模式`]);
+            await runDistributed(selectedPlatform, selectedCardCount, selectedAlgo, dataset);
           }
         }
         
@@ -305,61 +354,7 @@ export default function Page() {
         await readLogFile(selectedAlgo, selectedDataset, selectedPlatform);
       } else {
         // 实现run模式的逻辑
-        setLogs([`开始执行图算法 ${selectedAlgo}，数据集 ${selectedDataset}，平台 ${selectedPlatform}：`]);
-        setLogs(prev => [...prev, '正在与服务器建立连接...']);
-        
-        // 不再清空不同算法的数据，允许多算法数据共存
-        
-        // 获取URL映射
-        const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
-        const urlData = URL_MAPS.dataset[selectedDataset];
-        
-        // 执行流式命令
-        //const eventSource = new EventSource(`${request.BASE_URL}/part2/execute/${urlAlgo}/${urlData}/`);
-        const eventSource = new EventSource(`${request.BASE_URL}/dist_vit_test/`);
-        
-        eventSource.onmessage = async (event) => {
-          if (event.data === '[done]') {
-            eventSource.close();
-            setRunning(false);
-            
-            const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform, selectedCardCount);
-            updatePerformanceData(performanceEntry);
-            
-            // 执行完成后滚动到性能对比区域
-            setTimeout(() => scrollToPerformance(), 500);
-            
-            // setLogs(prev => [...prev, `正在拷贝 ${selectedDataset} 的result...`]);
-            
-            // try {
-            //   const res = await fetch(`${request.BASE_URL}/part2/result/${urlAlgo}/${urlData}/`);
-            //   const jsonData = await res.json();
-              
-            //   setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
-            //   setRunning(false);
-              
-            //   // 生成性能数据并更新
-            //   const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform);
-            //   updatePerformanceData(performanceEntry);
-              
-            // } catch (error) {
-            //   setLogs(prev => [...prev, `❌ 获取结果失败: ${error.message}`]);
-            //   setRunning(false);
-            // }
-          } else if (event.data === '[error]') {
-            eventSource.close();
-            setLogs(prev => [...prev, `❌ 服务器执行出错：${selectedAlgo}-${selectedDataset}-${selectedPlatform}`]);
-            setRunning(false);
-          } else {
-            setLogs(prev => [...prev, `${event.data}`]);
-          }
-        };
-        
-        eventSource.onerror = () => {
-          eventSource.close();
-          setLogs(prev => [...prev, `❌ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 连接错误`]);
-          setRunning(false);
-        };
+        await runDistributed(selectedPlatform, selectedCardCount, selectedAlgo, selectedDataset);
       }
     } catch (error) {
       setLogs(prev => [...prev, `❌ 执行失败: ${error.message}`]);

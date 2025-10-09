@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["10.21.145.217",
                 'localhost', 
                 '127.0.0.1', 
                 '10.12.60.75',
-                '10.11.72.198',
+                '10.11.74.77',
                 ]
 # ALLOWED_HOSTS = ['*']
 
@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders"
-                '10.11.72.198',
 ]
 
 MIDDLEWARE = [

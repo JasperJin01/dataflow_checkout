@@ -23,9 +23,13 @@ urlpatterns = [
     # 两个电力应用
     path('api/usage/powertrend/<str:dataset>/', views.stream_power_trend, name='stream_power_trend'),
     path('api/usage/stateestimation/<str:dataset>/', views.stream_power_state_estimation, name='stream_power_state_estimation'),
-
+    # 自动驾驶应用
+    path('api/usage/runad/<str:idx>', views.run_uniad_command, name='run_uniad_command'),
 
     path('api/single/<str:platform>/<str:algo>/<str:dataset>/', views.run_single, name='run_single'),
+    # 分布式执行接口
+    path('part2/run_distributed/', views.run_distributed, name='run_distributed'),
+    
 
     
     

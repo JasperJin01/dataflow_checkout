@@ -75,8 +75,8 @@ def stream_ssh_command(pool, command, slp=True):
         stdin, stdout, stderr = client.exec_command(command)
         
         # 设置非阻塞模式
-        stdout.channel.settimeout(0.05)
-        stderr.channel.settimeout(0.05)
+        stdout.channel.settimeout(0.001)
+        stderr.channel.settimeout(0.001)
         
         while True:
             # 检查命令是否已完成
@@ -111,8 +111,6 @@ def stream_ssh_command(pool, command, slp=True):
                 if line:
                     print(f'[stream_ssh_command] stdout: {line.rstrip()}')
                     yield f"data: {line.rstrip()}\n\n"
-                    if slp:
-                        time.sleep(0.01)
             except Exception:
                 pass
             
@@ -125,9 +123,13 @@ def stream_ssh_command(pool, command, slp=True):
             except Exception:
                 pass
             
-            # 如果没有新输出，稍作等待
+            # 如果没有新输出，根据slp参数决定是否等待
             if not line and not error_line:
-                time.sleep(0.05)
+                if slp:
+                    time.sleep(0.05)
+                # else:
+                    # 不设置slp时，使用极短的延迟避免CPU占用过高，但保持实时性
+                    # time.sleep(0.001)
         
         # 获取退出状态
         exit_status = stdout.channel.recv_exit_status()
@@ -258,8 +260,8 @@ def run_distributed(request):
     print(f'[run_distributed] 请求参数：平台={platform}, 卡数={card_count}, 算法={algorithm}, 数据集={dataset}')
     
     try:
-        # 检查是否为FPGA 4卡的PageRank
-        if platform == 'CPU-FPGA' and card_count == '4' and algorithm == 'PageRank':
+        # 检查是否为FPGA PageRank
+        if platform == 'CPU-FPGA' and algorithm == 'PageRank':
             # 数据集映射：前端的Rmat-16/18/20对应后端的scale18/20/22
             dataset_mapping = {
                 'Rmat-16': 'scale18',
@@ -275,16 +277,33 @@ def run_distributed(request):
             
             scale_param = dataset_mapping[dataset]
             
-            # FPGA 4卡分布式执行命令
-            commands = [
-                'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
-                'source /opt/xilinx/xrt/setup.sh',
-                'cd /space2/qch-data/now_version',
-                f'./pagerank_4_kernel 110Mhz_28suram.xclbin {scale_param}'
-            ]
+            # 根据卡数选择不同的执行命令
+            if card_count == '4':
+                # FPGA 4卡分布式执行命令
+                commands = [
+                    'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
+                    'source /opt/xilinx/xrt/setup.sh',
+                    'cd /space2/qch-data/now_version',
+                    f'./pagerank_4_kernel 110Mhz_28suram.xclbin {scale_param}'
+                ]
+                print(f'[run_distributed] FPGA 4卡 PageRank执行命令')
+            elif card_count == '1':
+                # FPGA 1卡执行命令
+                commands = [
+                    'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
+                    'source /opt/xilinx/xrt/setup.sh',
+                    'cd /space2/qch-data/now_version',
+                    f'./pagerank_single_kerel 110Mhz_28suram.xclbin {scale_param}'
+                ]
+                print(f'[run_distributed] FPGA 1卡 PageRank执行命令')
+            else:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的卡数配置: {card_count}卡"},
+                    status=400
+                )
             
             cmd = ' && '.join(commands)
-            print(f'[run_distributed] FPGA 4卡 PageRank执行命令: {cmd}')
+            print(f'[run_distributed] 执行命令: {cmd}')
             
             response = StreamingHttpResponse(
                 stream_ssh_command(pool86, cmd),
@@ -292,6 +311,41 @@ def run_distributed(request):
             )
             response['Cache-Control'] = 'no-cache'
             return response
+        
+        # 检查是否为CPU-DSA PageRank
+        elif platform == 'CPU-DSA' and algorithm == 'PageRank':
+            # 数据集映射：前端的Rmat-16/18/20对应后端的rmat-16/18/20
+            dataset_mapping = {
+                'Rmat-18': 'rmat-18',
+                'Rmat-19': 'rmat-19', 
+                'Rmat-20': 'rmat-20'
+            }
+            
+            if dataset not in dataset_mapping:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
+                    status=400
+                )
+            
+            graph_name = dataset_mapping[dataset]
+            
+            # CPU-DSA分布式执行命令
+            commands = [
+                'cd /root/tmp/pagerank/PageRank_v_3_0',
+                f'./restart.sh -g {graph_name} -c {card_count}'
+            ]
+            print(f'[run_distributed] CPU-DSA {card_count}卡 PageRank执行命令')
+            
+            cmd = ' && '.join(commands)
+            print(f'[run_distributed] 执行命令: {cmd}')
+            
+            response = StreamingHttpResponse(
+                stream_ssh_command(target_machine3, cmd, slp=False),
+                content_type='text/event-stream',
+            )
+            response['Cache-Control'] = 'no-cache'
+            return response
+        
         else:
             return JsonResponse(
                 {"status": 400, "error": f"不支持的分布式配置: {platform}/{card_count}卡/{algorithm}"},

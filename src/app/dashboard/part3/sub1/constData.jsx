@@ -41,11 +41,11 @@ total                     : 0.0124s
 --------------------`;
 
 export const executionTimes = {
-  'hn_20171128_174550': { cpu: 3327.98, accelerator: 12.4 },
-  'hn_20171207_06300': { cpu: 3327.98, accelerator: 11.2 },
-  'hn_20171207_08000': { cpu: 3327.98, accelerator: 11.0 },
-  'hn_20171207_09150': { cpu: 3327.98, accelerator: 11.0 },
-  'hn_20171207_10000': { cpu: 3327.98, accelerator: 11.0 },
-  'hn_20171207_11100': { cpu: 3327.98, accelerator: 10.8 },
-  'hn_20171208_11100': { cpu: 3327.98, accelerator: 11.8 }
+  'hn_20171128_174550': { cpu: 150.98, accelerator: 12.4 },
+  'hn_20171207_06300': { cpu: 150.98, accelerator: 11.2 },
+  'hn_20171207_08000': { cpu: 150.98, accelerator: 11.0 },
+  'hn_20171207_09150': { cpu: 150.98, accelerator: 11.0 },
+  'hn_20171207_10000': { cpu: 150.98, accelerator: 11.0 },
+  'hn_20171207_11100': { cpu: 150.98, accelerator: 10.8 },
+  'hn_20171208_11100': { cpu: 150.98, accelerator: 11.8 }
 };

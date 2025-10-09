@@ -19,8 +19,17 @@ export const URL_MAPS = {
   }
 };
 
-// run/log 控制字典（现在统一设为 log）
+// run/log 控制字典
 export function getRunMode(platform, algorithm, dataset) {
+  // DSA PageRank 使用实时执行模式
+  if (platform === 'DSA' && algorithm === 'PageRank') {
+    return 'run';
+  }
+  // FPGA PageRank 使用实时执行模式
+  if (platform === 'FPGA' && algorithm === 'PageRank') {
+    return 'run';
+  }
+  // 其他情况使用日志模式
   return 'log';
 }
 
@@ -98,6 +107,29 @@ export const PERFORMANCE_DATA = {
         'Dataflow-Throughput': 1.954 // GTEPS
       }
     ],
+    'DSA': [
+      {
+        'Dataset': 'Rmat-18',
+        'Baseline-Time(s)': 65.371,
+        'Dataflow-Time(s)': 20.631,
+        'Baseline-Throughput': 0.014844, // GTEPS
+        'Dataflow-Throughput': 0.039376  // GTEPS
+      },
+      {
+        'Dataset': 'Rmat-19',
+        'Baseline-Time(s)': 118.991,
+        'Dataflow-Time(s)': 41.8,
+        'Baseline-Throughput': 0.021534, // GTEPS
+        'Dataflow-Throughput': 0.047  // GTEPS
+      },
+      {
+        'Dataset': 'Rmat-20',
+        'Baseline-Time(s)': 242.008,
+        'Dataflow-Time(s)': 84.3,
+        'Baseline-Throughput': 0.02835, // GTEPS
+        'Dataflow-Throughput': 0.050  // GTEPS
+      }
+    ]
 
   },
   'ViT': {
@@ -121,16 +153,16 @@ export const PERFORMANCE_DATA = {
       {
         'Dataset': 'ImageNet',
         'Baseline-Time(s)': 110.0,
-        'Dataflow-Time(s)': 46.0,
+        'Dataflow-Time(s)': 46.5,
         'Baseline-Throughput': 480, // GFLOPS
         'Dataflow-Throughput': 1279.22  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
-        'Baseline-Time(s)': 78.0,
-        'Dataflow-Time(s)': 49.0,
-        'Baseline-Throughput': 420, // GFLOPS
-        'Dataflow-Throughput': 690  // GFLOPS
+        'Baseline-Time(s)': 128.0,
+        'Dataflow-Time(s)': 65.32,
+        'Baseline-Throughput': 34.18, // GFLOPS
+        'Dataflow-Throughput': 95.01  // GFLOPS
       }
     ],
     'FPGA': [

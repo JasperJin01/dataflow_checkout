@@ -82,7 +82,7 @@ export const DatasetInfo = ({ dataset }) => {
       <div>
         <div>节点规模：65,536</div>
         <div>边规模：1,048,576</div>
-        <div>内存大小：200MB</div>
+        <div>内存大小：51MB</div>
       </div>
     );
   }
@@ -90,9 +90,9 @@ export const DatasetInfo = ({ dataset }) => {
   if (dataset === 'Rmat-18') {
     return (
       <div>
-        <div>节点规模：262,144</div>
-        <div>边规模：4,194,304</div>
-        <div>内存大小：300MB</div>
+        <div>节点规模：174,147</div>
+        <div>边规模：7,600,696</div>
+        <div>内存大小：94MB</div>
       </div>
     );
   }
@@ -101,9 +101,9 @@ export const DatasetInfo = ({ dataset }) => {
   if (dataset === 'Rmat-19') {
     return (
       <div>
-        <div>节点规模：262,144</div>
-        <div>边规模：4,194,304</div>
-        <div>内存大小：300MB</div>
+        <div>节点规模：335,318</div>
+        <div>边规模：15,459,350</div>
+        <div>内存大小：195MB</div>
       </div>
     );
   }
@@ -111,9 +111,9 @@ export const DatasetInfo = ({ dataset }) => {
   if (dataset === 'Rmat-20') {
     return (
       <div>
-        <div>节点规模：1,048,576</div>
-        <div>边规模：16,777,216</div>
-        <div>内存大小：400MB</div>
+        <div>节点规模：645,820</div>
+        <div>边规模：31,361,722</div>
+        <div>内存大小：404MB</div>
       </div>
     );
   }

@@ -49,6 +49,14 @@ export function getRunMode(platform, algorithm, dataset) {
   if (algorithm === 'ViT' && dataset === 'ImageNet' && platform === 'CPU分布式') {
     return 'run';
   }
+  // FPGA PageRank算法使用实际执行模式
+  if (algorithm === 'PageRank' && platform === 'CPU-FPGA') {
+    return 'run';
+  }
+  // CPU-DSA PageRank算法使用实际执行模式
+  if (algorithm === 'PageRank' && platform === 'CPU-DSA') {
+    return 'run';
+  }
   return 'log';
 }
 

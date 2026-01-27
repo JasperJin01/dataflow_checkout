@@ -83,7 +83,8 @@ export default function Page() {
   const [tabValue, setTabValue] = useState(0);
   const [logs, setLogs] = useState([]);
   const [running, setRunning] = useState(false);
-  const [performanceData, setPerformanceData] = useState([]);
+  const [powerFlowData, setPowerFlowData] = useState([]);
+  const [stateEstimationData, setStateEstimationData] = useState([]);
   const [chartMetric, setChartMetric] = useState('time');
   const [progress, setProgress] = useState(0);
   const [showReferenceLine, setShowReferenceLine] = useState(false);
@@ -178,8 +179,6 @@ export default function Page() {
     setSelectedAlgo(newAlgo);
     // 当算法改变时，自动选择该算法下的第一个可用数据集
     setSelectedDataset(configCombinations[newAlgo][0]);
-    // 清空性能数据
-    setPerformanceData([]);
   };
 
   // 添加滚动到性能对比区域的函数
@@ -196,12 +195,6 @@ export default function Page() {
     setLogs(['正在与服务器建立连接...']);
     setShowGraphDisplay(false); // 开始执行时隐藏图形显示
 
-    // 直接在这里执行滚动
-    setTimeout(() => {
-      // performanceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      performanceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 50); // 延时50ms，等待react状态更新
-    await new Promise(resolve => setTimeout(resolve, 500)); // 等待滚动完成
 
     try {
       if (selectedAlgo === '潮流计算') {
@@ -229,26 +222,25 @@ export default function Page() {
                 throughput: 1.0
               };
               
-              // 更新性能数据
-              setPerformanceData(prev => {
-                // 移除相同算法和数据集的旧数据
-                const filtered = prev.filter(item => 
-                  !(item.algorithm === selectedAlgo && item.dataset === selectedDataset)
-                );
+              // 更新潮流计算性能数据
+              setPowerFlowData(prev => {
+                // 移除相同数据集的旧数据
+                const filtered = prev.filter(item => item.dataset !== selectedDataset);
                 // 添加新数据并按照allowedCombinations中的顺序排序
                 const newData = [...filtered, newResult];
                 return newData.sort((a, b) => {
-                  if (a.algorithm !== b.algorithm) {
-                    return algorithms.indexOf(a.algorithm) - algorithms.indexOf(b.algorithm);
-                  }
-                  return allowedCombinations[a.algorithm].indexOf(a.dataset) - 
-                         allowedCombinations[b.algorithm].indexOf(b.dataset);
+                  return allowedCombinations['潮流计算'].indexOf(a.dataset) - 
+                         allowedCombinations['潮流计算'].indexOf(b.dataset);
                 });
               });
             }
             
             setRunning(false);
             setShowGraphDisplay(true); // 执行完成后显示图形
+            // 执行完毕后滚动到性能对比区域
+            setTimeout(() => {
+              performanceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
           } else if (event.data === '[error]') {
             eventSource.close();
             setLogs(prev => [...prev, '❌ 执行出错']);
@@ -308,11 +300,13 @@ export default function Page() {
                 throughput: 1.0
               };
               
-              setPerformanceData(prev => {
-                const filtered = prev.filter(item => 
-                  !(item.algorithm === selectedAlgo && item.dataset === selectedDataset)
-                );
-                return [...filtered, newResult];
+              setStateEstimationData(prev => {
+                const filtered = prev.filter(item => item.dataset !== selectedDataset);
+                const newData = [...filtered, newResult];
+                return newData.sort((a, b) => {
+                  return allowedCombinations['状态估计'].indexOf(a.dataset) - 
+                         allowedCombinations['状态估计'].indexOf(b.dataset);
+                });
               });
             } else {
               // 如果没有解析到总时间，使用默认值
@@ -328,16 +322,22 @@ export default function Page() {
                 throughput: 1.0
               };
               
-              setPerformanceData(prev => {
-                const filtered = prev.filter(item => 
-                  !(item.algorithm === selectedAlgo && item.dataset === selectedDataset)
-                );
-                return [...filtered, newResult];
+              setStateEstimationData(prev => {
+                const filtered = prev.filter(item => item.dataset !== selectedDataset);
+                const newData = [...filtered, newResult];
+                return newData.sort((a, b) => {
+                  return allowedCombinations['状态估计'].indexOf(a.dataset) - 
+                         allowedCombinations['状态估计'].indexOf(b.dataset);
+                });
               });
             }
             
             setRunning(false);
             setShowGraphDisplay(true);
+            // 执行完毕后滚动到性能对比区域
+            setTimeout(() => {
+              performanceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
           } else {
             setLogs(prev => [...prev, event.data]);
             
@@ -515,8 +515,44 @@ export default function Page() {
 
         {/* 右侧列 */}
         <Grid item xs={12} md={8}>
-          {/* 代码展示 */}
-          <Paper elevation={3} sx={{
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              执行日志
+            </Typography>
+            <Box 
+              ref={logBoxRef}
+              sx={{
+                height: 430,
+                overflow: 'auto',
+                fontFamily: 'monospace',
+                fontSize: '0.8rem',
+                backgroundColor: '#1a1a1a',
+                borderRadius: 2,
+                p: 1.5,
+                '& > div': {
+                  color: '#ffffff',
+                  lineHeight: 1.6,
+                  borderBottom: '1px solid rgba(255,255,255,0.1)',
+                  py: 0.5
+                }
+              }}
+            >
+              {logs.filter(log => log && typeof log === 'string' && !log.includes('PATH')).map((log, index) => (
+                <div key={index}>{`> ${log}`}</div>
+              ))}
+            </Box>
+            {running && <LinearProgress value={progress} sx={{ mt: 1 }} />}
+          </Paper>
+
+          {/* 异质数据流映射展示面板 */}
+          {/* <Paper elevation={3} sx={{
             p: 2,
             height: '100%',
             borderRadius: 3,
@@ -552,11 +588,11 @@ export default function Page() {
                 }}
               />
             </Box>
-          </Paper>
+          </Paper> */}
         </Grid>
 
         {/* 下方性能对比和执行日志 */}
-        <Grid item xs={12} md={5} ref={performanceRef}>
+        <Grid item xs={12} md={6} ref={performanceRef}>
           <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
             <Typography variant="h6" sx={{
               fontWeight: 700,
@@ -570,9 +606,40 @@ export default function Page() {
             </Typography>
             <Box>
               <BarChart
-                width={400}
+                width={500}
                 height={300}
-                data={getChartData()}
+                data={powerFlowData.map(item => ({ ...item, displayName: item.dataset }))}
+                margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="displayName" />
+                <YAxis label={{ value: '执行时间(ms)', angle: -90, position: 'insideLeft' }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="cpu" fill="#7f58af" name="融合前时间" barSize={50} />
+                <Bar dataKey="accelerator" fill="#64b5f6" name="融合后时间" barSize={50} />
+              </BarChart>
+            </Box>
+          </Paper>
+        </Grid>
+        
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'secondary.main',
+              borderBottom: '2px solid',
+              borderColor: 'secondary.main',
+              pb: 1
+            }}>
+              状态估计性能对比
+            </Typography>
+            <Box>
+              <BarChart
+                width={500}
+                height={300}
+                data={stateEstimationData.map(item => ({ ...item, displayName: item.dataset }))}
                 margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -587,43 +654,7 @@ export default function Page() {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={7}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 3 }}>
-            <Typography variant="h6" sx={{
-              fontWeight: 700,
-              mb: 2,
-              color: 'secondary.main',
-              borderBottom: '2px solid',
-              borderColor: 'secondary.main',
-              pb: 1
-            }}>
-              执行日志
-            </Typography>
-            <Box 
-              ref={logBoxRef}
-              sx={{
-                height: 300,
-                overflow: 'auto',
-                fontFamily: 'monospace',
-                fontSize: '0.8rem',
-                backgroundColor: '#1a1a1a',
-                borderRadius: 2,
-                p: 1.5,
-                '& > div': {
-                  color: '#ffffff',
-                  lineHeight: 1.6,
-                  borderBottom: '1px solid rgba(255,255,255,0.1)',
-                  py: 0.5
-                }
-              }}
-            >
-              {logs.filter(log => log && typeof log === 'string' && !log.includes('PATH')).map((log, index) => (
-                <div key={index}>{`> ${log}`}</div>
-              ))}
-            </Box>
-            {running && <LinearProgress value={progress} sx={{ mt: 1 }} />}
-          </Paper>
-        </Grid>
+
 
         {/* 图形化结果展示 */}
         <Grid item xs={12}>

@@ -1,6 +1,6 @@
 // API配置
 export const API_CONFIG = {
-  host: '10.11.72.198',
+  host: '10.11.75.217',
   port: 8200
 };
 

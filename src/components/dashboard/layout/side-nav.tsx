@@ -56,17 +56,17 @@ export function SideNav(): React.JSX.Element {
             alignItems: 'center',
             backgroundColor: 'var(--mui-palette-neutral-950)',
             display: 'flex',
-            p: '4px 12px',
+            p: '3px 1px',
           }}
         >
           <Box sx={{ flex: '1 1 auto' }}>
-            <Typography sx={{color: '#BAB8B8', fontSize: '13px'}}>
+            <Typography sx={{color: '#BAB8B8', fontSize: '16px'}}>
               国家重点项目
             </Typography>
-            <Typography color="inherit" sx={{fontSize: '15px'}} >
+            <Typography color="inherit" sx={{fontSize: '18px'}} >
               多层次融合的软件定义数据流关键技术与系统
             </Typography>
-            <Typography color="inherit" sx={{fontSize: '15px'}}>
+            <Typography color="inherit" sx={{fontSize: '18px'}}>
               (2023YFB4503400)
             </Typography>
           </Box>
@@ -148,7 +148,7 @@ function NavItem({ disabled, external, href, pathname, title, subItems }: NavIte
         <Box sx={{ flex: '1 1 auto' }}>
           <Typography
             component="span"
-            sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 500, lineHeight: '28px' }}
+            sx={{ color: 'inherit', fontSize: '1.125rem', fontWeight: 500, lineHeight: '32px' }}
           >
             {title}
           </Typography>

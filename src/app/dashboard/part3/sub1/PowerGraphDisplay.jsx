@@ -7,16 +7,18 @@ import * as echarts from 'echarts';
 const PowerGraphDisplay = ({ dataset, algorithm, showLabels = false }) => {
   const graphRef = useRef(null);
   const barChartRef = useRef(null);
+  const baselineBarChartRef = useRef(null);
 
   useEffect(() => {
-    // 初始化图表
     const graphChart = echarts.init(graphRef.current);
     const barChart = echarts.init(barChartRef.current);
+    const baselineBarChart = echarts.init(baselineBarChartRef.current);
 
     // 添加窗口大小变化监听
     const handleResize = () => {
       graphChart.resize();
       barChart.resize();
+      baselineBarChart.resize();
     };
     window.addEventListener('resize', handleResize);
 
@@ -72,9 +74,9 @@ const PowerGraphDisplay = ({ dataset, algorithm, showLabels = false }) => {
 
         // 设置图表配置
         const categories = [
-          { name: 'PQ节点' },
-          { name: 'PV节点' },
-          { name: '平衡节点' }
+          { name: '用户' },
+          { name: '变电站' },
+          { name: '基准节点' }
         ];
 
         const graphOption = {
@@ -143,7 +145,7 @@ const PowerGraphDisplay = ({ dataset, algorithm, showLabels = false }) => {
           }]
         };
 
-        // 处理时间数据
+        // 处理时间数据 - 统一时间条显示的阶段
         const legendData = ['矩阵生成', '矩阵分解', '传输', '右端项', '前代/回代'];
         const seriesData = [];
         
@@ -280,22 +282,128 @@ const PowerGraphDisplay = ({ dataset, algorithm, showLabels = false }) => {
           xAxis: {
             type: 'value',
             name: 'ms',
+            max: algorithm === 'pf' ? 600 : algorithm === 'se' ? 200 : undefined, // 潮流计算优化手动设置最大值为600ms
             axisLabel: {
               formatter: '{value}'
             }
           },
           yAxis: {
             type: 'category',
-            data: ['时间'],
+            data: ['优化时间'],
             axisLine: { show: false },
-            axisTick: { show: false }
+            axisTick: { show: false },
+            axisLabel: {
+              fontSize: 12,
+              fontWeight: 'bold',
+              color: '#1976d2'
+            }
           },
           series: seriesData
+        };
+
+        // 创建基准时间条配置
+        // 根据算法和数据集选择对应的基准数据，统一为5个阶段：矩阵生成、矩阵分解、传输、右端项、前代/回代
+        let baselineData = [];
+        
+        if (algorithm === 'pf') {
+           // 潮流计算基准数据 - Case10790: 矩阵生成、矩阵分解、传输(0)、右端项、前代/回代
+           baselineData = [
+             16.467,   // 矩阵生成 (0.016467s * 1000)
+             364.243,  // 矩阵分解 (0.364243s * 1000)
+             0,        // 传输 (基准数据中无传输时间)
+             137.289,  // 右端项 (0.137289s * 1000)
+             34.412    // 前代/回代 (0.034412s * 1000)
+           ];
+        } else if (algorithm === 'se') {
+          // 状态估计基准数据 - 根据数据集选择，统一为5个阶段
+           const seBaselineMap = {
+             'hn_20171128_174550': [39.93, 99.31, 0, 59.57, 1.15],  // 矩阵生成、矩阵分解、传输(0)、右端项、前代/回代
+             'hn_20171208_11100': [38.56, 107.24, 0, 58.15, 1.07],
+             'hn_20171207_11100': [39.58, 102.85, 0, 59.50, 1.08],
+             'hn_20171207_10000': [41.26, 97.30, 0, 60.49, 1.09],
+             'hn_20171207_09150': [39.00, 105.12, 0, 57.03, 1.02],
+             'hn_20171207_08000': [38.78, 106.45, 0, 59.25, 1.08],
+             'hn_20171207_06300': [39.10, 100.90, 0, 59.40, 1.09],
+             'hn_20160818_174550': [38.81, 100.56, 0, 59.47, 1.07]
+           };
+          
+          // 根据数据集选择基准数据，如果没有匹配则使用第一个作为默认
+          baselineData = seBaselineMap[dataset] || seBaselineMap['hn_20171128_174550'];
+        } else {
+           // 默认使用潮流计算数据
+           baselineData = [16.467, 364.243, 0, 137.289, 34.412];
+         }
+        const baselineSeriesData = [];
+        
+        // 处理基准时间数据（统一为5个阶段：矩阵生成、矩阵分解、传输、右端项、前代/回代）
+        for (let i = 0; i < baselineData.length && i < 5; i++) {
+          baselineSeriesData.push({
+            name: legendData[i],
+            type: 'bar',
+            stack: '基准总量',
+            barWidth: 15,
+            label: {
+              show: showLabels,
+              position: 'top',
+              formatter: (params) => {
+                // 如果值为0（如传输时间），不显示标签
+                return params.value > 0 ? params.value.toFixed(3) : '';
+              }
+            },
+            data: [baselineData[i]]
+          });
+        }
+
+        // 设置基准时间条配置
+        const baselineBarOption = {
+          tooltip: {
+            trigger: 'item',
+            axisPointer: { type: 'shadow' },
+            formatter: function(params) {
+              const value = params.value;
+              return `<div style="margin:3px 0">
+                <span style="font-weight:bold">${params.seriesName}阶段 (基准)</span><br/>
+                <span>执行时间: ${value.toFixed(3)}ms</span>
+              </div>`;
+            }
+          },
+          legend: {
+            data: legendData,
+            selectedMode: false
+          },
+          grid: {
+            top: '30%',
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+            name: 'ms',
+            max: algorithm === 'pf' ? 600 : undefined, // 潮流计算手动设置基准时间最大值为600ms
+            axisLabel: {
+              formatter: '{value}'
+            }
+          },
+          yAxis: {
+            type: 'category',
+            data: ['基准时间'],
+            axisLine: { show: false },
+            axisTick: { show: false },
+            axisLabel: {
+              fontSize: 12,
+              fontWeight: 'bold',
+              color: '#f57c00'
+            }
+          },
+          series: baselineSeriesData
         };
 
         // 渲染图表
         graphChart.setOption(graphOption);
         barChart.setOption(barOption);
+        baselineBarChart.setOption(baselineBarOption);
       } catch (error) {
         console.error('Error loading graph data:', error);
       }
@@ -307,6 +415,7 @@ const PowerGraphDisplay = ({ dataset, algorithm, showLabels = false }) => {
     return () => {
       graphChart.dispose();
       barChart.dispose();
+      baselineBarChart.dispose();
       window.removeEventListener('resize', handleResize);
     };
   }, [dataset, algorithm, showLabels]);
@@ -318,7 +427,7 @@ const PowerGraphDisplay = ({ dataset, algorithm, showLabels = false }) => {
 
   return (
     <Box sx={{ 
-      height: 700,
+      height: 800,
       backgroundColor: '#f5f5f5',
       borderRadius: 2,
       display: 'flex',
@@ -326,9 +435,10 @@ const PowerGraphDisplay = ({ dataset, algorithm, showLabels = false }) => {
       overflow: 'hidden'
     }}>
       <Box ref={graphRef} sx={{ flex: 1, minHeight: 400 }} />
-      <Box ref={barChartRef} sx={{ height: 100, mt: 2 }} />
+      <Box ref={baselineBarChartRef} sx={{ height: 100, mt: 2 }} />
+      <Box ref={barChartRef} sx={{ height: 100, mt: 1 }} />
     </Box>
   );
 };
 
-export default PowerGraphDisplay; 
+export default PowerGraphDisplay;

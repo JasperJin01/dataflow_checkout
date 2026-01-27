@@ -8,8 +8,11 @@ import time
 from pathlib import Path
 from .ssh_pool import SSHConnectionPool
 
+# SSH 连接密钥
 KEY_PATH = '/Users/jiminj/.ssh/id_rsa_hust_server'
 
+# --- 不同的服务器连接池 ---
+# 负责电力应用
 lab84qch = SSHConnectionPool(
     hostname='192.168.165.231',
     username='qch',
@@ -18,14 +21,7 @@ lab84qch = SSHConnectionPool(
     max_connections=5
 )
 
-pool86 = SSHConnectionPool(
-    hostname='192.168.165.232',
-    username='jinjm',
-    key_filename=KEY_PATH,
-    port=22222,
-    max_connections=5
-)
-
+# 负责自动驾驶应用
 node8wq = SSHConnectionPool(
     hostname='222.20.94.68',
     port=50008,
@@ -34,6 +30,7 @@ node8wq = SSHConnectionPool(
     max_connections=5
 )
 
+# CPU服务器
 work1 = SSHConnectionPool(
     hostname='222.20.95.34',
     username='jinjm',
@@ -42,6 +39,18 @@ work1 = SSHConnectionPool(
     max_connections=5
 )
 
+# FPGA服务器
+pool86 = SSHConnectionPool(
+    hostname='192.168.165.232',
+    username='jinjm',
+    key_filename=KEY_PATH,
+    port=22222,
+    max_connections=5
+)
+
+# TODO GPU服务器（云服务）
+
+# 升腾服务器
 # TargetMachine3 SSH连接池 (通过JumpMachine1跳转)
 target_machine3 = SSHConnectionPool(
     hostname='11.11.10.30',
@@ -53,7 +62,6 @@ target_machine3 = SSHConnectionPool(
     jump_username='user',
     jump_port=22
 )
-
 
 
 def execute_ssh_command(pool, command):
@@ -89,14 +97,14 @@ def stream_ssh_command(pool, command, slp=True):
                 if remaining_stdout:
                     for line in remaining_stdout.splitlines():
                         if line.strip():
-                            print(f'[stream_ssh_command] 剩余stdout: {line}')
+                            print(f'[ssh] 剩余stdout: {line}')
                             yield f"data: {line}\n\n"
                 
                 # 输出剩余的stderr内容
                 if remaining_stderr:
                     for line in remaining_stderr.splitlines():
                         if line.strip():
-                            print(f'[stream_ssh_command] 剩余stderr: {line}')
+                            print(f'[ssh] 剩余stderr: {line}')
                             yield f"data: [stderr] {line}\n\n"
                 
                 break
@@ -109,7 +117,7 @@ def stream_ssh_command(pool, command, slp=True):
             try:
                 line = stdout.readline()
                 if line:
-                    print(f'[stream_ssh_command] stdout: {line.rstrip()}')
+                    print(f'[ssh] stdout: {line.rstrip()}')
                     yield f"data: {line.rstrip()}\n\n"
             except Exception:
                 pass
@@ -118,7 +126,7 @@ def stream_ssh_command(pool, command, slp=True):
             try:
                 error_line = stderr.readline()
                 if error_line:
-                    print(f'[stream_ssh_command] stderr: {error_line.rstrip()}')
+                    print(f'[ssh] stderr: {error_line.rstrip()}')
                     yield f"data: [stderr] {error_line.rstrip()}\n\n"
             except Exception:
                 pass
@@ -134,12 +142,12 @@ def stream_ssh_command(pool, command, slp=True):
         # 获取退出状态
         exit_status = stdout.channel.recv_exit_status()
         if exit_status != 0:
-            print(f'[stream_ssh_command] 命令退出状态: {exit_status}')
+            print(f'[ssh] 命令退出状态: {exit_status}')
             yield f"data: [exit_status] {exit_status}\n\n"
         
         yield "data: [done]\n\n"
     except Exception as e:
-        print(f'[stream_ssh_command] 异常: {str(e)}')
+        print(f'[ssh] 异常: {str(e)}')
         yield f"data: [error] {str(e)}\n\n"
     finally:
         if client:
@@ -242,13 +250,6 @@ def run_single(request, platform, algo, dataset):
         )
 
 
-
-
-
-
-
-
-# 电力的两个应用
 
 def run_distributed(request):
     """分布式执行API"""
@@ -360,6 +361,7 @@ def run_distributed(request):
         )
 
 
+# 电力的两个应用
 def stream_power_trend(request, dataset):
     """电力应用 - 潮流计算 (Power Application - Power Flow Calculation)"""
     print(f"[stream_power_trend] 收到请求，数据集: {dataset}")
@@ -369,7 +371,7 @@ def stream_power_trend(request, dataset):
     
     try:
         response = StreamingHttpResponse(
-            stream_ssh_command(lab84qch, my_command, slp=False),
+            stream_ssh_command(lab84qch, my_command, slp=0.1),
             content_type='text/event-stream',
         )
         response['Cache-Control'] = 'no-cache'

@@ -456,7 +456,8 @@ export default function Page() {
               color: 'secondary.main',
               borderBottom: '2px solid',
               borderColor: 'secondary.main',
-              pb: 1
+              pb: 1,
+              fontSize: '1.3rem'
             }}>
               算法选择
             </Typography>
@@ -476,7 +477,7 @@ export default function Page() {
                   setSelectedDataset(availableDatasets[0]);
                 }
               }}
-              sx={{ mb: 2 }}
+              sx={{ mb: 1, fontSize: '1.2rem' }}
             >
               {platforms.map(platform => (
                 <MenuItem key={platform} value={platform}>{platform}</MenuItem>
@@ -498,7 +499,7 @@ export default function Page() {
                   setSelectedDataset(availableDatasets[0]);
                 }
               }}
-              sx={{ mb: 2 }}
+              sx={{ mb: 1, fontSize: '1.2rem' }}
             >
               {algorithms.map(algo => (
                 <MenuItem key={algo} value={algo}>{algo}</MenuItem>
@@ -512,7 +513,7 @@ export default function Page() {
               fullWidth
               value={selectedDataset}
               onChange={(e) => setSelectedDataset(e.target.value)}
-              sx={{ mb: 2 }}
+              sx={{ mb: 2, fontSize: '1.2rem' }}
             >
               {getAvailableDatasets(selectedAlgo, selectedPlatform).map(ds => (
                 <MenuItem key={ds} value={ds}>{ds}</MenuItem>
@@ -549,7 +550,8 @@ export default function Page() {
               color: 'secondary.main',
               borderBottom: '2px solid',
               borderColor: 'secondary.main',
-              pb: 1
+              pb: 1,
+              fontSize: '1.3rem'
             }}>
               执行日志
             </Typography>
@@ -586,7 +588,8 @@ export default function Page() {
                 color: 'secondary.main',
                 borderBottom: '2px solid',
                 borderColor: 'secondary.main',
-                pb: 1
+                pb: 1,
+                fontSize: '1.3rem'
               }}>
                 算法详情
               </Typography>
@@ -603,7 +606,8 @@ export default function Page() {
                 color: 'secondary.main',
                 borderBottom: '2px solid',
                 borderColor: 'secondary.main',
-                pb: 1
+                pb: 1,
+                fontSize: '1.3rem'
               }}>
                 {selectedDataset === allDatasetsOption ? '数据集概览' : '数据集信息'}
               </Typography>
@@ -637,7 +641,8 @@ export default function Page() {
                   color: 'secondary.main',
                   borderBottom: '2px solid',
                   borderColor: 'secondary.main',
-                  pb: 1
+                  pb: 1,
+                  fontSize: '1.3rem'
                 }}>
                   PageRank性能对比详情
                 </Typography>
@@ -664,7 +669,8 @@ export default function Page() {
                     </Tabs>
 
                     <Box sx={{ mb: 2 }}>
-                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                      <Typography variant="subtitle1" align="center" 
+                      sx={{ fontWeight: 550, mb: 1, fontSize: '1.2rem' }}>
                         PageRank - 执行时间对比 (秒)
                       </Typography>
                       <ResponsiveContainer width="100%" height={250}>
@@ -712,7 +718,8 @@ export default function Page() {
                     </Box>
 
                     <Box>
-                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                      <Typography variant="subtitle1" align="center" 
+                      sx={{ fontWeight: 550, mb: 1, fontSize: '1.2rem' }}>
                         PageRank - 吞吐量对比 (GTEPS)
                       </Typography>
                       <ResponsiveContainer width="100%" height={250}>
@@ -803,7 +810,8 @@ export default function Page() {
                   color: 'secondary.main',
                   borderBottom: '2px solid',
                   borderColor: 'secondary.main',
-                  pb: 1
+                  pb: 1,
+                  fontSize: '1.3rem'
                 }}>
                   ViT性能对比详情
                 </Typography>
@@ -830,7 +838,8 @@ export default function Page() {
                     </Tabs>
 
                     <Box sx={{ mb: 2 }}>
-                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                      <Typography variant="subtitle1" align="center" 
+                      sx={{ fontWeight: 550, mb: 1, fontSize: '1.2rem' }}>
                         ViT - 执行时间对比 (秒)
                       </Typography>
                       <ResponsiveContainer width="100%" height={250}>
@@ -878,7 +887,8 @@ export default function Page() {
                     </Box>
 
                     <Box>
-                      <Typography variant="subtitle1" align="center" sx={{ fontWeight: 550, mb: 1 }}>
+                      <Typography variant="subtitle1" align="center" 
+                      sx={{ fontWeight: 550, mb: 1, fontSize: '1.2rem' }}>
                         ViT - 吞吐量对比 (GFLOPS)
                       </Typography>
                       <ResponsiveContainer width="100%" height={250}>

@@ -1,0 +1,141 @@
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:549: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:549: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/root/miniconda3/envs/mindspore_py39/lib/python3.9/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:23.736.970 [mindspore/ccsrc/distributed/rpc/tcp/tcp_comm.cc:485] Connect] Connection 19 source: 127.0.0.1:34636, destination: 127.0.0.1:8118
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:23.737.064 [mindspore/ccsrc/distributed/rpc/tcp/tcp_client.cc:76] Connect] Failed to connect to the tcp server : 127.0.0.1:8118, retry to reconnect(1/1)...
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:24.237.150 [mindspore/ccsrc/distributed/cluster/topology/compute_graph_node.cc:173] Register] Failed to connect to the meta server node url: 127.0.0.1:8118
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:24.237.185 [mindspore/ccsrc/distributed/cluster/topology/compute_graph_node.cc:363] ReconnectWithTimeoutWindow] Failed to register and try to reconnect to the meta server.
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:24.737.539 [mindspore/ccsrc/distributed/rpc/tcp/tcp_comm.cc:485] Connect] Connection 20 source: 127.0.0.1:34662, destination: 127.0.0.1:8118
+[WARNING] DISTRIBUTED(3957630,ffff38538120,python):2025-07-30-20:15:24.737.572 [mindspore/ccsrc/distributed/rpc/tcp/tcp_comm.cc:79] ConnectedEventHandler] Connection from 127.0.0.1:34662 to 127.0.0.1:8118 is successfully created. System errno: Success
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:24.737.613 [mindspore/ccsrc/distributed/rpc/tcp/tcp_comm.cc:494] Connect] Waiting for the state of the connection to 127.0.0.1:8118 to be connected...Retry number: 1
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:25.237.841 [mindspore/ccsrc/distributed/rpc/tcp/tcp_comm.cc:485] Connect] Connection 21 source: 127.0.0.1:34668, destination: 127.0.0.1:8118
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:25.237.875 [mindspore/ccsrc/distributed/rpc/tcp/tcp_comm.cc:494] Connect] Waiting for the state of the connection to 127.0.0.1:8118 to be connected...Retry number: 2
+[WARNING] DISTRIBUTED(3957630,ffff37518120,python):2025-07-30-20:15:25.237.888 [mindspore/ccsrc/distributed/rpc/tcp/tcp_comm.cc:79] ConnectedEventHandler] Connection from 127.0.0.1:34668 to 127.0.0.1:8118 is successfully created. System errno: Success
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:25.738.371 [mindspore/ccsrc/distributed/cluster/cluster_context.cc:245] BuildCluster] Topology build timed out., retry(1/1200).
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:26.238.485 [mindspore/ccsrc/distributed/cluster/cluster_context.cc:245] BuildCluster] Topology build timed out., retry(2/1200).
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:26.738.624 [mindspore/ccsrc/distributed/cluster/cluster_context.cc:248] BuildCluster] Cluster is successfully initialized.
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:26.738.676 [mindspore/ccsrc/distributed/cluster/cluster_context.cc:355] PostProcess] This node 0 rank id: 0
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:30.809.644 [mindspore/ccsrc/distributed/collective/collective_manager.cc:332] CreateCommunicationGroup] Start to create communication group: hccl_world_group [const vector]{0, 1, 2, 3, 4, 5, 6, 7}, async: 1, submit_now: 1
+[WARNING] DISTRIBUTED(3957630,ffffa8ae7020,python):2025-07-30-20:15:30.809.891 [mindspore/ccsrc/distributed/collective/collective_manager.cc:381] CreateCommunicationGroup] This group's communicator is async created hccl_world_group
+[2025-07-30 20:15:30] dataflow.train INFO - We recommend installing `termcolor` via `pip install termcolor` and setup logger by `set_logger(..., color=True)`
+[WARNING] DISTRIBUTED(3957630,fffebcf9f120,python):2025-07-30-20:15:30.972.648 [mindspore/ccsrc/distributed/collective/collective_manager.cc:777] CreateDeviceCommunicator] Begin initialize communication group on the device side: hccl_world_group
+[WARNING] DEVICE(3957630,fffdfffff120,python):2025-07-30-20:15:30.973.160 [mindspore/ccsrc/plugin/device/ascend/hal/hardware/ascend_collective_comm/ascend_communication_group.cc:141] InitializeByRootInfoConfig] Start to initialize communicator by HcclCommInitRootInfo for hccl_world_group, hcclBufferSize is 200 MB. hcclDeterministic is 0
+[WARNING] DEVICE(3957630,fffdfffff120,python):2025-07-30-20:15:34.913.211 [mindspore/ccsrc/plugin/device/ascend/hal/hardware/ascend_collective_comm/ascend_communication_group.cc:152] InitializeByRootInfoConfig] End to initialize communicator by HcclCommInitRootInfo for hccl_world_group
+[WARNING] DISTRIBUTED(3957630,fffebcf9f120,python):2025-07-30-20:15:34.913.440 [mindspore/ccsrc/distributed/collective/collective_manager.cc:788] CreateDeviceCommunicator] End initialize communication group on the device side: hccl_world_group
+[2025-07-30 20:15:41] dataflow.train INFO - Essential Experiment Configurations:
+MindSpore mode[GRAPH(0)/PYNATIVE(1)]: 0
+Distributed mode: True
+Number of devices: 8
+Number of training samples: 38400
+Number of validation samples: 9600
+Number of classes: 100
+Number of batches: 18
+Batch size: 256
+Auto augment: randaug-m9-mstd0.5
+MixUp: 0.8
+CutMix: 1.0
+Model: vit_b_16_224
+Model parameters: 85875556
+Number of epochs: 8
+Optimizer: adamw
+Learning rate: 0.0016
+LR Scheduler: cosine_decay
+Momentum: 0.9
+Weight decay: 0.3
+Auto mixed precision: O2
+Loss scale: 1024(fixed)
+[2025-07-30 20:15:41] dataflow.train INFO - Resume training from /dev/MODEL/VIT/DataFlow/backup/vit_b_16_224-496_18.ckpt, last step: 0, last epoch: 0
+....[2025-07-30 20:17:39] dataflow.utils.callbacks INFO - Epoch: [1/8], batch: [18/18], loss: 3.151951, lr: 0.000000, time: 113.274519s
+..[2025-07-30 20:18:00] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 20.537422s
+[2025-07-30 20:18:00] dataflow.utils.callbacks INFO - => New best val acc: 65.6458%
+[2025-07-30 20:18:04] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt
+[2025-07-30 20:18:06] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+[2025-07-30 20:18:06] dataflow.utils.callbacks INFO - Total time since last epoch: 144.450093(train: 118.035023, val: 20.537422)s, GFLOPS: 414.45	ETA: 1011.150653s
+[2025-07-30 20:18:06] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:18:15] dataflow.utils.callbacks INFO - Epoch: [2/8], batch: [18/18], loss: 2.714737, lr: 0.000000, time: 8.033024s
+[2025-07-30 20:18:16] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 1.420506s
+[2025-07-30 20:18:17] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt
+[2025-07-30 20:18:19] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt	0.65645831823349
+[2025-07-30 20:18:19] dataflow.utils.callbacks INFO - Total time since last epoch: 12.169141(train: 8.039716, val: 1.420506)s, GFLOPS: 4919.63	ETA: 73.014843s
+[2025-07-30 20:18:19] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:18:27] dataflow.utils.callbacks INFO - Epoch: [3/8], batch: [18/18], loss: 2.353475, lr: 0.000000, time: 8.026284s
+[2025-07-30 20:18:28] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 1.404635s
+[2025-07-30 20:18:29] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_18.ckpt
+[2025-07-30 20:18:31] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt	0.65645831823349
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_18.ckpt	0.65645831823349
+[2025-07-30 20:18:31] dataflow.utils.callbacks INFO - Total time since last epoch: 12.011383(train: 8.031825, val: 1.404635)s, GFLOPS: 4984.25	ETA: 60.056914s
+[2025-07-30 20:18:31] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:18:39] dataflow.utils.callbacks INFO - Epoch: [4/8], batch: [18/18], loss: 2.887333, lr: 0.000000, time: 8.028733s
+[2025-07-30 20:18:40] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 1.407276s
+[2025-07-30 20:18:41] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_18.ckpt
+[2025-07-30 20:18:43] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt	0.65645831823349
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_18.ckpt	0.65645831823349
+[2025-07-30 20:18:43] dataflow.utils.callbacks INFO - Total time since last epoch: 12.143057(train: 8.034359, val: 1.407276)s, GFLOPS: 4930.20	ETA: 48.572228s
+[2025-07-30 20:18:43] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:18:51] dataflow.utils.callbacks INFO - Epoch: [5/8], batch: [18/18], loss: 1.723825, lr: 0.000000, time: 8.026461s
+[2025-07-30 20:18:52] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 1.397100s
+[2025-07-30 20:18:53] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-5_18.ckpt
+[2025-07-30 20:18:55] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-5_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt	0.65645831823349
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_18.ckpt	0.65645831823349
+[2025-07-30 20:18:55] dataflow.utils.callbacks INFO - Total time since last epoch: 12.164357(train: 8.032203, val: 1.397100)s, GFLOPS: 4921.57	ETA: 36.493072s
+[2025-07-30 20:18:55] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:19:03] dataflow.utils.callbacks INFO - Epoch: [6/8], batch: [18/18], loss: 1.544071, lr: 0.000000, time: 8.028050s
+[2025-07-30 20:19:05] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 1.410489s
+[2025-07-30 20:19:06] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-6_18.ckpt
+[2025-07-30 20:19:07] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-5_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-6_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt	0.65645831823349
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_18.ckpt	0.65645831823349
+[2025-07-30 20:19:07] dataflow.utils.callbacks INFO - Total time since last epoch: 12.279615(train: 8.034596, val: 1.410489)s, GFLOPS: 4875.37	ETA: 24.559231s
+[2025-07-30 20:19:07] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:19:15] dataflow.utils.callbacks INFO - Epoch: [7/8], batch: [18/18], loss: 3.346601, lr: 0.000000, time: 8.029063s
+[2025-07-30 20:19:17] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 1.404714s
+[2025-07-30 20:19:18] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-7_18.ckpt
+[2025-07-30 20:19:19] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-5_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-6_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-7_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt	0.65645831823349
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_18.ckpt	0.65645831823349
+[2025-07-30 20:19:19] dataflow.utils.callbacks INFO - Total time since last epoch: 11.967687(train: 8.035230, val: 1.404714)s, GFLOPS: 5002.45	ETA: 11.967687s
+[2025-07-30 20:19:19] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:19:27] dataflow.utils.callbacks INFO - Epoch: [8/8], batch: [18/18], loss: 2.785472, lr: 0.000000, time: 8.026817s
+[2025-07-30 20:19:29] dataflow.utils.callbacks INFO - Validation Top_1_Accuracy: 65.6458%, Top_5_Accuracy: 86.0833%, time: 1.403758s
+[2025-07-30 20:19:30] dataflow.utils.callbacks INFO - Saving model to /dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-8_18.ckpt
+[2025-07-30 20:19:31] dataflow.utils.checkpoint_manager INFO - Top-k accuracy checkpoints:
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-1_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-4_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-5_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-6_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-7_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-8_18.ckpt	0.6564583778381348
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-2_18.ckpt	0.65645831823349
+/dev/MODEL/VIT/DataFlow/ckpt/vit_b_16_224-3_18.ckpt	0.65645831823349
+[2025-07-30 20:19:31] dataflow.utils.callbacks INFO - Total time since last epoch: 11.966199(train: 8.032180, val: 1.403758)s, GFLOPS: 5003.07	ETA: 0.000000s
+[2025-07-30 20:19:31] dataflow.utils.callbacks INFO - ---------------------------------------- DataFlow Method ----------------------------------------
+[2025-07-30 20:19:31] dataflow.utils.callbacks INFO - Finish training!
+[2025-07-30 20:19:31] dataflow.utils.callbacks INFO - Average calculate time: 12.0712 seconds, GFLOPS: 4960.2964
+[2025-07-30 20:19:31] dataflow.utils.callbacks INFO - ======================================== DataFlow Method ========================================
+[2025-07-30 20:19:32] dataflow.train INFO - Total E2E Time: 241.6504 second

@@ -15,7 +15,7 @@ const allDatasetsOption = 'all-datasets';
 const datasetsByAlgorithmAndPlatform = {
   'PageRank': {
     'CPU-GPU': ['Rmat-18', 'Rmat-19', 'Rmat-20'],
-    'CPU-FPGA': ['Rmat-16', 'Rmat-18', 'Rmat-20'],
+    'CPU-FPGA': ['Rmat-18', 'Rmat-19', 'Rmat-20'],
     'CPU-DSA': ['Rmat-18', 'Rmat-19', 'Rmat-20']
   },
   'ViT': {

@@ -9,30 +9,36 @@ from pathlib import Path
 from .ssh_pool import SSHConnectionPool
 
 # SSH 连接密钥
-KEY_PATH = '/Users/jiminj/.ssh/id_rsa_hust_server'
+# SSH_KEY_ROOT = '/home/jinjm' 
+SSH_KEY_ROOT = '/Users/jiminj'
+
+KEY_PATH = f'{SSH_KEY_ROOT}/.ssh/id_rsa_hust_server'
+WQ_KEY_PATH = f'{SSH_KEY_ROOT}/.ssh/id_rsa_wq'
+QCH_KEY_PATH = f'{SSH_KEY_ROOT}/.ssh/id_rsa_qch'
+
 
 # --- 不同的服务器连接池 ---
 # 负责电力应用
 lab84qch = SSHConnectionPool(
     hostname='192.168.165.231',
     username='qch',
-    key_filename='/Users/jiminj/.ssh/id_rsa_qch',
+    key_filename=QCH_KEY_PATH,
     port=22222,
     max_connections=5
 )
 
 # 负责自动驾驶应用
 node8wq = SSHConnectionPool(
-    hostname='222.20.94.68',
+    hostname='222.20.94.68', # NOTE ping不通
     port=50008,
     username='wangqie',
-    key_filename='/Users/jiminj/.ssh/id_rsa_wq',
+    key_filename=WQ_KEY_PATH,
     max_connections=5
 )
 
 # CPU服务器
 work1 = SSHConnectionPool(
-    hostname='222.20.95.34',
+    hostname='222.20.95.34', # NOTE ping不通
     username='jinjm',
     key_filename=KEY_PATH,
     port=50017,
@@ -200,12 +206,12 @@ def run_single(request, platform, algo, dataset):
         elif platform.lower() == 'fpga' and algo.lower() == 'pr':
             # FPGA PageRank执行逻辑
             dataset_mapping = {
-                'rmat16': 'scale18',
-                'rmat18': 'scale20', 
-                'rmat20': 'scale22',
-                'rmat-16': 'scale18',
-                'rmat-18': 'scale20', 
-                'rmat-20': 'scale22'
+                'rmat18': 'scale18',
+                'rmat19': 'scale19', 
+                'rmat20': 'scale20',
+                'rmat-18': 'scale18',
+                'rmat-19': 'scale19', 
+                'rmat-20': 'scale20'
             }
             
             if dataset.lower() not in dataset_mapping:
@@ -221,7 +227,7 @@ def run_single(request, platform, algo, dataset):
                 'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
                 'source /opt/xilinx/xrt/setup.sh',
                 'cd /space2/qch-data/now_version',
-                f'./pagerank_single_kerel 110Mhz_28suram.xclbin {scale_param}'
+                f'./pagerank_single_kernel 110Mhz_28suram.xclbin {scale_param}'
             ]
             print(commands)
             
@@ -234,6 +240,46 @@ def run_single(request, platform, algo, dataset):
             )
             response['Cache-Control'] = 'no-cache'
             return response
+
+        elif platform.lower() == 'cpu' and algo.lower() == 'pr':
+            # CPU PageRank执行逻辑
+            dataset_mapping = {
+                'rmat18': 'Rmat-18',
+                'rmat19': 'Rmat-19', 
+                'rmat20': 'Rmat-20',
+                'rmat-18': 'Rmat-18',
+                'rmat-19': 'Rmat-19', 
+                'rmat-20': 'Rmat-20'
+            }
+
+            if dataset.lower() not in dataset_mapping:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
+                    status=400
+                )
+
+            dataset_param = dataset_mapping[dataset.lower()]
+            
+            # 构建命令序列
+            commands = [
+                'cd /home/jinjm/dev/pagerank',
+                'source ~/anaconda3/etc/profile.d/conda.sh', 
+                'conda activate pt38',
+                f'python -u pr_dataflow.py {dataset_param}'
+            ]
+            
+            cmd = ' && '.join(commands)
+            print(f'[run_single] CPU PageRank执行命令: {cmd}')
+            
+            response = StreamingHttpResponse(
+                stream_ssh_command(work1, cmd),
+                content_type='text/event-stream',
+            )
+            response['Cache-Control'] = 'no-cache'
+            return response
+
+            
+
 
         else:
             # 其他平台的执行逻辑可以在这里添加

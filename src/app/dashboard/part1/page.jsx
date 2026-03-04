@@ -9,7 +9,7 @@ import { AssessmentCriteria, AlgorithmDetails, DatasetInfo, getThroughputUnit } 
 
 // 定义可选项
 const algorithms = ['PageRank', 'ViT'];
-const platforms = ['DSA', 'GPU', 'FPGA','CPU' ];
+const platforms = ['CPU', 'GPU', 'FPGA'];
 const allDatasetsOption = 'all-datasets';
 
 // 不同算法对应的数据集（保留兼容性）
@@ -21,16 +21,14 @@ const datasetsByAlgorithm = {
 // 不同算法-平台组合对应的数据集
 const datasetsByAlgorithmAndPlatform = {
   'PageRank': {
-    'CPU': ['Rmat-16', 'Rmat-18', 'Rmat-20'],
+    'CPU': ['Rmat-18', 'Rmat-19', 'Rmat-20'],
     'GPU': ['Rmat-18', 'Rmat-19', 'Rmat-20'],
-    'FPGA': ['Rmat-16', 'Rmat-18', 'Rmat-20'],
-    'DSA': ['Rmat-18', 'Rmat-19', 'Rmat-20']
+    'FPGA': ['Rmat-18', 'Rmat-19', 'Rmat-20']
   },
   'ViT': {
     'CPU': ['ImageNet', 'DriveSeg'],
     'GPU': ['ImageNet', 'DriveSeg'],
-    'FPGA': ['ImageNet', 'DriveSeg'],
-    'DSA': ['ImageNet', 'DriveSeg']
+    'FPGA': ['ImageNet', 'DriveSeg']
   }
 };
 
@@ -325,24 +323,17 @@ export default function Page() {
           setPerformanceData([]);
         }
         
-        // 根据平台选择不同的API端点
+        
         let eventSource;
         let extractedMetrics = { gteps: null, totalCost: null };
         
-        if ((selectedPlatform === 'DSA' || selectedPlatform === 'FPGA') && selectedAlgo === 'PageRank') {
-          // DSA 和 FPGA PageRank 使用新的API端点
-          const urlPlatform = URL_MAPS.platform[selectedPlatform];
-          const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
-          const urlData = URL_MAPS.dataset[selectedDataset];
-          
-          eventSource = new EventSource(`${request.BASE_URL}/api/single/${urlPlatform}/${urlAlgo}/${urlData}/`);
-        } else {
-          // 其他情况使用原有的API端点
-          const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
-          const urlData = URL_MAPS.dataset[selectedDataset];
-          
-          eventSource = new EventSource(`${request.BASE_URL}/part1/execute/${urlAlgo}/${urlData}/`);
-        }
+        
+        const urlPlatform = URL_MAPS.platform[selectedPlatform];
+        const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
+        const urlData = URL_MAPS.dataset[selectedDataset];
+        
+        eventSource = new EventSource(`${request.BASE_URL}/api/single/${urlPlatform}/${urlAlgo}/${urlData}/`);
+
         
         eventSource.onmessage = async (event) => {
           if (event.data === '[done]') {

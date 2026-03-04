@@ -90,70 +90,70 @@ export const PERFORMANCE_DATA = {
       2: [
         {
           'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 18.0,
-          'Dataflow-Time(s)': 6.0,
-          'Baseline-Throughput': 0.0008, // GTEPS
-          'Dataflow-Throughput': 0.0018  // GTEPS
+          'Baseline-Time(s)': 36.38,
+          'Dataflow-Time(s)': 10.85,
+          'Baseline-Throughput': 0.1745, // GTEPS
+          'Dataflow-Throughput': 0.5907  // GTEPS
         },
         {
           'Dataset': 'Rmat-19',
-          'Baseline-Time(s)': 59.6,
-          'Dataflow-Time(s)': 26.8,
-          'Baseline-Throughput': 1.6, // GTEPS
-          'Dataflow-Throughput': 3.15  // GTEPS
+          'Baseline-Time(s)': 77.83,
+          'Dataflow-Time(s)': 15.61,
+          'Baseline-Throughput': 0.184, // GTEPS
+          'Dataflow-Throughput': 0.7456  // GTEPS
         },
         {
           'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 117.0,
-          'Dataflow-Time(s)': 7.8,
-          'Baseline-Throughput': 1.65, // GTEPS
-          'Dataflow-Throughput': 25.2 // GTEPS
+          'Baseline-Time(s)': 155.33,
+          'Dataflow-Time(s)': 26.88,
+          'Baseline-Throughput': 0.2832, // GTEPS
+          'Dataflow-Throughput': 0.8986 // GTEPS
         }
       ],
       4: [
         {
           'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 9,
-          'Dataflow-Time(s)': 3,
-          'Baseline-Throughput': 0.001606, // GTEPS
-          'Dataflow-Throughput': 0.003606  // GTEPS
+          'Baseline-Time(s)': 38.25,
+          'Dataflow-Time(s)': 10.95,
+          'Baseline-Throughput': 0.1737, // GTEPS
+          'Dataflow-Throughput': 0.6179  // GTEPS
         },
         {
           'Dataset': 'Rmat-19',
-          'Baseline-Time(s)': 29.8,
-          'Dataflow-Time(s)': 13.4,
-          'Baseline-Throughput': 3.2, // GTEPS
-          'Dataflow-Throughput': 6.3  // GTEPS
+          'Baseline-Time(s)': 77.84,
+          'Dataflow-Time(s)': 24.4,
+          'Baseline-Throughput': 0.1843, // GTEPS
+          'Dataflow-Throughput': 0.8137  // GTEPS
         },
         {
           'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 58.5,
-          'Dataflow-Time(s)': 3.9,
-          'Baseline-Throughput': 3.3, // GTEPS
-          'Dataflow-Throughput': 50.4 // GTEPS
+          'Baseline-Time(s)': 155.3,
+          'Dataflow-Time(s)': 44.54,
+          'Baseline-Throughput': 0.2862, // GTEPS
+          'Dataflow-Throughput': 0.9946 // GTEPS
         }
       ],
       8: [
         {
           'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 4.5,
-          'Dataflow-Time(s)': 1.5,
-          'Baseline-Throughput': 0.03212, // GTEPS
-          'Dataflow-Throughput': 0.1212  // GTEPS
+          'Baseline-Time(s)': 47.74,
+          'Dataflow-Time(s)': 15.35,
+          'Baseline-Throughput': 0.1746, // GTEPS
+          'Dataflow-Throughput': 0.8267  // GTEPS
         },
         {
           'Dataset': 'Rmat-19',
-          'Baseline-Time(s)': 14.9,
-          'Dataflow-Time(s)': 6.7,
-          'Baseline-Throughput': 0.064, // GTEPS
-          'Dataflow-Throughput': 0.136  // GTEPS
+          'Baseline-Time(s)': 98.82,
+          'Dataflow-Time(s)': 32.44,
+          'Baseline-Throughput': 0.2033, // GTEPS
+          'Dataflow-Throughput': 0.7806  // GTEPS
         },
         {
           'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 29.25,
-          'Dataflow-Time(s)': 1.95,
-          'Baseline-Throughput': 6.6, // GTEPS
-          'Dataflow-Throughput': 100.8 // GTEPS
+          'Baseline-Time(s)': 192.89,
+          'Dataflow-Time(s)': 65.51,
+          'Baseline-Throughput': 0.2409, // GTEPS
+          'Dataflow-Throughput': 1.0292 // GTEPS
         }
       ]
     },
@@ -323,49 +323,49 @@ export const PERFORMANCE_DATA = {
       2: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 447.43,
-          'Dataflow-Time(s)': 191.33,
-          'Baseline-Throughput': 797.59, // GFLOPS
-          'Dataflow-Throughput': 2163.43, // GFLOPS
+          'Baseline-Time(s)': 80.45,
+          'Dataflow-Time(s)': 28.09,
+          'Baseline-Throughput': 16706.03, // GFLOPS
+          'Dataflow-Throughput': 47846.21, // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 322.17 ,
-          'Dataflow-Time(s)': 115.81,
-          'Baseline-Throughput': 173.96, // GFLOPS
-          'Dataflow-Throughput': 327.78  // GFLOPS
+          'Baseline-Time(s)': 70.7,
+          'Dataflow-Time(s)': 19.21,
+          'Baseline-Throughput': 1980.2, // GFLOPS
+          'Dataflow-Throughput': 7287.87  // GFLOPS
         }
       ],
       4: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 390.12,
-          'Dataflow-Time(s)': 133.97,
-          'Baseline-Throughput': 1052.73, // GFLOPS
-          'Dataflow-Throughput': 3524.31, // GFLOPS
+          'Baseline-Time(s)': 65.3,
+          'Dataflow-Time(s)': 17.87,
+          'Baseline-Throughput': 20581.93, // GFLOPS
+          'Dataflow-Throughput': 75209.85, // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 352.74,
-          'Dataflow-Time(s)': 71.83,
-          'Baseline-Throughput': 284.94, // GFLOPS
-          'Dataflow-Throughput': 534.07  // GFLOPS
+          'Baseline-Time(s)': 69.86,
+          'Dataflow-Time(s)': 14.61,
+          'Baseline-Throughput': 2004.01, // GFLOPS
+          'Dataflow-Throughput': 9582.46  // GFLOPS
         }
       ],
       8: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 448.53,
-          'Dataflow-Time(s)': 128.07,
-          'Baseline-Throughput': 1069.68, // GFLOPS
-          'Dataflow-Throughput': 4434.44 , // GFLOPS
+          'Baseline-Time(s)': 63.74,
+          'Dataflow-Time(s)': 15.19,
+          'Baseline-Throughput': 21085.66, // GFLOPS
+          'Dataflow-Throughput': 88479.26, // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 615.99,
-          'Dataflow-Time(s)': 73.58,
-          'Baseline-Throughput': 289.62, // GFLOPS
-          'Dataflow-Throughput': 516.97  // GFLOPS
+          'Baseline-Time(s)': 75.8,
+          'Dataflow-Time(s)': 14.6,
+          'Baseline-Throughput': 1846.97, // GFLOPS
+          'Dataflow-Throughput': 9589.04  // GFLOPS
         }
       ]
     },
@@ -474,7 +474,6 @@ export const PERFORMANCE_DATA = {
 
   }
 };
-
 
 
 

@@ -38,7 +38,7 @@ def update_frontend_config(new_ip):
     """
     更新前端配置文件中的IP地址
     """
-    frontend_file = '/Users/jiminj/Desktop/dataflow_checkout/src/lib/request/request.js'
+    frontend_file = '/Users/jiminj/Developer/hust-democheck/dataflow_checkout/src/lib/request/request.js'
     
     try:
         # 读取文件内容
@@ -67,7 +67,7 @@ def update_backend_config(new_ip):
     """
     更新后端配置文件中的ALLOWED_HOSTS最后一个IP地址
     """
-    backend_file = '/Users/jiminj/Desktop/dataflow_checkout/backend_checkout/backend/settings.py'
+    backend_file = '/Users/jiminj/Developer/hust-democheck/dataflow_checkout/backend_checkout/backend/settings.py'
     
     try:
         # 读取文件内容

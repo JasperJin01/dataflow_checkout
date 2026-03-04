@@ -19,81 +19,88 @@ export const URL_MAPS = {
   }
 };
 
-// run/log 控制字典
+// NOTE run/log 控制字典
 export function getRunMode(platform, algorithm, dataset) {
-  // DSA PageRank 使用实时执行模式
-  if (platform === 'DSA' && algorithm === 'PageRank') {
-    return 'run';
-  }
+
   // FPGA PageRank 使用实时执行模式
-  if (platform === 'FPGA' && algorithm === 'PageRank') {
+  if (platform === 'FPGA') {
+      return 'run';
+  }
+
+  if (platform === 'CPU' && algorithm === 'PageRank') {
     return 'run';
   }
-  // 其他情况使用日志模式
+
+  // CPU - VIT 需要处理！
+  if (platform === 'CPU' && algorithm === 'ViT') {
+    return 'log';
+  }
+
+  // GPU需要依赖云服务器？
   return 'log';
 }
 
 
 
-// 性能指标数据（示例数据）
+// 单机环境下的性能指标数据
 export const PERFORMANCE_DATA = {
   'PageRank': {
     'CPU': [
       {
-        'Dataset': 'Rmat-16',
-        'Baseline-Time(s)': 75.225,
-        'Dataflow-Time(s)': 18.9,
-        'Baseline-Throughput': 0.001577, // GTEPS
-        'Dataflow-Throughput': 0.0148415  // GTEPS
+        'Dataset': 'Rmat-18',
+        'Baseline-Time(s)': 62.5,
+        'Dataflow-Time(s)': 18.79,
+        'Baseline-Throughput': 0.0029, // GTEPS
+        'Dataflow-Throughput': 0.0139  // GTEPS
       },
       {
-        'Dataset': 'Rmat-18',
-        'Baseline-Time(s)': 155.493,
-        'Dataflow-Time(s)': 37.5,
-        'Baseline-Throughput': 0.001480, // GTEPS
-        'Dataflow-Throughput': 0.014936  // GTEPS
+        'Dataset': 'Rmat-19',
+        'Baseline-Time(s)': 139.37,
+        'Dataflow-Time(s)': 37.86,
+        'Baseline-Throughput': 0.0026, // GTEPS
+        'Dataflow-Throughput': 0.0149  // GTEPS
       },
       {
         'Dataset': 'Rmat-20',
-        'Baseline-Time(s)': 318.37,
-        'Dataflow-Time(s)': 76.3,
-        'Baseline-Throughput': 0.001476, // GTEPS
-        'Dataflow-Throughput': 0.01455304 // GTEPS
+        'Baseline-Time(s)': 272.16,
+        'Dataflow-Time(s)': 76.96,
+        'Baseline-Throughput': 0.0025, // GTEPS
+        'Dataflow-Throughput': 0.0139 // GTEPS
       }
     ],
     'GPU': [
       {
-        'Dataset': 'Rmat-16',
-        'Baseline-Time(s)': 70.456,
-        'Dataflow-Time(s)': 32.53,
-        'Baseline-Throughput': 0.001606, // GTEPS
-        'Dataflow-Throughput': 0.01606  // GTEPS
+        'Dataset': 'Rmat-18',
+        'Baseline-Time(s)': 45.36,
+        'Dataflow-Time(s)': 9.04,
+        'Baseline-Throughput': 0.1395, // GTEPS
+        'Dataflow-Throughput': 0.6113  // GTEPS
       },
       {
-        'Dataset': 'Rmat-18',
-        'Baseline-Time(s)': 29.8,
-        'Dataflow-Time(s)': 13.4,
-        'Baseline-Throughput': 3.2, // GTEPS
-        'Dataflow-Throughput': 6.3  // GTEPS
+        'Dataset': 'Rmat-19',
+        'Baseline-Time(s)': 89.49,
+        'Dataflow-Time(s)': 14.7,
+        'Baseline-Throughput': 0.1685, // GTEPS
+        'Dataflow-Throughput': 0.748  // GTEPS
       },
       {
         'Dataset': 'Rmat-20',
-        'Baseline-Time(s)': 58.5,
-        'Dataflow-Time(s)': 3.9,
-        'Baseline-Throughput': 3.3, // GTEPS
-        'Dataflow-Throughput': 50.4 // GTEPS
+        'Baseline-Time(s)': 164.27,
+        'Dataflow-Time(s)': 25.96,
+        'Baseline-Throughput': 0.1923, // GTEPS
+        'Dataflow-Throughput': 0.8943 // GTEPS
       }
     ],
     'FPGA': [
       {
-        'Dataset': 'Rmat-16',
+        'Dataset': 'Rmat-18',
         'Baseline-Time(s)': 0.0077,
         'Dataflow-Time(s)': 0.004,
         'Baseline-Throughput': 0.98, // GTEPS
         'Dataflow-Throughput': 1.86 // GTEPS
       },
       {
-        'Dataset': 'Rmat-18',
+        'Dataset': 'Rmat-19',
         'Baseline-Time(s)': 0.032,
         'Dataflow-Time(s)': 0.017,
         'Baseline-Throughput': 0.966, // GTEPS
@@ -136,49 +143,49 @@ export const PERFORMANCE_DATA = {
     'CPU': [
       {
         'Dataset': 'ImageNet',
-        'Baseline-Time(s)': 0.46,
-        'Dataflow-Time(s)': 0.16,
-        'Baseline-Throughput': 35.58, // GFLOPS
-        'Dataflow-Throughput': 115.41  // GFLOPS
+        'Baseline-Time(s)': 115.09,
+        'Dataflow-Time(s)': 43.56,
+        'Baseline-Throughput': 204.12, // GFLOPS
+        'Dataflow-Throughput': 539.30  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
-        'Baseline-Time(s)': 0.53,
-        'Dataflow-Time(s)': 0.19,
-        'Baseline-Throughput': 230, // GFLOPS
-        'Dataflow-Throughput': 380  // GFLOPS
+        'Baseline-Time(s)': 120.35,
+        'Dataflow-Time(s)': 39.67,
+        'Baseline-Throughput': 232.65, // GFLOPS
+        'Dataflow-Throughput': 705.82  // GFLOPS
       }
     ],
     'GPU': [
       {
         'Dataset': 'ImageNet',
-        'Baseline-Time(s)': 110.0,
-        'Dataflow-Time(s)': 46.5,
-        'Baseline-Throughput': 480, // GFLOPS
-        'Dataflow-Throughput': 1279.22  // GFLOPS
+        'Baseline-Time(s)': 123.63,
+        'Dataflow-Time(s)': 45.9,
+        'Baseline-Throughput': 10871.15, // GFLOPS
+        'Dataflow-Throughput': 29281.05  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
-        'Baseline-Time(s)': 128.0,
-        'Dataflow-Time(s)': 65.32,
-        'Baseline-Throughput': 34.18, // GFLOPS
-        'Dataflow-Throughput': 95.01  // GFLOPS
+        'Baseline-Time(s)': 99.25,
+        'Dataflow-Time(s)': 34.39,
+        'Baseline-Throughput': 1410.58, // GFLOPS
+        'Dataflow-Throughput': 4070.95  // GFLOPS
       }
     ],
     'FPGA': [
       {
         'Dataset': 'ImageNet',
-        'Baseline-Time(s)': 0.338,
-        'Dataflow-Time(s)': 0.154,
-        'Baseline-Throughput': 47.673, // GFLOPS
-        'Dataflow-Throughput': 111.32  // GFLOPS
+        'Baseline-Time(s)': 181.34,
+        'Dataflow-Time(s)': 63.58,
+        'Baseline-Throughput': 23.16, // GFLOPS
+        'Dataflow-Throughput': 66.06  // GFLOPS
       },
       {
         'Dataset': 'DriveSeg',
-        'Baseline-Time(s)': 0.348,
-        'Dataflow-Time(s)': 0.158,
-        'Baseline-Throughput': 55.823, // GFLOPS
-        'Dataflow-Throughput': 101.38  // GFLOPS
+        'Baseline-Time(s)': 193.44,
+        'Dataflow-Time(s)': 63.27,
+        'Baseline-Throughput': 21.71, // GFLOPS
+        'Dataflow-Throughput': 66.38  // GFLOPS
       }
     ],
 

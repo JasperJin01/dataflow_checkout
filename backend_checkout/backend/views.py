@@ -168,43 +168,8 @@ def run_single(request, platform, algo, dataset):
     print(f'[run_single] 请求平台：{platform}, 算法：{algo}, 数据集：{dataset}')
     
     try:
-        # NOTE 单机DSA已经被丢弃
-        if platform.lower() == 'dsa' and algo.lower() == 'pr':
-            # DSA PageRank执行逻辑
-            dataset_mapping = {
-                'rmat18': 'rmat-18',
-                'rmat19': 'rmat-19', 
-                'rmat20': 'rmat-20',
-                'rmat-18': 'rmat-18',
-                'rmat-19': 'rmat-19', 
-                'rmat-20': 'rmat-20'
-            }
-            
-            if dataset.lower() not in dataset_mapping:
-                return JsonResponse(
-                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
-                    status=400
-                )
-            
-            rmat_param = dataset_mapping[dataset.lower()]
-            
-            # 构建命令序列
-            commands = [
-                'cd /root/tmp/pagerank/PageRank_v_2_0',
-                f'./restart.sh -g {rmat_param}'
-            ]
-            
-            cmd = ' && '.join(commands)
-            print(f'[run_single] DSA PageRank执行命令: {cmd}')
-            
-            response = StreamingHttpResponse(
-                stream_ssh_command(target_machine3, cmd),
-                content_type='text/event-stream',
-            )
-            response['Cache-Control'] = 'no-cache'
-            return response
-
-        elif platform.lower() == 'fpga' and algo.lower() == 'pr':
+        
+        if platform.lower() == 'fpga' and algo.lower() == 'pr':
             # FPGA PageRank执行逻辑
             dataset_mapping = {
                 'rmat18': 'scale18',
@@ -315,6 +280,44 @@ def run_single(request, platform, algo, dataset):
             response['Cache-Control'] = 'no-cache'
             return response
 
+        elif platform.lower() == 'cpu' and algo.lower() == 'vit':
+            # CPU ViT执行逻辑
+            dataset_mapping = {
+                'DriveSeg': 'driveseg',
+                'ImageNet': 'imagenet',
+                'driveseg': 'driveseg',
+                'imagenet': 'imagenet'
+            }
+            
+            if dataset not in dataset_mapping:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
+                    status=400
+                )
+            
+            dataset_param = dataset_mapping[dataset]
+            
+            # 构建命令序列
+            if dataset_param == 'imagenet':
+                commands = [
+                    'cd /home/jinjm/xxr/vit-cpu/dataflow',
+                    '/home/jinjm/anaconda3/envs/dataflow/bin/python -u train.py'
+                ]
+            else: # driveseg
+                commands = [
+                    'cd /home/jinjm/xxr/vit-cpu/dataflow',
+                    '/home/jinjm/anaconda3/envs/dataflow/bin/python -u train1.py'
+                ]
+            
+            cmd = ' && '.join(commands)
+            print(f'[run_single] CPU ViT执行命令: {cmd}')
+            
+            response = StreamingHttpResponse(
+                stream_ssh_command(work1, cmd),
+                content_type='text/event-stream',
+            )
+            response['Cache-Control'] = 'no-cache'
+            return response
             
 
 
@@ -430,6 +433,41 @@ def run_distributed(request):
             response['Cache-Control'] = 'no-cache'
             return response
         
+        # 检查是否为CPU-FPGA ViT
+        elif platform == 'CPU-FPGA' and algorithm == 'ViT':
+            # 数据集映射：前端的ImageNet/DriveSeg对应后端的imagenet/driveseg
+            dataset_mapping = {
+                'ImageNet': 'imagenet',
+                'DriveSeg': 'driveseg'
+            }
+            
+            if dataset not in dataset_mapping:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
+                    status=400
+                )
+            
+            dataset_param = dataset_mapping[dataset]
+            
+            # CPU-FPGA ViT执行命令
+            commands = [
+                'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
+                'source /opt/xilinx/xrt/setup.sh',
+                'cd /home/jinjm/Documents/ViT-Accelerator',
+                f'python -u parallel.py -d {dataset_param}'
+            ]
+            print(f'[run_distributed] CPU-FPGA ViT执行命令')
+            
+            cmd = ' && '.join(commands)
+            print(f'[run_distributed] 执行命令: {cmd}')
+            
+            response = StreamingHttpResponse(
+                stream_ssh_command(pool86, cmd, slp=False),
+                content_type='text/event-stream',
+            )
+            response['Cache-Control'] = 'no-cache'
+            return response
+
         else:
             return JsonResponse(
                 {"status": 400, "error": f"不支持的分布式配置: {platform}/{card_count}卡/{algorithm}"},

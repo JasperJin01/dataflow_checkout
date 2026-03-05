@@ -46,7 +46,7 @@ export function getRunMode(platform, algorithm, dataset) {
 
   // TODO CPU - VIT 需要处理！
   if (platform === 'CPU' && algorithm === 'ViT') {
-    return 'log';
+    return 'run';
   }
 
   // GPU需要依赖云服务器？

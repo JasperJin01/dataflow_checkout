@@ -26,13 +26,12 @@ SECRET_KEY = "django-insecure-w1tl&a1_cpj0@d*yq(d4$_2xi9m&9#qj*50_wqyv3j(xia@3_d
 DEBUG = True
 
 # NOTE 这里要加上访问后端服务器的IP地址，否则无法访问
-ALLOWED_HOSTS = ["10.21.145.217", 
-                '10.21.150.129', 
-                'localhost', 
-                '127.0.0.1', 
-                '10.12.60.75',
-                '10.15.154.226',
-                ]
+ALLOWED_HOSTS = [
+    '10.11.74.80',
+    'localhost',
+    '127.0.0.1',
+    '47.110.126.229'
+]
 # ALLOWED_HOSTS = ['*']
 
 

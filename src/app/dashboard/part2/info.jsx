@@ -1,6 +1,5 @@
 
-import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
 // 考核指标组件
 export const AssessmentCriteria = () => {
@@ -95,46 +94,90 @@ export const AlgorithmDetails = ({ algorithm }) => {
   return null;
 };
 
+// PageRank数据集配置表
+const PAGERANK_DATASETS = {
+  'Rmat-16': { node: '65,536', edge: '1,048,576', memory: '200MB' },
+  'Rmat-18': { node: '262,144', edge: '4,194,304', memory: '300MB' },
+  'Rmat-19': { node: '262,144', edge: '4,194,304', memory: '300MB' },
+  'Rmat-20': { node: '1,048,576', edge: '16,777,216', memory: '128MB' }
+};
+
 // 数据集信息组件
 export const DatasetInfo = ({ dataset }) => {
-  if (dataset === 'Rmat-16') {
+  // 处理数组情况（全部数据集）
+  if (Array.isArray(dataset)) {
+    // 检查是否包含 PageRank 数据集
+    const pageRankDatasets = dataset.filter(ds => PAGERANK_DATASETS[ds]);
+    
+    if (pageRankDatasets.length > 0) {
+      return (
+        <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+          <Table size="small">
+            <TableHead sx={{ bgcolor: '#f5f5f5' }}>
+              <TableRow>
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>数据集</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>节点规模</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>边规模</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>内存大小</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {pageRankDatasets.map(ds => {
+                const info = PAGERANK_DATASETS[ds];
+                return (
+                  <TableRow key={ds}>
+                    <TableCell align="center">{ds}</TableCell>
+                    <TableCell align="center">{info.node}</TableCell>
+                    <TableCell align="center">{info.edge}</TableCell>
+                    <TableCell align="center">{info.memory}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      );
+    }
+    
+    // 对于非PageRank数据集（如ViT），列表显示
     return (
-      <div>
-        <div>节点规模：65,536</div>
-        <div>边规模：1,048,576</div>
-        <div>内存大小：200MB</div>
-      </div>
-    );
-  }
-  
-  if (dataset === 'Rmat-18') {
-    return (
-      <div>
-        <div>节点规模：262,144</div>
-        <div>边规模：4,194,304</div>
-        <div>内存大小：300MB</div>
-      </div>
+      <Box>
+        {dataset.map(ds => (
+          <Box key={ds} sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>{ds}:</strong>
+            </Typography>
+            <DatasetInfo dataset={ds} />
+          </Box>
+        ))}
+      </Box>
     );
   }
 
-  // TODO: 数据集Rmat-19的信息需要调整
-  if (dataset === 'Rmat-19') {
+  // 如果是PageRank的数据集，显示表格
+  if (PAGERANK_DATASETS[dataset]) {
+    const info = PAGERANK_DATASETS[dataset];
     return (
-      <div>
-        <div>节点规模：262,144</div>
-        <div>边规模：4,194,304</div>
-        <div>内存大小：300MB</div>
-      </div>
-    );
-  }
-  
-  if (dataset === 'Rmat-20') {
-    return (
-      <div>
-        <div>节点规模：1,048,576</div>
-        <div>边规模：16,777,216</div>
-        <div>内存大小：128MB</div>
-      </div>
+      <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+        <Table size="small">
+          <TableHead sx={{ bgcolor: '#f5f5f5' }}>
+            <TableRow>
+              <TableCell align="center" sx={{ fontWeight: 'bold' }}>数据集</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold' }}>节点规模</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold' }}>边规模</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold' }}>内存大小</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell align="center">{dataset}</TableCell>
+              <TableCell align="center">{info.node}</TableCell>
+              <TableCell align="center">{info.edge}</TableCell>
+              <TableCell align="center">{info.memory}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
     );
   }
   

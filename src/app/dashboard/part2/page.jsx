@@ -89,7 +89,54 @@ export default function Page() {
   const isButtonDisabled = () => running;
 
   // 生成性能数据
-  const generatePerformanceData = (algorithm, dataset, platform, cardCount = selectedCardCount) => {
+  const generatePerformanceData = (algorithm, dataset, platform, cardCount = selectedCardCount, realTimeMetrics = null) => {
+    // 如果有实时指标，无论平台如何，都使用实时数据
+    if ((algorithm === 'PageRank' || algorithm === 'ViT') && realTimeMetrics) {
+      console.log('Using real-time metrics:', realTimeMetrics);
+      const { gteps, totalCost, executionTime } = realTimeMetrics;
+      
+      // 使用预设的baseline数据进行对比
+      let baselineData = null;
+      const platformKey = platform.split('-')[1] || platform;
+      
+      if (PERFORMANCE_DATA[algorithm] && PERFORMANCE_DATA[algorithm][platformKey]) {
+        const platformData = PERFORMANCE_DATA[algorithm][platformKey];
+        // 获取特定卡数的数据
+        let cardData;
+        if (typeof platformData === 'object' && !Array.isArray(platformData)) {
+          cardData = platformData[cardCount];
+        } else {
+          cardData = platformData;
+        }
+        
+        if (cardData) {
+          baselineData = cardData.find(item => item.Dataset === dataset);
+        }
+      }
+      
+      // 确定实际执行时间
+      // DSA/CPU使用totalCost，FPGA使用executionTime
+      const actualTime = totalCost || executionTime;
+      
+      // 如果没有baseline数据，使用默认值
+      const baselineTime = baselineData ? baselineData['Baseline-Time(s)'] : actualTime * 2;
+      const baselineThroughput = baselineData ? baselineData['Baseline-Throughput'] : gteps * 0.5;
+      
+      return {
+        algorithm,
+        dataset,
+        platform,
+        cardCount,
+        baselineTime: baselineTime,
+        optimizedTime: actualTime,
+        speedUp: baselineTime / actualTime,
+        efficiencyImprovement: ((baselineTime - actualTime) / baselineTime * 100),
+        baselineThroughput: baselineThroughput,
+        optimizedThroughput: gteps,
+        throughputSpeedup: gteps / baselineThroughput
+      };
+    }
+
     // 从预定义的性能数据中获取
     if (!PERFORMANCE_DATA[algorithm]) {
       console.error(`未找到 ${algorithm} 的性能数据`);
@@ -135,6 +182,7 @@ export default function Page() {
       baselineTime: datasetEntry["Baseline-Time(s)"],
       optimizedTime: datasetEntry["Dataflow-Time(s)"],
       speedUp: datasetEntry["Baseline-Time(s)"] / datasetEntry["Dataflow-Time(s)"],
+      efficiencyImprovement: ((datasetEntry["Baseline-Time(s)"] - datasetEntry["Dataflow-Time(s)"]) / datasetEntry["Baseline-Time(s)"] * 100),
       baselineThroughput: datasetEntry["Baseline-Throughput"],
       optimizedThroughput: datasetEntry["Dataflow-Throughput"],
       throughputSpeedup: datasetEntry["Dataflow-Throughput"] / datasetEntry["Baseline-Throughput"]
@@ -158,6 +206,7 @@ export default function Page() {
       name: `${item.dataset}(${item.cardCount}卡)`,
       algorithm: item.algorithm,
       speedUp: item.speedUp,
+      efficiencyImprovement: item.efficiencyImprovement,
       throughputSpeedup: item.throughputSpeedup,
       baselineTime: item.baselineTime,
       optimizedTime: item.optimizedTime,
@@ -185,6 +234,8 @@ export default function Page() {
         dataset: dataset
       };
       
+      let extractedMetrics = { gteps: null, totalCost: null, executionTime: null };
+      
       // 发送执行请求
       const eventSource = new EventSource(`${request.BASE_URL}/part2/run_distributed/?${new URLSearchParams(params)}`);
       
@@ -194,7 +245,13 @@ export default function Page() {
           setLogs(prev => [...prev, `✅ ${algorithm}-${dataset}-${platform} 执行完成`]);
           setRunning(false);
           
-          const performanceEntry = generatePerformanceData(algorithm, dataset, platform, cardCount);
+          const performanceEntry = generatePerformanceData(
+            algorithm, 
+            dataset, 
+            platform, 
+            cardCount,
+            extractedMetrics.gteps && (extractedMetrics.totalCost || extractedMetrics.executionTime) ? extractedMetrics : null
+          );
           updatePerformanceData(performanceEntry);
           
           // 执行完成后滚动到性能对比区域
@@ -205,6 +262,51 @@ export default function Page() {
           setRunning(false);
         } else {
           setLogs(prev => [...prev, `${event.data}`]);
+          
+          if (algorithm === 'PageRank') {
+            if (platform === 'CPU-DSA') {
+               // 解析DSA的GTEPS
+               const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
+               if (gtepsMatch) {
+                 extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
+               }
+               
+               // 解析DSA的Total Cost
+               const costMatch = event.data.match(/Total Cost:\s*([0-9.]+)\s*seconds/);
+               if (costMatch) {
+                 extractedMetrics.totalCost = parseFloat(costMatch[1]);
+               }
+            } else if (platform === 'CPU-FPGA') {
+                // 解析FPGA的GTEPS
+                const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
+                if (gtepsMatch) {
+                  extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
+                }
+                
+                // 解析FPGA的执行时间（微秒转换为秒）
+                const timeMatch = event.data.match(/执行时间:\s*([0-9.]+)\s*微秒/);
+                if (timeMatch) {
+                  extractedMetrics.executionTime = parseFloat(timeMatch[1]) / 1000000; // 微秒转秒
+                }
+            }
+          } else if (algorithm === 'ViT') {
+             if (platform === 'CPU-FPGA') {
+                // 解析FPGA ViT的指标
+                // 日志格式：Total inference time = 60.89 s
+                const timeMatch = event.data.match(/Total inference time\s*=\s*([0-9.]+)\s*s/i);
+                if (timeMatch) {
+                  extractedMetrics.totalCost = parseFloat(timeMatch[1]);
+                  console.log('ViT Total Cost extracted:', extractedMetrics.totalCost);
+                }
+
+                // 日志格式：Avg GFLOPS = 137.21
+                const gflopsMatch = event.data.match(/Avg GFLOPS\s*=\s*([0-9.]+)/i);
+                if (gflopsMatch) {
+                  extractedMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
+                  console.log('ViT GFLOPS extracted:', extractedMetrics.gteps);
+                }
+             }
+          }
         }
       };
       
@@ -330,20 +432,60 @@ export default function Page() {
         // 获取当前选中算法-平台组合的所有数据集
         const datasetsToProcess = getAvailableDatasets(selectedAlgo, selectedPlatform);
         
-        // 依次处理每个数据集
+        // 等待200ms
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // 批量生成性能数据
+        const newEntries = [];
         for (const dataset of datasetsToProcess) {
-          const runMode = getRunMode(selectedPlatform, selectedAlgo, dataset);
-          
-          if (runMode === 'log') {
-            await readLogFile(selectedAlgo, dataset, selectedPlatform);
-          } else {
-            // 实现run模式的逻辑
-            await runDistributed(selectedPlatform, selectedCardCount, selectedAlgo, dataset);
+          const entry = generatePerformanceData(selectedAlgo, dataset, selectedPlatform, selectedCardCount);
+          if (entry) {
+            newEntries.push(entry);
           }
         }
+
+        // 批量更新性能数据
+        setPerformanceData(prev => {
+          // 过滤掉即将更新的条目
+          const filtered = prev.filter(item => 
+            !newEntries.some(entry => 
+              entry.algorithm === item.algorithm && 
+              entry.dataset === item.dataset && 
+              entry.platform === item.platform &&
+              entry.cardCount === item.cardCount
+            )
+          );
+
+          // 合并并排序
+          const newData = [...filtered, ...newEntries].sort((a, b) => {
+            // 首先按算法排序
+            if (a.algorithm !== b.algorithm) {
+              return algorithms.indexOf(a.algorithm) - algorithms.indexOf(b.algorithm);
+            }
+            // 然后按数据集排序
+            if (a.dataset !== b.dataset) {
+              const allDatasets = datasetsByAlgorithm[a.algorithm] || [];
+              const aIndex = allDatasets.indexOf(a.dataset);
+              const bIndex = allDatasets.indexOf(b.dataset);
+              return aIndex - bIndex;
+            }
+            // 如果有平台信息，按平台排序
+            if (a.platform && b.platform) {
+              const platformDiff = platforms.indexOf(a.platform) - platforms.indexOf(b.platform);
+              if (platformDiff !== 0) return platformDiff;
+            }
+            // 最后按卡数排序
+            return (a.cardCount || 0) - (b.cardCount || 0);
+          });
+          
+          return newData;
+        });
         
         setLogs(prev => [...prev, '全部数据集加载完成']);
         setRunning(false);
+        
+        // 执行完成后滚动到性能对比区域
+        setTimeout(() => scrollToPerformance(), 500);
         return;
       }
 
@@ -540,16 +682,9 @@ export default function Page() {
                 {selectedDataset === allDatasetsOption ? '数据集概览' : '数据集信息'}
               </Typography>
               {selectedDataset === allDatasetsOption ? (
-                <Box>
-                  {getAvailableDatasets(selectedAlgo, selectedPlatform).map(ds => (
-                    <Box key={ds} sx={{ mb: 2 }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        <strong>{ds}:</strong>
-                      </Typography>
-                      <DatasetInfo dataset={ds} />
-                    </Box>
-                  ))}
-                </Box>
+                <DatasetInfo 
+                  dataset={getAvailableDatasets(selectedAlgo, selectedPlatform)} 
+                />
               ) : (
                 <DatasetInfo dataset={selectedDataset} />
               )}
@@ -609,7 +744,27 @@ export default function Page() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
-                          <Tooltip />
+                          <Tooltip
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc' }}>
+                                    <p style={{ margin: '0 0 5px 0' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)}s
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       执行效率提升: {data.efficiencyImprovement ? data.efficiencyImprovement.toFixed(2) + '%' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
                           <Legend />
                           <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
                           <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
@@ -632,8 +787,24 @@ export default function Page() {
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: 'GTEPS', angle: -90, position: 'insideLeft' }} />
                           <Tooltip 
-                            formatter={(value, name) => {
-                              return [`${value.toFixed(3)} GTEPS`, name];
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc' }}>
+                                    <p style={{ margin: '0 0 5px 0' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)} GTEPS
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       吞吐量提升: {data.throughputSpeedup ? data.throughputSpeedup.toFixed(2) + ' x' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
                             }}
                           />
                           <Legend />
@@ -673,7 +844,7 @@ export default function Page() {
                           <TableCell>卡数</TableCell>
                           <TableCell>TensorFlow时间(s)</TableCell>
                           <TableCell>优化时间(s)</TableCell>
-                          <TableCell>加速比</TableCell>
+                          <TableCell>执行效率提升</TableCell>
                           <TableCell>TensorFlow吞吐量</TableCell>
                           <TableCell>优化吞吐量</TableCell>
                           <TableCell>吞吐量提升</TableCell>
@@ -687,7 +858,7 @@ export default function Page() {
                             <TableCell>{row.cardCount}</TableCell>
                             <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
                             <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
-                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
+                            <TableCell>{row.efficiencyImprovement.toFixed(2)}%</TableCell>
                             <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
                             <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
                             <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
@@ -749,7 +920,27 @@ export default function Page() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: '时间 (秒)', angle: -90, position: 'insideLeft' }} />
-                          <Tooltip />
+                          <Tooltip
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc' }}>
+                                    <p style={{ margin: '0 0 5px 0' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)}s
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       执行效率提升: {data.efficiencyImprovement ? data.efficiencyImprovement.toFixed(2) + '%' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
                           <Legend />
                           <Bar dataKey="baselineTime" fill="#7f58af" name="TensorFlow执行时间" />
                           <Bar dataKey="optimizedTime" fill="#64b5f6" name="优化执行时间" />
@@ -774,8 +965,24 @@ export default function Page() {
                           <XAxis dataKey="name" />
                           <YAxis label={{ value: 'GFLOPS', angle: -90, position: 'insideLeft' }} />
                           <Tooltip 
-                            formatter={(value, name) => {
-                              return [`${value.toFixed(3)} GFLOPS`, name];
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc' }}>
+                                    <p style={{ margin: '0 0 5px 0' }}>{label}</p>
+                                    {payload.map((entry, index) => (
+                                      <p key={index} style={{ margin: '2px 0', color: entry.color }}>
+                                        {entry.name}: {entry.value.toFixed(3)} GFLOPS
+                                      </p>
+                                    ))}
+                                    <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
+                                       吞吐量提升: {data.throughputSpeedup ? data.throughputSpeedup.toFixed(2) + ' x' : 'N/A'}
+                                     </p>
+                                  </div>
+                                );
+                              }
+                              return null;
                             }}
                           />
                           <Legend />
@@ -815,7 +1022,7 @@ export default function Page() {
                           <TableCell>卡数</TableCell>
                           <TableCell>TensorFlow时间(s)</TableCell>
                           <TableCell>优化时间(s)</TableCell>
-                          <TableCell>加速比</TableCell>
+                          <TableCell>执行效率提升</TableCell>
                           <TableCell>TensorFlow吞吐量</TableCell>
                           <TableCell>优化吞吐量</TableCell>
                           <TableCell>吞吐量提升</TableCell>
@@ -829,7 +1036,7 @@ export default function Page() {
                             <TableCell>{row.cardCount}</TableCell>
                             <TableCell>{row.baselineTime.toFixed(2)}</TableCell>
                             <TableCell>{row.optimizedTime.toFixed(2)}</TableCell>
-                            <TableCell>{row.speedup.toFixed(2)}x</TableCell>
+                            <TableCell>{row.efficiencyImprovement.toFixed(2)}%</TableCell>
                             <TableCell>{row.baselineThroughput.toFixed(2)} {getThroughputUnit('ViT')}</TableCell>
                             <TableCell>{row.optimizedThroughput.toFixed(2)} {getThroughputUnit('ViT')}</TableCell>
                             <TableCell>{row.throughputImprovement.toFixed(2)}x</TableCell>

@@ -1,6 +1,6 @@
-// API配置
+// API配置（修改成阿里云服务器ip）
 export const API_CONFIG = {
-  host: '10.15.154.226',
+  host: '47.110.126.229',
   port: 8200
 };
 

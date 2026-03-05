@@ -294,20 +294,59 @@ export default function Page() {
         // 获取当前选中算法-平台组合的所有数据集
         const datasetsToProcess = getAvailableDatasets(selectedAlgo, selectedPlatform);
         
-        // 依次处理每个数据集
+        // 等待
+        await new Promise(resolve => setTimeout(resolve, 600));
+        setLogs(['...']);
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+
+        // 批量生成性能数据
+        const newEntries = [];
         for (const dataset of datasetsToProcess) {
-          const runMode = getRunMode(selectedPlatform, selectedAlgo, dataset);
-          
-          if (runMode === 'log') {
-            await readLogFile(selectedAlgo, dataset, selectedPlatform);
-          } else {
-            // 实现run模式的逻辑
-            setLogs(prev => [...prev, `暂不支持 ${selectedAlgo}-${dataset}-${selectedPlatform} 的run模式`]);
+          const entry = generatePerformanceData(selectedAlgo, dataset, selectedPlatform);
+          if (entry) {
+            newEntries.push(entry);
           }
         }
+
+        // 批量更新性能数据
+        setPerformanceData(prev => {
+          // 过滤掉即将更新的条目
+          const filtered = prev.filter(item => 
+            !newEntries.some(entry => 
+              entry.algorithm === item.algorithm && 
+              entry.dataset === item.dataset && 
+              entry.platform === item.platform
+            )
+          );
+
+          // 合并并排序
+          const newData = [...filtered, ...newEntries].sort((a, b) => {
+            // 首先按算法排序
+            if (a.algorithm !== b.algorithm) {
+              return algorithms.indexOf(a.algorithm) - algorithms.indexOf(b.algorithm);
+            }
+            // 然后按数据集排序
+            if (a.dataset !== b.dataset) {
+              const allDatasets = a.algorithm === 'PageRank' 
+                ? ['Rmat-16', 'Rmat-18', 'Rmat-19', 'Rmat-20']
+                : ['ImageNet', 'DriveSeg'];
+              const aIndex = allDatasets.indexOf(a.dataset);
+              const bIndex = allDatasets.indexOf(b.dataset);
+              return aIndex - bIndex;
+            }
+            // 最后按平台排序
+            return platforms.indexOf(a.platform) - platforms.indexOf(b.platform);
+          });
+          
+          return newData;
+        });
         
         setLogs(prev => [...prev, '全部数据集加载完成']);
         setRunning(false);
+        
+        // 执行完成后滚动到性能对比区域
+        setTimeout(() => scrollToPerformance(), 500);
         return;
       }
 
@@ -618,16 +657,9 @@ export default function Page() {
                 {selectedDataset === allDatasetsOption ? '数据集概览' : '数据集信息'}
               </Typography>
               {selectedDataset === allDatasetsOption ? (
-                <Box>
-                  {getAvailableDatasets(selectedAlgo, selectedPlatform).map(ds => (
-                    <Box key={ds} sx={{ mb: 2 }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        <strong>{ds}:</strong>
-                      </Typography>
-                      <DatasetInfo dataset={ds} />
-                    </Box>
-                  ))}
-                </Box>
+                <DatasetInfo 
+                  dataset={getAvailableDatasets(selectedAlgo, selectedPlatform)} 
+                />
               ) : (
                 <DatasetInfo dataset={selectedDataset} />
               )}

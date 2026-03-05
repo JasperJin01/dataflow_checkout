@@ -135,7 +135,9 @@ def main():
     
     # 更新前端配置
     print("🔧 正在更新前端配置...")
-    frontend_success = update_frontend_config(current_ip)
+    # frontend_success = update_frontend_config(current_ip)
+    print("⚠️  前端配置更新已禁用 (如需启用请取消注释)")
+    frontend_success = True
     print()
     
     # 更新后端配置

@@ -9,12 +9,12 @@ from pathlib import Path
 from .ssh_pool import SSHConnectionPool
 
 # SSH 连接密钥
-# SSH_KEY_ROOT = '/home/jinjm' 
-SSH_KEY_ROOT = '/Users/jiminj'
+# 自动获取当前用户主目录，兼容 Windows/Linux/macOS
+SSH_KEY_ROOT = Path.home()
 
-KEY_PATH = f'{SSH_KEY_ROOT}/.ssh/id_rsa_hust_server'
-WQ_KEY_PATH = f'{SSH_KEY_ROOT}/.ssh/id_rsa_wq'
-QCH_KEY_PATH = f'{SSH_KEY_ROOT}/.ssh/id_rsa_qch'
+KEY_PATH = str(SSH_KEY_ROOT / '.ssh' / 'id_rsa_hust_server')
+WQ_KEY_PATH = str(SSH_KEY_ROOT / '.ssh' / 'id_rsa_wq')
+QCH_KEY_PATH = str(SSH_KEY_ROOT / '.ssh' / 'id_rsa_qch')
 
 
 # --- 不同的服务器连接池 ---
@@ -168,6 +168,7 @@ def run_single(request, platform, algo, dataset):
     print(f'[run_single] 请求平台：{platform}, 算法：{algo}, 数据集：{dataset}')
     
     try:
+        # NOTE 单机DSA已经被丢弃
         if platform.lower() == 'dsa' and algo.lower() == 'pr':
             # DSA PageRank执行逻辑
             dataset_mapping = {
@@ -273,6 +274,42 @@ def run_single(request, platform, algo, dataset):
             
             response = StreamingHttpResponse(
                 stream_ssh_command(work1, cmd),
+                content_type='text/event-stream',
+            )
+            response['Cache-Control'] = 'no-cache'
+            return response
+
+        elif platform.lower() == 'fpga' and algo.lower() == 'vit':
+            # FPGA ViT执行逻辑
+            # 数据集映射：前端的DriveSeg/ImageNet对应命令中的driveseg/imagenet
+            dataset_mapping = {
+                'DriveSeg': 'driveseg',
+                'ImageNet': 'imagenet',
+                'driveseg': 'driveseg',
+                'imagenet': 'imagenet'
+            }
+            
+            if dataset not in dataset_mapping:
+                return JsonResponse(
+                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
+                    status=400
+                )
+            
+            dataset_param = dataset_mapping[dataset]
+            
+            # 构建命令序列
+            commands = [
+                'source /tools/Xilinx/Vitis/2023.2/settings64.sh',
+                'source /opt/xilinx/xrt/setup.sh',
+                'cd /home/jinjm/Documents/ViT-Accelerator/host/build/',
+                f'./bin/vit -d {dataset_param} --device 1'
+            ]
+            
+            cmd = ' && '.join(commands)
+            print(f'[run_single] FPGA ViT执行命令: {cmd}')
+            
+            response = StreamingHttpResponse(
+                stream_ssh_command(pool86, cmd),
                 content_type='text/event-stream',
             )
             response['Cache-Control'] = 'no-cache'

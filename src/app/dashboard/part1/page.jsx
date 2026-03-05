@@ -143,8 +143,9 @@ export default function Page() {
 
   // 生成性能数据
   const generatePerformanceData = (algorithm, dataset, platform, realTimeMetrics = null) => {
-    // 如果是DSA或FPGA PageRank且有实时指标，使用实时数据
-    if ((platform === 'DSA' || platform === 'FPGA') && algorithm === 'PageRank' && realTimeMetrics) {
+    // 如果有实时指标，无论平台如何，都使用实时数据
+    if ((algorithm === 'PageRank' || algorithm === 'ViT') && realTimeMetrics) {
+      console.log('Using real-time metrics:', realTimeMetrics);
       const { gteps, totalCost, executionTime } = realTimeMetrics;
       
       // 使用预设的baseline数据进行对比
@@ -154,8 +155,9 @@ export default function Page() {
         baselineData = platformData.find(item => item.Dataset === dataset);
       }
       
-      // 确定实际执行时间（DSA使用totalCost，FPGA使用executionTime）
-      const actualTime = platform === 'DSA' ? totalCost : executionTime;
+      // 确定实际执行时间
+      // DSA/CPU使用totalCost，FPGA使用executionTime
+      const actualTime = totalCost || executionTime;
       
       // 如果没有baseline数据，使用默认值
       const baselineTime = baselineData ? baselineData['Baseline-Time(s)'] : actualTime * 2;
@@ -168,6 +170,7 @@ export default function Page() {
         baselineTime: baselineTime,
         optimizedTime: actualTime,
         speedUp: baselineTime / actualTime,
+        efficiencyImprovement: ((baselineTime - actualTime) / baselineTime * 100),
         baselineThroughput: baselineThroughput,
         optimizedThroughput: gteps,
         throughputSpeedup: gteps / baselineThroughput
@@ -201,6 +204,8 @@ export default function Page() {
       baselineTime: datasetEntry['Baseline-Time(s)'],
       optimizedTime: datasetEntry['Dataflow-Time(s)'],
       speedUp: datasetEntry['Baseline-Time(s)'] / datasetEntry['Dataflow-Time(s)'],
+      // 执行效率提升
+      efficiencyImprovement: ((datasetEntry['Baseline-Time(s)'] - datasetEntry['Dataflow-Time(s)']) / datasetEntry['Baseline-Time(s)'] * 100),
       baselineThroughput: datasetEntry['Baseline-Throughput'],
       optimizedThroughput: datasetEntry['Dataflow-Throughput'],
       throughputSpeedup: datasetEntry['Dataflow-Throughput'] / datasetEntry['Baseline-Throughput']
@@ -261,6 +266,7 @@ export default function Page() {
       name: `${item.dataset}`,
       algorithm: item.algorithm,
       speedUp: item.speedUp,
+      efficiencyImprovement: item.efficiencyImprovement,
       throughputSpeedup: item.throughputSpeedup,
       baselineTime: item.baselineTime,
       optimizedTime: item.optimizedTime,
@@ -307,6 +313,7 @@ export default function Page() {
 
       // 处理单个数据集
       const runMode = getRunMode(selectedPlatform, selectedAlgo, selectedDataset);
+      console.log(runMode);
       
       if (runMode === 'log') {
         await readLogFile(selectedAlgo, selectedDataset, selectedPlatform);
@@ -339,57 +346,33 @@ export default function Page() {
           if (event.data === '[done]') {
             eventSource.close();
             
-            if ((selectedPlatform === 'DSA' || selectedPlatform === 'FPGA') && selectedAlgo === 'PageRank') {
-              // DSA 和 FPGA PageRank 直接从日志中提取性能指标
-              setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
-              
-              setRunning(false);
-              
-              // 生成性能数据并更新，传入实时提取的性能指标
-              const performanceEntry = generatePerformanceData(
-                selectedAlgo, 
-                selectedDataset, 
-                selectedPlatform, 
-                extractedMetrics.gteps && (extractedMetrics.totalCost || extractedMetrics.executionTime) ? extractedMetrics : null
-              );
-              updatePerformanceData(performanceEntry);
-              
-              // 执行完成后滚动到性能对比区域
-              setTimeout(() => scrollToPerformance(), 500);
-            } else {
-              // 其他平台的原有逻辑
-              setLogs(prev => [...prev, `正在拷贝 ${selectedDataset} 的result...`]);
-              
-              try {
-                const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
-                const urlData = URL_MAPS.dataset[selectedDataset];
-                const res = await fetch(`${request.BASE_URL}/part1/result/${urlAlgo}/${urlData}/`);
-                const jsonData = await res.json();
-                
-                setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
-                setRunning(false);
-                
-                // 生成性能数据并更新
-                const performanceEntry = generatePerformanceData(selectedAlgo, selectedDataset, selectedPlatform);
-                updatePerformanceData(performanceEntry);
-                
-                // 执行完成后滚动到性能对比区域
-                setTimeout(() => scrollToPerformance(), 500);
-                
-              } catch (error) {
-                setLogs(prev => [...prev, `❌ 获取结果失败: ${error.message}`]);
-                setRunning(false);
-              }
-            }
+            // 无论是DSA/FPGA/CPU，如果走的是后端模式且成功完成，尝试使用提取的指标
+            // 如果提取失败（比如CPU脚本没输出指标），则回退到静态数据（因为extractedMetrics初始为null）
+            setLogs(prev => [...prev, `✅ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 执行完成`]);
+            
+            setRunning(false);
+            
+            // 生成性能数据并更新，传入实时提取的性能指标
+            const performanceEntry = generatePerformanceData(
+              selectedAlgo, 
+              selectedDataset, 
+              selectedPlatform, 
+              extractedMetrics.gteps && (extractedMetrics.totalCost || extractedMetrics.executionTime) ? extractedMetrics : null
+            );
+            updatePerformanceData(performanceEntry);
+            
+            // 执行完成后滚动到性能对比区域
+            setTimeout(() => scrollToPerformance(), 500);
+
           } else if (event.data === '[error]') {
             eventSource.close();
             setLogs(prev => [...prev, `❌ 服务器执行出错：${selectedAlgo}-${selectedDataset}-${selectedPlatform}`]);
             setRunning(false);
           } else {
-            // 显示日志并解析性能指标（DSA 和 FPGA PageRank）
+            // 显示日志并解析性能指标
             setLogs(prev => [...prev, `${event.data}`]);
             
-            if ((selectedPlatform === 'DSA' || selectedPlatform === 'FPGA') && selectedAlgo === 'PageRank') {
+            if (selectedAlgo === 'PageRank') {
               if (selectedPlatform === 'DSA') {
                 // 解析DSA的GTEPS
                 const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
@@ -413,6 +396,38 @@ export default function Page() {
                 const timeMatch = event.data.match(/执行时间:\s*([0-9.]+)\s*微秒/);
                 if (timeMatch) {
                   extractedMetrics.executionTime = parseFloat(timeMatch[1]) / 1000000; // 微秒转秒
+                }
+              } else if (selectedPlatform === 'CPU') {
+                // 解析CPU的GTEPS和时间
+                // 日志格式：GTEPS: 0.014953
+                const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/i);
+                if (gtepsMatch) {
+                  extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
+                  console.log('CPU GTEPS extracted:', extractedMetrics.gteps);
+                }
+                
+                // 日志格式：Total Cost: 18.61 seconds
+                const costMatch = event.data.match(/Total Cost:\s*([0-9.]+)\s*seconds/i);
+                if (costMatch) {
+                   extractedMetrics.totalCost = parseFloat(costMatch[1]);
+                   console.log('CPU Total Cost extracted:', extractedMetrics.totalCost);
+                 }
+               }
+            } else if (selectedAlgo === 'ViT') {
+              if (selectedPlatform === 'FPGA') {
+                // 解析FPGA ViT的指标
+                // 日志格式：Total inference time = 60.89 s
+                const timeMatch = event.data.match(/Total inference time\s*=\s*([0-9.]+)\s*s/i);
+                if (timeMatch) {
+                  extractedMetrics.totalCost = parseFloat(timeMatch[1]);
+                  console.log('ViT Total Cost extracted:', extractedMetrics.totalCost);
+                }
+
+                // 日志格式：Avg GFLOPS = 137.21
+                const gflopsMatch = event.data.match(/Avg GFLOPS\s*=\s*([0-9.]+)/i);
+                if (gflopsMatch) {
+                  extractedMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
+                  console.log('ViT GFLOPS extracted:', extractedMetrics.gteps);
                 }
               }
             }
@@ -693,7 +708,7 @@ export default function Page() {
                                       </p>
                                     ))}
                                     <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
-                                       加速比: {data.speedUp ? data.speedUp.toFixed(3) + ' x' : 'N/A'}
+                                       执行效率提升: {data.efficiencyImprovement ? data.efficiencyImprovement.toFixed(2) + '%' : 'N/A'}
                                      </p>
                                   </div>
                                 );
@@ -766,7 +781,7 @@ export default function Page() {
                           <TableCell>硬件平台</TableCell>
                           <TableCell>TensorFlow时间(s)</TableCell>
                           <TableCell>优化时间(s)</TableCell>
-                          <TableCell>加速比</TableCell>
+                          <TableCell>执行效率提升</TableCell>
                           <TableCell>TensorFlow吞吐量</TableCell>
                           <TableCell>优化吞吐量</TableCell>
                           <TableCell>吞吐量提升</TableCell>
@@ -779,7 +794,7 @@ export default function Page() {
                             <TableCell>{row.platform}</TableCell>
                             <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
                             <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
-                            <TableCell>{row.speedUp.toFixed(3)}</TableCell>
+                            <TableCell>{row.efficiencyImprovement.toFixed(2)}%</TableCell>
                             <TableCell>{`${row.baselineThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
                             <TableCell>{`${row.optimizedThroughput.toFixed(3)} ${getThroughputUnit(row.algorithm)}`}</TableCell>
                             <TableCell>{row.throughputSpeedup.toFixed(3)}</TableCell>
@@ -862,7 +877,7 @@ export default function Page() {
                                       </p>
                                     ))}
                                     <p style={{ margin: '5px 0 0 0', fontWeight: 'bold', color: '#666' }}>
-                                       加速比: {data.speedUp ? data.speedUp.toFixed(3) + ' x' : 'N/A'}
+                                       执行效率提升: {data.efficiencyImprovement ? data.efficiencyImprovement.toFixed(2) + '%' : 'N/A'}
                                      </p>
                                   </div>
                                 );
@@ -935,7 +950,7 @@ export default function Page() {
                           <TableCell>硬件平台</TableCell>
                           <TableCell>TensorFlow时间(s)</TableCell>
                           <TableCell>优化时间(s)</TableCell>
-                          <TableCell>加速比</TableCell>
+                          <TableCell>执行效率提升</TableCell>
                           <TableCell>TensorFlow吞吐量</TableCell>
                           <TableCell>优化吞吐量</TableCell>
                           <TableCell>吞吐量提升</TableCell>
@@ -948,7 +963,7 @@ export default function Page() {
                             <TableCell>{row.platform}</TableCell>
                             <TableCell>{row.baselineTime.toFixed(3)}</TableCell>
                             <TableCell>{row.optimizedTime.toFixed(3)}</TableCell>
-                            <TableCell>{row.speedup.toFixed(2)}x</TableCell>
+                            <TableCell>{row.efficiencyImprovement.toFixed(2)}%</TableCell>
                             <TableCell>{row.baselineThroughput.toFixed(3)} {getThroughputUnit('ViT')}</TableCell>
                             <TableCell>{row.optimizedThroughput.toFixed(3)} {getThroughputUnit('ViT')}</TableCell>
                             <TableCell>{row.throughputImprovement.toFixed(2)}x</TableCell>

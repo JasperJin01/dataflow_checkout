@@ -21,7 +21,15 @@ export const URL_MAPS = {
 
 // NOTE run/log 控制字典
 export function getRunMode(platform, algorithm, dataset) {
+  // 读取全局环境变量，默认为 simulation
+  const executionMode = process.env.NEXT_PUBLIC_EXECUTION_MODE || 'simulation';
+  
+  // 如果是模拟模式，全部返回 log
+  if (executionMode === 'simulation') {
+    return 'log';
+  }
 
+  // 后端模式下，只有支持的组合才返回 run
   // FPGA PageRank 使用实时执行模式
   if (platform === 'FPGA') {
       return 'run';
@@ -31,7 +39,12 @@ export function getRunMode(platform, algorithm, dataset) {
     return 'run';
   }
 
-  // CPU - VIT 需要处理！
+  // DSA PageRank 也支持
+  if (platform === 'DSA' && algorithm === 'PageRank') {
+    return 'run';
+  }
+
+  // TODO CPU - VIT 需要处理！
   if (platform === 'CPU' && algorithm === 'ViT') {
     return 'log';
   }
@@ -94,24 +107,24 @@ export const PERFORMANCE_DATA = {
     'FPGA': [
       {
         'Dataset': 'Rmat-18',
-        'Baseline-Time(s)': 0.0077,
-        'Dataflow-Time(s)': 0.004,
-        'Baseline-Throughput': 0.98, // GTEPS
-        'Dataflow-Throughput': 1.86 // GTEPS
+        'Baseline-Time(s)': 0.06,
+        'Dataflow-Time(s)': 0.02,
+        'Baseline-Throughput': 0.7906, // GTEPS
+        'Dataflow-Throughput': 2.3267 // GTEPS
       },
       {
         'Dataset': 'Rmat-19',
-        'Baseline-Time(s)': 0.032,
-        'Dataflow-Time(s)': 0.017,
-        'Baseline-Throughput': 0.966, // GTEPS
-        'Dataflow-Throughput': 1.811 // GTEPS
+        'Baseline-Time(s)': 0.13,
+        'Dataflow-Time(s)': 0.05,
+        'Baseline-Throughput': 0.7159, // GTEPS
+        'Dataflow-Throughput': 2.1216 // GTEPS
       },
       {
         'Dataset': 'Rmat-20',
-        'Baseline-Time(s)': 0.125,
-        'Dataflow-Time(s)': 0.066,
-        'Baseline-Throughput': 1.0203, // GTEPS
-        'Dataflow-Throughput': 1.954 // GTEPS
+        'Baseline-Time(s)': 0.25,
+        'Dataflow-Time(s)': 0.08,
+        'Baseline-Throughput': 0.7739, // GTEPS
+        'Dataflow-Throughput': 2.2925 // GTEPS
       }
     ],
     'DSA': [

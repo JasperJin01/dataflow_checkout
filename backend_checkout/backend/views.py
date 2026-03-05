@@ -92,6 +92,9 @@ def stream_ssh_command(pool, command, slp=True):
         stdout.channel.settimeout(0.001)
         stderr.channel.settimeout(0.001)
         
+        stdout_buf = ""
+        stderr_buf = ""
+        
         while True:
             # 检查命令是否已完成
             if stdout.channel.exit_status_ready():
@@ -99,51 +102,75 @@ def stream_ssh_command(pool, command, slp=True):
                 remaining_stdout = stdout.read().decode('utf-8', errors='ignore')
                 remaining_stderr = stderr.read().decode('utf-8', errors='ignore')
                 
+                # 合并剩余的 buffer
+                final_stdout = stdout_buf + remaining_stdout
+                final_stderr = stderr_buf + remaining_stderr
+                
                 # 输出剩余的stdout内容
-                if remaining_stdout:
-                    for line in remaining_stdout.splitlines():
+                if final_stdout:
+                    # 处理 \r 为 \n
+                    final_stdout = final_stdout.replace('\r', '\n')
+                    for line in final_stdout.split('\n'):
                         if line.strip():
                             print(f'[ssh] 剩余stdout: {line}')
                             yield f"data: {line}\n\n"
                 
                 # 输出剩余的stderr内容
-                if remaining_stderr:
-                    for line in remaining_stderr.splitlines():
+                if final_stderr:
+                    final_stderr = final_stderr.replace('\r', '\n')
+                    for line in final_stderr.split('\n'):
                         if line.strip():
                             print(f'[ssh] 剩余stderr: {line}')
                             yield f"data: [stderr] {line}\n\n"
                 
                 break
             
-            # 初始化变量
-            line = None
-            error_line = None
+            # 标记是否有数据读取
+            data_read = False
             
             # 读取stdout
-            try:
-                line = stdout.readline()
-                if line:
-                    print(f'[ssh] stdout: {line.rstrip()}')
-                    yield f"data: {line.rstrip()}\n\n"
-            except Exception:
-                pass
+            if stdout.channel.recv_ready():
+                try:
+                    chunk = stdout.channel.recv(4096).decode('utf-8', errors='ignore')
+                    if chunk:
+                        data_read = True
+                        stdout_buf += chunk
+                        # 处理 \r 为 \n，解决进度条不刷新问题
+                        stdout_buf = stdout_buf.replace('\r', '\n')
+                        
+                        if '\n' in stdout_buf:
+                            lines = stdout_buf.split('\n')
+                            # 输出完整的行
+                            for line in lines[:-1]:
+                                print(f'[ssh] stdout: {line.rstrip()}')
+                                yield f"data: {line.rstrip()}\n\n"
+                            # 保留未完成的部分
+                            stdout_buf = lines[-1]
+                except Exception:
+                    pass
             
             # 读取stderr
-            try:
-                error_line = stderr.readline()
-                if error_line:
-                    print(f'[ssh] stderr: {error_line.rstrip()}')
-                    yield f"data: [stderr] {error_line.rstrip()}\n\n"
-            except Exception:
-                pass
+            if stderr.channel.recv_ready():
+                try:
+                    chunk = stderr.channel.recv(4096).decode('utf-8', errors='ignore')
+                    if chunk:
+                        data_read = True
+                        stderr_buf += chunk
+                        stderr_buf = stderr_buf.replace('\r', '\n')
+                        
+                        if '\n' in stderr_buf:
+                            lines = stderr_buf.split('\n')
+                            for line in lines[:-1]:
+                                print(f'[ssh] stderr: {line.rstrip()}')
+                                yield f"data: [stderr] {line.rstrip()}\n\n"
+                            stderr_buf = lines[-1]
+                except Exception:
+                    pass
             
             # 如果没有新输出，根据slp参数决定是否等待
-            if not line and not error_line:
+            if not data_read:
                 if slp:
                     time.sleep(0.05)
-                # else:
-                    # 不设置slp时，使用极短的延迟避免CPU占用过高，但保持实时性
-                    # time.sleep(0.001)
         
         # 获取退出状态
         exit_status = stdout.channel.recv_exit_status()

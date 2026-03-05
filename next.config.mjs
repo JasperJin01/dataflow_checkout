@@ -12,7 +12,11 @@ const config = {
     unoptimized: false
   },
   basePath: isWebBuild ? '' : '',
-  assetPrefix: isWebBuild ? '' : ''
+  assetPrefix: isWebBuild ? '' : '',
+  env: {
+    // 全局执行模式：'simulation' (全部模拟执行) | 'backend' (尽可能后端调用)
+    NEXT_PUBLIC_EXECUTION_MODE: process.env.NEXT_PUBLIC_EXECUTION_MODE || 'simulation',
+  }
 };
 
 export default config;

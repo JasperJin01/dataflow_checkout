@@ -15,50 +15,34 @@ const scenes = [
   {
     name: "城市道路场景",
     description: "城市道路环境下的自动驾驶场景演示",
-    // description: "城市道路环境下的自动驾驶场景演示，包含多车道、交通信号灯、行人过街等复杂城市交通元素",
-    images: Array.from({length: 40}, (_, i) => 
-      `${String(39 + i).padStart(3, '0')}.jpg`
-    )
+    video: "/drive_visual/videos/scene_01.mp4"
   },
   {
     name: "高车流量场景",
     description: "高车流量十字路口环境下的自动驾驶场景演示", 
-    // description: "高车流量十字路口环境下的自动驾驶场景演示，展示在繁忙交叉路口的精准导航和避障能力", 
-    images: Array.from({length: 41}, (_, i) => 
-      `${String(79 + i).padStart(3, '0')}.jpg`
-    )
+    video: "/drive_visual/videos/scene_02.mp4"
   },
   {
     name: "窄路场景",
-    // description: "单车道窄路环境下的自动驾驶场景演示，测试在受限空间中的精确控制和路径规划能力",
     description: "窄路环境下的自动驾驶场景演示",
-    images: Array.from({length: 40}, (_, i) => 
-      `${String(202 + i).padStart(3, '0')}.jpg`
-    )
+    video: "/drive_visual/videos/scene_03.mp4"
   },
   {
     name: "露天停车场场景",
-    // description: "露天停车场环境下的自动驾驶场景演示，展示自动泊车、车位识别和精确停车的先进技术",
     description: "露天停车场环境下的自动驾驶场景演示",
-    images: Array.from({length: 41}, (_, i) => 
-      `${String(242 + i).padStart(3, '0')}.jpg`
-    )
+    video: "/drive_visual/videos/scene_04.mp4"
   }
 ];
 
 export default function AutonomousDrivingDemo() {
   const [currentScene, setCurrentScene] = useState(0);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
   
-  // 融合前区域状态
-  const [beforeImageIndex, setBeforeImageIndex] = useState(0);
-  const [isBeforePlaying, setIsBeforePlaying] = useState(false);
-  
-  // 融合后区域状态
-  const [afterImageIndex, setAfterImageIndex] = useState(0);
-  const [isAfterPlaying, setIsAfterPlaying] = useState(false);
+  // 视频播放状态
+  const [beforeVideoEnded, setBeforeVideoEnded] = useState(false);
+  const [afterVideoEnded, setAfterVideoEnded] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   
   // 性能数据状态
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
@@ -69,11 +53,10 @@ export default function AutonomousDrivingDemo() {
   // Throughput 数据状态
   const [throughputData, setThroughputData] = useState(null);
   
-  const intervalRef = useRef(null);
-  const beforeIntervalRef = useRef(null);
-  const afterIntervalRef = useRef(null);
-  const imageRef = useRef(null);
+  const beforeVideoRef = useRef(null);
+  const afterVideoRef = useRef(null);
   const performanceChartRef = useRef(null);
+  const logBoxRef = useRef(null);
 
   // 性能数据
   const performanceData = [
@@ -91,48 +74,19 @@ export default function AutonomousDrivingDemo() {
     }
   ];
 
-  // 播放速度设置
-  const beforePlaybackSpeed = 150; // 融合前播放速度
-  const afterPlaybackSpeed = 80;   // 融合后播放速度
+  // 播放速度设置 (基于10fps视频基准)
+  // 融合前: 150ms/帧 -> ~6.67fps -> 0.67x
+  // 融合后: 80ms/帧 -> ~12.5fps -> 1.25x
+  const BEFORE_PLAYBACK_RATE = 0.67;
+  const AFTER_PLAYBACK_RATE = 1.15;
 
-  // NOTE 融合前区域自动播放功能
+  // 监听视频结束状态
   useEffect(() => {
-    if (isBeforePlaying) {
-      beforeIntervalRef.current = setInterval(() => {
-        setBeforeImageIndex(prev => {
-          const nextIndex = prev + 1;
-          if (nextIndex >= scenes[currentScene].images.length) {
-            // 播放完毕后停止，但不控制整体流程
-            setIsBeforePlaying(false);
-            return scenes[currentScene].images.length - 1; // 停在最后一帧
-          }
-          return nextIndex;
-        });
-      }, beforePlaybackSpeed);
-    } else {
-      if (beforeIntervalRef.current) {
-        clearInterval(beforeIntervalRef.current);
-      }
-    }
-
-    return () => {
-      if (beforeIntervalRef.current) {
-        clearInterval(beforeIntervalRef.current);
-      }
-    };
-  }, [isBeforePlaying, currentScene, beforePlaybackSpeed]);
-
-  // 检测两个区域都播放完毕的状态
-  useEffect(() => {
-    // 只有当两个区域都停止播放时才执行完成逻辑
-    if (!isBeforePlaying && !isAfterPlaying && 
-        beforeImageIndex >= scenes[currentScene].images.length - 1 && 
-        afterImageIndex >= scenes[currentScene].images.length - 1) {
-      
+    if (beforeVideoEnded && afterVideoEnded) {
+      setIsPlaying(false);
       // 播放完成后显示性能图表
       setTimeout(() => {
         setShowPerformanceChart(true);
-        // setLogs(prevLogs => [...prevLogs, `✅ ${scenes[currentScene].name} 图片播放完成，显示性能图表`]);
         
         // 图片播放完毕后滚动到底部展示图表
         setTimeout(() => {
@@ -149,42 +103,18 @@ export default function AutonomousDrivingDemo() {
         }, 1000);
       }, 1000);
     }
-  }, [isBeforePlaying, isAfterPlaying, beforeImageIndex, afterImageIndex, currentScene]);
-
-  // 融合后区域自动播放功能
-  useEffect(() => {
-    if (isAfterPlaying) {
-      afterIntervalRef.current = setInterval(() => {
-        setAfterImageIndex(prev => {
-          const nextIndex = prev + 1;
-          if (nextIndex >= scenes[currentScene].images.length) {
-            // 融合后区域播放完毕
-            setIsAfterPlaying(false);
-            
-            return scenes[currentScene].images.length - 1; // 停在最后一帧
-          }
-          return nextIndex;
-        });
-      }, afterPlaybackSpeed);
-    } else {
-      if (afterIntervalRef.current) {
-        clearInterval(afterIntervalRef.current);
-      }
-    }
-
-    return () => {
-      if (afterIntervalRef.current) {
-        clearInterval(afterIntervalRef.current);
-      }
-    };
-  }, [isAfterPlaying, currentScene, afterPlaybackSpeed]);
+  }, [beforeVideoEnded, afterVideoEnded, currentScene]);
 
   // 更新进度（基于融合后区域的进度）
-  useEffect(() => {
-    const totalImages = scenes[currentScene].images.length;
-    const progressPercent = ((afterImageIndex + 1) / totalImages) * 100;
-    setProgress(progressPercent);
-  }, [afterImageIndex, currentScene]);
+  const handleTimeUpdate = () => {
+    if (afterVideoRef.current) {
+      const duration = afterVideoRef.current.duration;
+      const currentTime = afterVideoRef.current.currentTime;
+      if (duration > 0) {
+        setProgress((currentTime / duration) * 100);
+      }
+    }
+  };
 
   // 自动滚动到日志底部
   useEffect(() => {
@@ -193,27 +123,44 @@ export default function AutonomousDrivingDemo() {
     }
   }, [logs]);
 
-  // 场景切换时重置所有图片索引
+  // 场景切换时重置状态
   useEffect(() => {
-    setCurrentImageIndex(0);
-    setBeforeImageIndex(0);
-    setAfterImageIndex(0);
     setRunning(false);
-    setIsBeforePlaying(false);
-    setIsAfterPlaying(false);
-    setThroughputData(null); // 重置吞吐量数据
+    setIsPlaying(false);
+    setBeforeVideoEnded(false);
+    setAfterVideoEnded(false);
+    setShowPerformanceChart(false);
+    setThroughputData(null);
+    setProgress(0);
+    
+    // 重置视频
+    if (beforeVideoRef.current) {
+      beforeVideoRef.current.currentTime = 0;
+      beforeVideoRef.current.pause();
+    }
+    if (afterVideoRef.current) {
+      afterVideoRef.current.currentTime = 0;
+      afterVideoRef.current.pause();
+    }
   }, [currentScene]);
 
   const handleRun = async () => {
-    const anyPlaying = isBeforePlaying || isAfterPlaying;
-    if (anyPlaying) {
+    if (isPlaying) {
       // 停止所有播放
-      setIsBeforePlaying(false);
-      setIsAfterPlaying(false);
+      if (beforeVideoRef.current) beforeVideoRef.current.pause();
+      if (afterVideoRef.current) afterVideoRef.current.pause();
+      setIsPlaying(false);
       setRunning(false);
     } else {
       setRunning(true);
       setLogs([`开始执行场景 ${scenes[currentScene].name}...`]);
+      setBeforeVideoEnded(false);
+      setAfterVideoEnded(false);
+      setShowPerformanceChart(false);
+      
+      // 预加载视频（如果尚未加载）
+      if (beforeVideoRef.current) beforeVideoRef.current.load();
+      if (afterVideoRef.current) afterVideoRef.current.load();
       
       try {
         // 场景索引：城市道路场景(1)、高车流量场景(2)、窄路场景(3)、露天停车场场景(4)
@@ -227,7 +174,6 @@ export default function AutonomousDrivingDemo() {
           if (event.data === '[done]') {
             eventSource.close();
             
-            
             // 先小幅滚动到自动驾驶图片播放区域
             setTimeout(() => {
               const imageSection = document.querySelector('.image-display-section');
@@ -237,15 +183,21 @@ export default function AutonomousDrivingDemo() {
                   block: 'center' 
                 });
                 
-                // 滚动完成后再开始播放图片
+                // 滚动完成后再开始播放视频
                 setTimeout(() => {
-                  // 重置图片索引到开始位置
-                  setBeforeImageIndex(0);
-                  setAfterImageIndex(0);
+                  setIsPlaying(true);
                   
-                  // 开始播放两个区域
-                  setIsBeforePlaying(true);
-                  setIsAfterPlaying(true);
+                  // 设置播放速度并开始播放
+                  if (beforeVideoRef.current) {
+                    beforeVideoRef.current.playbackRate = BEFORE_PLAYBACK_RATE;
+                    beforeVideoRef.current.play().catch(e => console.error("Before video play failed", e));
+                  }
+                  
+                  if (afterVideoRef.current) {
+                    afterVideoRef.current.playbackRate = AFTER_PLAYBACK_RATE;
+                    afterVideoRef.current.play().catch(e => console.error("After video play failed", e));
+                  }
+                  
                 }, 800); // 等待滚动动画完成
               }
             }, 500);
@@ -282,19 +234,13 @@ export default function AutonomousDrivingDemo() {
 
   const handleSceneChange = (sceneIndex) => {
     setCurrentScene(sceneIndex);
-    setCurrentImageIndex(0);
-    setBeforeImageIndex(0);
-    setAfterImageIndex(0);
-    setRunning(false);
-    setIsBeforePlaying(false);
-    setIsAfterPlaying(false);
-    setShowPerformanceChart(false);
-    setThroughputData(null); // 重置吞吐量数据
   };
+  
   const isButtonDisabled = () => {
-    if (running) return true;
+    // 只有在后端执行阶段才禁用，播放阶段可以点击停止
+    if (running && !isPlaying) return true;
+    return false;
   };
-  const logBoxRef = React.useRef(null);
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#f5f6fa' }}>
@@ -451,18 +397,19 @@ export default function AutonomousDrivingDemo() {
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <img
-              src={`/drive_visual/combined/combined_${scenes[currentScene].images[beforeImageIndex]}`}
-              alt={`融合前场景 ${scenes[currentScene].images[beforeImageIndex]}`}
+            <video
+              ref={beforeVideoRef}
+              src={scenes[currentScene].video}
               style={{
                 maxWidth: '100%',
                 maxHeight: '100%',
                 objectFit: 'contain'
               }}
-              onError={(e) => {
-                console.error(`Failed to load before image: ${e.target.src}`);
-                e.target.style.display = 'none';
-              }}
+              muted
+              playsInline
+              preload="auto"
+              onEnded={() => setBeforeVideoEnded(true)}
+              onError={(e) => console.error(`Failed to load before video: ${e.target.src}`)}
             />
 
             {/* 左侧图像信息 */}
@@ -493,18 +440,20 @@ export default function AutonomousDrivingDemo() {
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <img
-              src={`/drive_visual/combined/combined_${scenes[currentScene].images[afterImageIndex]}`}
-              alt={`融合后场景 ${scenes[currentScene].images[afterImageIndex]}`}
+            <video
+              ref={afterVideoRef}
+              src={scenes[currentScene].video}
               style={{
                 maxWidth: '100%',
                 maxHeight: '100%',
                 objectFit: 'contain'
               }}
-              onError={(e) => {
-                console.error(`Failed to load after image: ${e.target.src}`);
-                e.target.style.display = 'none';
-              }}
+              muted
+              playsInline
+              preload="auto"
+              onEnded={() => setAfterVideoEnded(true)}
+              onTimeUpdate={handleTimeUpdate}
+              onError={(e) => console.error(`Failed to load after video: ${e.target.src}`)}
             />
 
             {/* 右侧图像信息 */}

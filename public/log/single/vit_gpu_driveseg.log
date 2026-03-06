@@ -1,65 +1,35 @@
-2025-08-15 06:47:43.798582: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-2025-08-15 06:47:46.203926: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
-2025-08-15 06:47:46.217289: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcuda.so.1
-2025-08-15 06:47:47.915844: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
-pciBusID: 0000:12:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-08-15 06:47:47.918366: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-2025-08-15 06:47:48.099034: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
-2025-08-15 06:47:48.101652: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
-2025-08-15 06:47:48.217182: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
-2025-08-15 06:47:48.258144: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
-2025-08-15 06:47:48.609197: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
-2025-08-15 06:47:48.722099: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.11
-2025-08-15 06:47:48.728280: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
-2025-08-15 06:47:48.728494: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
-2025-08-15 06:47:48.728811: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
-To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2025-08-15 06:47:48.734375: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
-2025-08-15 06:47:48.734539: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
-pciBusID: 0000:12:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-08-15 06:47:48.736899: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-2025-08-15 06:47:48.739152: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
-2025-08-15 06:47:48.741450: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
-2025-08-15 06:47:48.743718: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
-2025-08-15 06:47:48.746304: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
-2025-08-15 06:47:48.750171: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
-2025-08-15 06:47:48.752509: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.11
-2025-08-15 06:47:48.754821: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
-2025-08-15 06:47:48.754939: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
-2025-08-15 06:47:48.757269: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-2025-08-15 06:47:49.497240: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1261] Device interconnect StreamExecutor with strength 1 edge matrix:
-2025-08-15 06:47:49.497286: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1267]      0 
-2025-08-15 06:47:49.497293: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 0:   N 
-2025-08-15 06:47:49.497755: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-08-15 06:47:49.497791: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 75468 MB memory) -> physical GPU (device: 0, name: P1.gpu.xlarge, pci bus id: 0000:12:00.0, compute capability: 8.0)
-Found 5000 frames and 5000 labels.
-training head
-Model: "ViT-B_16"
-_________________________________________________________________
-  0%|                                                                                                                                                      | 0/500 [00:00<?, ?it/s]2025-08-15 06:47:53.720032: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:116] None of the MLIR optimization passes are enabled (registered 2)
-2025-08-15 06:47:53.739830: I tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 3000000000 Hz
-2025-08-15 06:48:21.072126: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
-2025-08-15 06:48:22.021362: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
-2025-08-15 06:48:22.163053: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
-2025-08-15 06:48:29.673690: I tensorflow/stream_executor/cuda/cuda_blas.cc:1838] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
-train epoch[1/5] loss:1.766, acc:0.451: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [01:33<00:00,  5.37it/s]
-valid epoch[1/5] loss:1.743, acc:0.525: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 125/125 [00:14<00:00,  8.71it/s]
-EPOCH1 GFLOPS: 57.77 GFLOPS, TIME: 107.40 seconds.
-train epoch[2/5] loss:1.741, acc:0.508: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [00:58<00:00,  8.58it/s]
-valid epoch[2/5] loss:1.734, acc:0.495: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 13.90it/s]
-EPOCH2 GFLOPS: 92.25 GFLOPS, TIME: 67.26 seconds.
-train epoch[3/5] loss:1.735, acc:0.546: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [00:57<00:00,  8.70it/s]
-valid epoch[3/5] loss:1.729, acc:0.594: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 14.22it/s]
-EPOCH3 GFLOPS: 93.65 GFLOPS, TIME: 66.25 seconds.
-train epoch[4/5] loss:1.729, acc:0.567: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [00:57<00:00,  8.75it/s]
-valid epoch[4/5] loss:1.738, acc:0.660: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 14.11it/s]
-EPOCH4 GFLOPS: 93.97 GFLOPS, TIME: 66.03 seconds.
-train epoch[5/5] loss:1.725, acc:0.604: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [00:54<00:00,  9.12it/s]
-valid epoch[5/5] loss:1.722, acc:0.599: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 14.10it/s]
-EPOCH5 GFLOPS: 97.43 GFLOPS, TIME: 63.68 seconds.
-======================== TensorFlow ======================== 
-                Total E2E time: 401.39 seconds
-                Average Time Per Epoch: 65.32 seconds, GFLOPS: 95.01
-======================== TensorFlow ======================== 
+| distributed init (rank 0): env://
+Namespace(batch_size=8, data_path='/gemini/code/DriveSeg', device='cuda', dist_backend='nccl', dist_url='env://', distributed=True, epochs=8, freeze_layers=True, gpu=0, local_rank=None, lr=0.001, lrf=0.01, num_classes=13, pre_calflops=1310.21, rank=0, syncBN=True, use_pre_calflops=True, weights='./vit_base_patch16_224_in21k.pth', world_size=1)
+Using 8 dataloader workers every process
+Training head.weight
+Training head.bias
+=============== CompileTime: 2.16 second
+[train epoch 0] loss: 1.129, acc: 0.517: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:53<00:00,  9.33it/s]
+[valid epoch 0] loss: 0.916, acc: 0.571: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 15.51it/s]
+EPOCH1 GFLOPS: 2269.68 GFLOPS, TIME: 61.68 seconds.
+[train epoch 1] loss: 0.997, acc: 0.590: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:25<00:00, 19.54it/s]
+[valid epoch 1] loss: 0.830, acc: 0.668: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 15.19it/s]
+EPOCH2 GFLOPS: 4138.85 GFLOPS, TIME: 33.83 seconds.
+[train epoch 2] loss: 0.954, acc: 0.621: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:25<00:00, 19.70it/s]
+[valid epoch 2] loss: 0.790, acc: 0.668: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 15.50it/s]
+EPOCH3 GFLOPS: 4185.43 GFLOPS, TIME: 33.45 seconds.
+[train epoch 3] loss: 0.909, acc: 0.640: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:25<00:00, 19.88it/s]
+[valid epoch 3] loss: 0.798, acc: 0.720: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 15.53it/s]
+EPOCH4 GFLOPS: 4215.97 GFLOPS, TIME: 33.21 seconds.
+[train epoch 4] loss: 0.865, acc: 0.648: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:25<00:00, 19.71it/s]
+[valid epoch 4] loss: 0.798, acc: 0.685: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 15.37it/s]
+EPOCH5 GFLOPS: 4178.93 GFLOPS, TIME: 33.50 seconds.
+[train epoch 5] loss: 0.842, acc: 0.660: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:25<00:00, 19.77it/s]
+[valid epoch 5] loss: 0.792, acc: 0.681: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:07<00:00, 15.95it/s]
+EPOCH6 GFLOPS: 4226.15 GFLOPS, TIME: 33.13 seconds.
+[train epoch 6] loss: 0.818, acc: 0.671: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:24<00:00, 20.24it/s]
+[valid epoch 6] loss: 0.735, acc: 0.700: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:08<00:00, 15.53it/s]
+EPOCH7 GFLOPS: 4274.05 GFLOPS, TIME: 32.76 seconds.
+[train epoch 7] loss: 0.801, acc: 0.673: 100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:24<00:00, 20.32it/s]
+[valid epoch 7] loss: 0.729, acc: 0.696: 100%|████████████████████████████████████████████████████████████████████████████| 125/125 [00:07<00:00, 15.94it/s]
+EPOCH8 GFLOPS: 4313.33 GFLOPS, TIME: 32.46 seconds.
+======================== DataFlow ========================
+                Total E2E time: 316.46 seconds
+                 Average Time Per Epoch: 36.75 seconds,
+                AVG Calculate GFLOPS: 3975.30 GFLOPS
+======================== DataFlow ========================

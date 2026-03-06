@@ -1,14 +1,15 @@
-Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
 *****************************************
-| distributed init (rank 3): env://
-| distributed init (rank 1): env://
-| distributed init (rank 5): env://
-| distributed init (rank 2): env://
-| distributed init (rank 4): env://
-| distributed init (rank 6): env://
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+*****************************************
 | distributed init (rank 0): env://
+| distributed init (rank 2): env://
 | distributed init (rank 7): env://
-Namespace(batch_size=256, data_path='/gemini/code/Mini-ImageNet-Dataset', device='cuda', dist_backend='nccl', dist_url='env://', distributed=True, epochs=5, freeze_layers=True, gpu=0, local_rank=None, lr=0.008, lrf=0.01, model_name='', num_classes=100, rank=0, syncBN=True, use_pre_calflops=True, weights='/gemini/pretrain/weights/vit_base_patch16_224_in21k.pth', world_size=8)
+| distributed init (rank 4): env://
+| distributed init (rank 5): env://
+| distributed init (rank 6): env://
+| distributed init (rank 1): env://
+| distributed init (rank 3): env://
+Namespace(batch_size=256, data_path='/gemini/code/Mini-ImageNet-Dataset', device='cuda', dist_backend='nccl', dist_url='env://', distributed=True, epochs=8, freeze_layers=True, gpu=0, local_rank=None, lr=0.008, lrf=0.01, model_name='', num_classes=100, rank=0, syncBN=True, use_pre_calflops=True, weights='/gemini/pretrain/weights/vit_base_patch16_224_in21k.pth', world_size=8)
 Found 38400 training images.
 Found 9600 validation images.
 Found 38400 training images.
@@ -31,28 +32,37 @@ _IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
 _IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
 _IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
 _IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
+_IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
+_IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
+_IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
 training head.weight
 training head.bias
-_IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
-_IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
-_IncompatibleKeys(missing_keys=['head.weight', 'head.bias'], unexpected_keys=[])
-=============== CompileTime: 34.91 second
-[train epoch 0] loss: 4.583, acc: 0.057: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 18/18 [00:13<00:00,  1.29it/s]
-[valid epoch 0] loss: 4.538, acc: 0.207: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.10it/s]
-EPOCH0 GFLOPS: 3218.54 GFLOPS, TIME: 18.51 seconds.
-[train epoch 1] loss: 4.497, acc: 0.482: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 18/18 [00:08<00:00,  2.19it/s]
-[valid epoch 1] loss: 4.438, acc: 0.777: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.25it/s]
-EPOCH1 GFLOPS: 4657.97 GFLOPS, TIME: 12.79 seconds.
-[train epoch 2] loss: 4.411, acc: 0.788: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 18/18 [00:09<00:00,  1.98it/s]
-[valid epoch 2] loss: 4.361, acc: 0.887: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.12it/s]
-EPOCH2 GFLOPS: 4385.18 GFLOPS, TIME: 13.58 seconds.
-[train epoch 3] loss: 4.356, acc: 0.846: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 18/18 [00:09<00:00,  1.82it/s]
-[valid epoch 3] loss: 4.320, acc: 0.909: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.26it/s]
-EPOCH3 GFLOPS: 4147.21 GFLOPS, TIME: 14.36 seconds.
-[train epoch 4] loss: 4.330, acc: 0.857: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 18/18 [00:08<00:00,  2.19it/s]
-[valid epoch 4] loss: 4.308, acc: 0.913: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.24it/s]
-EPOCH4 GFLOPS: 4770.93 GFLOPS, TIME: 12.48 seconds.
-======================== DataFlow ======================== 
-                Total E2E time: 128.07 seconds
-                 Average Time Per Epoch: 13.48 seconds, AVG Calculate GFLOPS: 4434.44 GFLOPS
+=============== CompileTime: 17.86 second
+[train epoch 0] loss: 4.583, acc: 0.059: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:14<00:00,  1.21it/s]
+[valid epoch 0] loss: 4.539, acc: 0.235: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.34it/s]
+EPOCH0 GFLOPS: 71149.39 GFLOPS, TIME: 18.89 seconds.
+[train epoch 1] loss: 4.493, acc: 0.514: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:08<00:00,  2.04it/s]
+[valid epoch 1] loss: 4.432, acc: 0.782: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.33it/s]
+EPOCH1 GFLOPS: 103205.76 GFLOPS, TIME: 13.02 seconds.
+[train epoch 2] loss: 4.395, acc: 0.806: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:11<00:00,  1.63it/s]
+[valid epoch 2] loss: 4.332, acc: 0.895: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.29it/s]
+EPOCH2 GFLOPS: 87375.47 GFLOPS, TIME: 15.38 seconds.
+[train epoch 3] loss: 4.310, acc: 0.869: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:10<00:00,  1.73it/s]
+[valid epoch 3] loss: 4.252, acc: 0.920: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.34it/s]
+EPOCH3 GFLOPS: 92086.37 GFLOPS, TIME: 14.59 seconds.
+[train epoch 4] loss: 4.245, acc: 0.875: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:09<00:00,  1.81it/s]
+[valid epoch 4] loss: 4.193, acc: 0.927: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.26it/s]
+EPOCH4 GFLOPS: 95862.37 GFLOPS, TIME: 14.02 seconds.
+[train epoch 5] loss: 4.196, acc: 0.888: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:10<00:00,  1.68it/s]
+[valid epoch 5] loss: 4.157, acc: 0.930: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.39it/s]
+EPOCH5 GFLOPS: 91030.23 GFLOPS, TIME: 14.76 seconds.
+[train epoch 6] loss: 4.176, acc: 0.890: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:10<00:00,  1.70it/s]
+[valid epoch 6] loss: 4.140, acc: 0.933: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.24it/s]
+EPOCH6 GFLOPS: 90882.55 GFLOPS, TIME: 14.79 seconds.
+[train epoch 7] loss: 4.160, acc: 0.892: 100%|██████████████████████████████████████████████████████████████████████████████| 18/18 [00:11<00:00,  1.57it/s]
+[valid epoch 7] loss: 4.134, acc: 0.933: 100%|████████████████████████████████████████████████████████████████████████████████| 5/5 [00:03<00:00,  1.28it/s]
+EPOCH7 GFLOPS: 86726.03 GFLOPS, TIME: 15.50 seconds.
+======================== DataFlow ========================
+                Total E2E time: 157.47 seconds
+                 Average Time Per Epoch: 15.12 seconds, AVG Calculate GFLOPS: 89789.77 GFLOPS
 ======================== DataFlow ========================

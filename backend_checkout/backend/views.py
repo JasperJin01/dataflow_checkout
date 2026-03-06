@@ -181,7 +181,7 @@ def stream_ssh_command(pool, command, slp=True):
         yield "data: [done]\n\n"
     except Exception as e:
         print(f'[ssh] 异常: {str(e)}')
-        yield f"data: [error] {str(e)}\n\n"
+        yield f"data: {str(e)}\n\n"
     finally:
         if client:
             pool.return_connection(client)

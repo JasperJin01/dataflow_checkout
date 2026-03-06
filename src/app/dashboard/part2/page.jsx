@@ -270,12 +270,28 @@ export default function Page() {
         if (timeMatch) {
           currentMetrics.totalCost = parseFloat(timeMatch[1]);
           console.log('ViT Total Cost extracted:', currentMetrics.totalCost);
+        } else {
+            // 尝试匹配另一种格式
+            // > Total Execution time = 20.48 s 
+            const timeMatch2 = logLine.match(/Total Execution time\s*=\s*([0-9.]+)\s*s/i);
+            if (timeMatch2) {
+                currentMetrics.totalCost = parseFloat(timeMatch2[1]);
+                console.log('ViT Total Cost extracted (Type 2):', currentMetrics.totalCost);
+            }
         }
 
         const gflopsMatch = logLine.match(/Avg GFLOPS\s*=\s*([0-9.]+)/i);
         if (gflopsMatch) {
           currentMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
           console.log('ViT GFLOPS extracted:', currentMetrics.gteps);
+        } else {
+            // 尝试匹配另一种格式
+            // > Total GFLOPS = 499.37 
+            const gflopsMatch2 = logLine.match(/Total GFLOPS\s*=\s*([0-9.]+)/i);
+            if (gflopsMatch2) {
+                currentMetrics.gteps = parseFloat(gflopsMatch2[1]);
+                console.log('ViT GFLOPS extracted (Type 2):', currentMetrics.gteps);
+            }
         }
       } else if (platform === 'CPU-DSA') {
         // 解析DSA ViT的指标
@@ -289,6 +305,19 @@ export default function Page() {
         if (gflopsMatch) {
           currentMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
           console.log('DSA ViT GFLOPS extracted:', currentMetrics.gteps);
+        }
+      } else if (platform === 'CPU-GPU') {
+        // 解析GPU ViT的指标
+        const timeMatch = logLine.match(/Average Time Per Epoch:\s*([0-9.]+)\s*seconds/i);
+        if (timeMatch) {
+          currentMetrics.totalCost = parseFloat(timeMatch[1]);
+          console.log('GPU ViT Total Cost extracted:', currentMetrics.totalCost);
+        }
+
+        const gflopsMatch = logLine.match(/AVG Calculate GFLOPS:\s*([0-9.]+)\s*GFLOPS/i);
+        if (gflopsMatch) {
+          currentMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
+          console.log('GPU ViT GFLOPS extracted:', currentMetrics.gteps);
         }
       }
     }

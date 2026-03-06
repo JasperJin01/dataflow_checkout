@@ -121,7 +121,7 @@ def stream_ssh_command(pool, command, slp=True):
                     for line in final_stderr.split('\n'):
                         if line.strip():
                             print(f'[ssh] 剩余stderr: {line}')
-                            yield f"data: [stderr] {line}\n\n"
+                            yield f"data: {line}\n\n"
                 
                 break
             
@@ -461,45 +461,6 @@ def run_distributed(request):
             )
             response['Cache-Control'] = 'no-cache'
             return response
-        
-        # 检查是否为CPU-GPU PageRank
-        elif platform == 'CPU-GPU' and algorithm == 'PageRank':
-             # 数据集映射：前端的Rmat-18/19/20对应后端的rmat18/19/20
-            dataset_mapping = {
-                'Rmat-18': 'rmat18',
-                'Rmat-19': 'rmat19', 
-                'Rmat-20': 'rmat20'
-            }
-            
-            if dataset not in dataset_mapping:
-                return JsonResponse(
-                    {"status": 400, "error": f"不支持的数据集: {dataset}"},
-                    status=400
-                )
-            
-            dataset_param = dataset_mapping[dataset]
-            
-            # 使用cat命令读取预置的log文件
-            # 路径格式: /root/tmp/pagerank/PageRank_v_3_0/log/gpu_{card_count}_{dataset}.log
-            log_path = f'/root/tmp/pagerank/PageRank_v_3_0/log/gpu_{card_count}_{dataset_param}.log'
-            
-            # 检查文件是否存在
-            check_cmd = f'[ -f {log_path} ] && echo "exists" || echo "not found"'
-            
-            # 构建cat命令
-            commands = [
-               f'cat {log_path}'
-            ]
-            print(f'[run_distributed] CPU-GPU {card_count}卡 PageRank执行(读取日志): {log_path}')
-            
-            cmd = ' && '.join(commands)
-            
-            response = StreamingHttpResponse(
-                stream_ssh_command(target_machine3, cmd, slp=True), # 使用slp=True模拟流式输出
-                content_type='text/event-stream',
-            )
-            response['Cache-Control'] = 'no-cache'
-            return response
 
         # 检查是否为CPU-FPGA ViT
         elif platform == 'CPU-FPGA' and algorithm == 'ViT':
@@ -538,25 +499,31 @@ def run_distributed(request):
 
         # 检查是否为CPU-DSA ViT
         elif platform == 'CPU-DSA' and algorithm == 'ViT':
-            # 确定工作目录和配置
+            # 确定工作目录
             if dataset == 'ImageNet':
                 work_dir = '/root/tmp/vit/VIT/VIT_for_Dataflow'
-                config_file = 'configs/vit_b16_224_ascend.yaml'
-                # 8卡时不需要local_worker_num参数
-                if str(card_count) == '8':
-                    msrun_cmd = f'msrun --bind_core=True --worker_num {card_count} python -u train.py --config {config_file}'
-                else:
-                    msrun_cmd = f'msrun --bind_core=True --worker_num {card_count} --local_worker_num={card_count} python -u train.py --config {config_file}'
             elif dataset == 'DriveSeg':
                 work_dir = '/root/tmp/vit/VIT/VIT_Drive_Dataflow/'
-                config_file = 'configs/vit_b16_224_ascend.yaml'
-                if str(card_count) == '8':
-                    msrun_cmd = f'msrun --bind_core=True --worker_num {card_count} python -u train.py --config {config_file}'
-                else:
-                    msrun_cmd = f'msrun --bind_core=True --worker_num {card_count} --local_worker_num={card_count} python -u train.py --config {config_file}'
             else:
                  return JsonResponse(
                     {"status": 400, "error": f"CPU-DSA ViT暂不支持数据集: {dataset}"},
+                    status=400
+                )
+
+            config_file = 'configs/vit_b16_224_ascend.yaml'
+            
+            # 根据卡数选择不同的执行命令
+            if str(card_count) == '1':
+                cmd_exec = f'python -u train.py --config {config_file} --distribute False'
+            elif str(card_count) == '2':
+                cmd_exec = f'msrun --bind_core=True --worker_num 2 --local_worker_num=2 python -u train2.py --config {config_file}'
+            elif str(card_count) == '4':
+                cmd_exec = f'msrun --bind_core=True --worker_num 4 --local_worker_num=4 python -u train4.py --config {config_file}'
+            elif str(card_count) == '8':
+                cmd_exec = f'msrun --bind_core=True --worker_num 8 python -u train8.py --config {config_file}'
+            else:
+                return JsonResponse(
+                    {"status": 400, "error": f"CPU-DSA ViT不支持卡数: {card_count}"},
                     status=400
                 )
 
@@ -566,9 +533,9 @@ def run_distributed(request):
                 'source /root/miniconda3/etc/profile.d/conda.sh',
                 'conda activate mindspore_py39',
                 f'cd {work_dir}',
-                msrun_cmd
+                cmd_exec
             ]
-            print(f'[run_distributed] CPU-DSA ViT执行命令')
+            print(f'[run_distributed] CPU-DSA ViT执行命令: {cmd_exec}')
             
             cmd = ' && '.join(commands)
             print(f'[run_distributed] 执行命令: {cmd}')

@@ -453,17 +453,17 @@ export const PERFORMANCE_DATA = {
       1: [
         {
           'Dataset': 'ImageNet',
-          'Baseline-Time(s)': 440.0,
-          'Dataflow-Time(s)': 288.0,
-          'Baseline-Throughput': 145, // GFLOPS
-          'Dataflow-Throughput': 220  // GFLOPS
+          'Baseline-Time(s)': 40.49,
+          'Dataflow-Time(s)': 15.73,
+          'Baseline-Throughput': 96.81, // GFLOPS
+          'Dataflow-Throughput': 249.21  // GFLOPS
         },
         {
           'Dataset': 'DriveSeg',
-          'Baseline-Time(s)': 312.0,
-          'Dataflow-Time(s)': 208.0,
-          'Baseline-Throughput': 105, // GFLOPS
-          'Dataflow-Throughput': 162.5  // GFLOPS
+          'Baseline-Time(s)': 42.82,
+          'Dataflow-Time(s)': 16.01,
+          'Baseline-Throughput': 91.55, // GFLOPS
+          'Dataflow-Throughput': 244.85  // GFLOPS
         }
       ],
       4: [

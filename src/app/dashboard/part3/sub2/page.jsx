@@ -132,7 +132,7 @@ export default function AutonomousDrivingDemo() {
       // 播放完成后显示性能图表
       setTimeout(() => {
         setShowPerformanceChart(true);
-        setLogs(prevLogs => [...prevLogs, `✅ ${scenes[currentScene].name} 图片播放完成，显示性能图表`]);
+        // setLogs(prevLogs => [...prevLogs, `✅ ${scenes[currentScene].name} 图片播放完成，显示性能图表`]);
         
         // 图片播放完毕后滚动到底部展示图表
         setTimeout(() => {
@@ -145,7 +145,7 @@ export default function AutonomousDrivingDemo() {
         // 执行完毕，设置 running 为 false
         setTimeout(() => {
           setRunning(false);
-          setLogs(prevLogs => [...prevLogs, `🎉 ${scenes[currentScene].name} 执行完毕`]);
+          setLogs(prevLogs => [...prevLogs, `[INFO] ${scenes[currentScene].name} 执行完毕`]);
         }, 1000);
       }, 1000);
     }

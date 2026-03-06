@@ -193,7 +193,7 @@ def main():
     
     # 更新后端配置
     print("🔧 正在更新后端配置...")
-    backend_success = update_backend_config(current_ip)
+    # backend_success = update_backend_config(current_ip)
     print()
     
     # 总结

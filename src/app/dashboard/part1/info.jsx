@@ -75,7 +75,7 @@ export const AlgorithmDetails = ({ algorithm }) => {
 };
 
 // PageRank数据集配置表
-const PAGERANK_DATASETS = {
+export const PAGERANK_DATASETS = {
   'Rmat-16': { node: '65,536', edge: '1,048,576', memory: '51MB' },
   'Rmat-18': { node: '174,147', edge: '7,600,696', memory: '94MB' },
   'Rmat-19': { node: '335,318', edge: '15,459,350', memory: '195MB' },

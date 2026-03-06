@@ -1,108 +1,38 @@
-2025-07-28 13:20:17.209328: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-shape of matrix:(174148, 174148), num_nodes=174148
-2025-07-28 13:21:02.008055: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
-2025-07-28 13:21:02.019927: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcuda.so.1
-2025-07-28 13:21:03.850175: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
-pciBusID: 0000:12:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.850268: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 1 with properties: 
-pciBusID: 0000:13:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.850331: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 2 with properties: 
-pciBusID: 0000:14:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.850392: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 3 with properties: 
-pciBusID: 0000:48:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.850449: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 4 with properties: 
-pciBusID: 0000:49:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.850508: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 5 with properties: 
-pciBusID: 0000:c0:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.850565: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 6 with properties: 
-pciBusID: 0000:c1:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.850622: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 7 with properties: 
-pciBusID: 0000:c2:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:03.853428: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-2025-07-28 13:21:04.041344: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
-2025-07-28 13:21:04.044572: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
-2025-07-28 13:21:04.172458: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
-2025-07-28 13:21:04.210965: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
-2025-07-28 13:21:04.580360: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
-2025-07-28 13:21:04.707908: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.11
-2025-07-28 13:21:04.715601: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
-2025-07-28 13:21:04.716427: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0, 1, 2, 3, 4, 5, 6, 7
-2025-07-28 13:21:04.716935: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
-To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2025-07-28 13:21:04.721838: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
-2025-07-28 13:21:05.267415: W tensorflow/stream_executor/cuda/cuda_driver.cc:431] A non-primary context 0x541f420 for device 2 exists before initializing the StreamExecutor. The primary context is now 0x5432160. We haven't verified StreamExecutor works with that.
-2025-07-28 13:21:05.471578: W tensorflow/stream_executor/cuda/cuda_driver.cc:431] A non-primary context 0x541f420 for device 3 exists before initializing the StreamExecutor. The primary context is now 0x543b800. We haven't verified StreamExecutor works with that.
-2025-07-28 13:21:05.651093: W tensorflow/stream_executor/cuda/cuda_driver.cc:431] A non-primary context 0x541f420 for device 4 exists before initializing the StreamExecutor. The primary context is now 0x5444ea0. We haven't verified StreamExecutor works with that.
-2025-07-28 13:21:05.832247: W tensorflow/stream_executor/cuda/cuda_driver.cc:431] A non-primary context 0x541f420 for device 5 exists before initializing the StreamExecutor. The primary context is now 0x544e540. We haven't verified StreamExecutor works with that.
-2025-07-28 13:21:06.017458: W tensorflow/stream_executor/cuda/cuda_driver.cc:431] A non-primary context 0x541f420 for device 6 exists before initializing the StreamExecutor. The primary context is now 0x5457be0. We haven't verified StreamExecutor works with that.
-2025-07-28 13:21:06.204887: W tensorflow/stream_executor/cuda/cuda_driver.cc:431] A non-primary context 0x541f420 for device 7 exists before initializing the StreamExecutor. The primary context is now 0x5461950. We haven't verified StreamExecutor works with that.
-2025-07-28 13:21:06.284946: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
-pciBusID: 0000:12:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.285047: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 1 with properties: 
-pciBusID: 0000:13:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.285112: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 2 with properties: 
-pciBusID: 0000:14:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.285175: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 3 with properties: 
-pciBusID: 0000:48:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.285235: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 4 with properties: 
-pciBusID: 0000:49:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.285297: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 5 with properties: 
-pciBusID: 0000:c0:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.285356: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 6 with properties: 
-pciBusID: 0000:c1:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.285411: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 7 with properties: 
-pciBusID: 0000:c2:00.0 name: P1.gpu.xlarge computeCapability: 8.0
-coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 78.95GiB deviceMemoryBandwidth: 1.76TiB/s
-2025-07-28 13:21:06.289692: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-2025-07-28 13:21:06.292593: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
-2025-07-28 13:21:06.295401: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
-2025-07-28 13:21:06.298313: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
-2025-07-28 13:21:06.301161: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
-2025-07-28 13:21:06.304072: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
-2025-07-28 13:21:06.306928: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.11
-2025-07-28 13:21:06.309837: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
-2025-07-28 13:21:06.310551: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0, 1, 2, 3, 4, 5, 6, 7
-2025-07-28 13:21:06.313594: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
-2025-07-28 13:21:10.119785: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1261] Device interconnect StreamExecutor with strength 1 edge matrix:
-2025-07-28 13:21:10.119847: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1267]      0 1 2 3 4 5 6 7 
-2025-07-28 13:21:10.119857: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 0:   N Y Y Y Y Y Y Y 
-2025-07-28 13:21:10.119866: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 1:   Y N Y Y Y Y Y Y 
-2025-07-28 13:21:10.119872: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 2:   Y Y N Y Y Y Y Y 
-2025-07-28 13:21:10.119878: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 3:   Y Y Y N Y Y Y Y 
-2025-07-28 13:21:10.119887: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 4:   Y Y Y Y N Y Y Y 
-2025-07-28 13:21:10.119895: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 5:   Y Y Y Y Y N Y Y 
-2025-07-28 13:21:10.119906: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 6:   Y Y Y Y Y Y N Y 
-2025-07-28 13:21:10.119915: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 7:   Y Y Y Y Y Y Y N 
-2025-07-28 13:21:10.121411: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.121467: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 75468 MB memory) -> physical GPU (device: 0, name: P1.gpu.xlarge, pci bus id: 0000:12:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.122624: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.122663: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 75468 MB memory) -> physical GPU (device: 1, name: P1.gpu.xlarge, pci bus id: 0000:13:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.123780: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.123857: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:2 with 75468 MB memory) -> physical GPU (device: 2, name: P1.gpu.xlarge, pci bus id: 0000:14:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.125116: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.125192: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:3 with 75468 MB memory) -> physical GPU (device: 3, name: P1.gpu.xlarge, pci bus id: 0000:48:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.126103: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.126139: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:4 with 75468 MB memory) -> physical GPU (device: 4, name: P1.gpu.xlarge, pci bus id: 0000:49:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.127095: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.127130: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:5 with 75468 MB memory) -> physical GPU (device: 5, name: P1.gpu.xlarge, pci bus id: 0000:c0:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.128013: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.128051: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:6 with 75468 MB memory) -> physical GPU (device: 6, name: P1.gpu.xlarge, pci bus id: 0000:c1:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.128959: W tensorflow/core/common_runtime/gpu/gpu_bfc_allocator.cc:39] Overriding allow_growth setting because the TF_FORCE_GPU_ALLOW_GROWTH environment variable is set. Original config value was 0.
-2025-07-28 13:21:10.128996: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:7 with 75468 MB memory) -> physical GPU (device: 7, name: P1.gpu.xlarge, pci bus id: 0000:c2:00.0, compute capability: 8.0)
-2025-07-28 13:21:10.275046: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:196] None of the MLIR optimization passes are enabled (registered 0 passes)
-2025-07-28 13:21:10.301071: I tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 3000000000 Hz
+================= CONFIG =================
+Graph name : Rmat-20
+Card num   : 1
+Root path  : /gemini/code/graph
+==========================================
+Start calculating PageRank...
+Using device: cuda
+================================ DataFlow METHOD =======================================
+                Graph: nodes: 645821, edges: 31361722
+Pagerank calculation took 0.21061 seconds for 188170332 edges
+                GTEPS: 0.893465
+                Total Cost: 25.87864 seconds
+================================ DataFlow METHOD =======================================
+
+Printing top 20 node ids with their ranks
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.002199
+   2 |  330702 | 0.000865
+   3 |  326638 | 0.000858
+   4 |    9341 | 0.000857
+   5 |  426482 | 0.000855
+   6 |  101769 | 0.000852
+   7 |  139132 | 0.000851
+   8 |  544219 | 0.000850
+   9 |  194455 | 0.000850
+  10 |   34541 | 0.000847
+  11 |  261692 | 0.000844
+  12 |  141625 | 0.000833
+  13 |   64385 | 0.000826
+  14 |   36022 | 0.000824
+  15 |  433913 | 0.000810
+  16 |  199033 | 0.000809
+  17 |  530778 | 0.000808
+  18 |  254027 | 0.000806
+  19 |   97431 | 0.000805
+  20 |       2 | 0.000801
+PageRank finished.

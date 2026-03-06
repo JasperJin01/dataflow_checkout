@@ -3,20 +3,45 @@ Graph name : Rmat-19
 Card num   : 8
 Root path  : /gemini/code/graph
 ==========================================
-Compiling...
-Compile Finished
-Running init_graph.py to preprocess graph...
-===> nodes = 335318, edges = 15459350
-Graph node: 335318, edges: 15459350
-Init Graph: 32.8935 seconds
-Start calculating...
-DataStruct: CSR
-Start Warm Up GPU .... 
-I/O time usage: 0.3038 seconds
-WARMUP time usage: 4.1395 seconds
-Cal time usage: 0.9824 seconds, GTEPS: 0.7553
-================================ DATAFLOW METHOD =======================================
-                Graph nodes = 335318, edges = 15459350, Env_Cards: 8
-                GTEPS: 0.7553
-                Total Cost: 48.317 seconds
-================================ DATAFLOW METHOD =======================================
+Start calculating PageRank...
+Running multi-GPU single-GPU mode with 8 GPUs...
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+*****************************************
+World size: 8, rank: 0
+Iter 0, diff = 1.267137e+00
+Iter 1, diff = 2.474970e-01
+Iter 2, diff = 4.266025e-02
+Iter 3, diff = 1.131052e-02
+Iter 4, diff = 2.807184e-03
+Iter 5, diff = 8.494481e-04
+================================ DataFlow METHOD Card: 8=======================================
+                Graph: nodes: 335319, edges: 15459350
+Pagerank calculation took 0.118186 seconds for 92756100 edges within  6  iterations
+                GTEPS: 0.784835
+                Total Cost: 25.93850 seconds
+================================ DataFlow METHOD =======================================
+
+Printing top 20 node ids with their ranks
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.002757
+   2 |  120991 | 0.001112
+   3 |    2259 | 0.001100
+   4 |  170570 | 0.001094
+   5 |  289915 | 0.001093
+   6 |  302985 | 0.001090
+   7 |   21751 | 0.001090
+   8 |  118851 | 0.001089
+   9 |   84954 | 0.001088
+  10 |  232019 | 0.001083
+  11 |   50099 | 0.001077
+  12 |  318268 | 0.001074
+  13 |   23044 | 0.001074
+  14 |  319671 | 0.001071
+  15 |  303790 | 0.001059
+  16 |  174501 | 0.001036
+  17 |   80958 | 0.001023
+  18 |       2 | 0.001022
+  19 |   52496 | 0.001020
+  20 |  224968 | 0.001016

@@ -66,6 +66,9 @@ export function getRunMode(platform, algorithm, dataset) {
   if (algorithm === 'ViT' && platform === 'CPU-FPGA') {
     return 'run';
   }
+  if (algorithm === 'ViT' && platform === 'CPU-DSA') {
+    return 'run';
+  }
   return 'log';
 }
 
@@ -262,48 +265,48 @@ export const PERFORMANCE_DATA = {
       ]
     },
     'FPGA': {
-      1: [
-        {
-          'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 0.0077,
-          'Dataflow-Time(s)': 0.004,
-          'Baseline-Throughput': 0.98, // GTEPS
-          'Dataflow-Throughput': 1.86 // GTEPS
-        },
+      2: [
         {
           'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 0.032,
-          'Dataflow-Time(s)': 0.017,
-          'Baseline-Throughput': 0.966, // GTEPS
-          'Dataflow-Throughput': 1.811 // GTEPS
+          'Baseline-Time(s)': 0.036,
+          'Dataflow-Time(s)': 0.012,
+          'Baseline-Throughput': 1.25, // GTEPS
+          'Dataflow-Throughput': 2.85 // GTEPS
+        },
+        {
+          'Dataset': 'Rmat-19',
+          'Baseline-Time(s)': 0.068,
+          'Dataflow-Time(s)': 0.024,
+          'Baseline-Throughput': 1.35, // GTEPS
+          'Dataflow-Throughput': 3.15 // GTEPS
         },
         {
           'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 0.125,
-          'Dataflow-Time(s)': 0.066,
-          'Baseline-Throughput': 1.0203, // GTEPS
-          'Dataflow-Throughput': 1.954 // GTEPS
+          'Baseline-Time(s)': 0.129,
+          'Dataflow-Time(s)': 0.045,
+          'Baseline-Throughput': 1.45, // GTEPS
+          'Dataflow-Throughput': 3.45 // GTEPS
         }
       ],
       4: [
         {
-          'Dataset': 'Rmat-16',
-          'Baseline-Time(s)': 0.003,
-          'Dataflow-Time(s)': 0.001,
-          'Baseline-Throughput': 2.466, // GTEPS
-          'Dataflow-Throughput': 4.52 // GTEPS
-        },
-        {
           'Dataset': 'Rmat-18',
-          'Baseline-Time(s)': 0.009,
-          'Dataflow-Time(s)': 0.005,
+          'Baseline-Time(s)': 0.023,
+          'Dataflow-Time(s)': 0.006,
           'Baseline-Throughput': 3.29, // GTEPS
           'Dataflow-Throughput': 6.14 // GTEPS
         },
         {
+          'Dataset': 'Rmat-19',
+          'Baseline-Time(s)': 0.040,
+          'Dataflow-Time(s)': 0.013,
+          'Baseline-Throughput': 3.45, // GTEPS
+          'Dataflow-Throughput': 6.55 // GTEPS
+        },
+        {
           'Dataset': 'Rmat-20',
-          'Baseline-Time(s)': 0.035,
-          'Dataflow-Time(s)': 0.018,
+          'Baseline-Time(s)': 0.071,
+          'Dataflow-Time(s)': 0.019,
           'Baseline-Throughput': 3.58, // GTEPS
           'Dataflow-Throughput': 6.82 // GTEPS
         }

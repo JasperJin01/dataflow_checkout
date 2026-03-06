@@ -3,20 +3,46 @@ Graph name : Rmat-20
 Card num   : 8
 Root path  : /gemini/code/graph
 ==========================================
-Compiling...
-Compile Finished
-Running init_graph.py to preprocess graph...
-===> nodes = 645820, edges = 31361722
-Graph node: 645820, edges: 31361722
-Init Graph: 58.8844 seconds
-Start calculating...
-DataStruct: CSR
-Start Warm Up GPU .... 
-I/O time usage: 0.4886 seconds
-WARMUP time usage: 4.8869 seconds
-Cal time usage: 1.7508 seconds, GTEPS: 0.8598
-================================ DATAFLOW METHOD =======================================
-                Graph nodes = 645820, edges = 31361722, Env_Cards: 8
-                GTEPS: 0.8598
-                Total Cost: 80.040 seconds
-================================ DATAFLOW METHOD =======================================
+Start calculating PageRank...
+Running multi-GPU single-GPU mode with 8 GPUs...
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+*****************************************
+World size: 8, rank: 0
+Iter 0, diff = 1.281495e+00
+Iter 1, diff = 2.461720e-01
+Iter 2, diff = 4.143449e-02
+Iter 3, diff = 1.097706e-02
+Iter 4, diff = 2.705184e-03
+Iter 5, diff = 8.229736e-04
+================================ DataFlow METHOD Card: 8=======================================
+                Graph: nodes: 645821, edges: 31361722
+Pagerank calculation took 0.179996 seconds for 188170332 edges within  6  iterations
+                GTEPS: 1.045413
+                Total Cost: 56.50077 seconds
+================================ DataFlow METHOD =======================================
+
+Printing top 20 node ids with their ranks
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.002199
+   2 |  330702 | 0.000865
+   3 |  326638 | 0.000858
+   4 |    9341 | 0.000857
+   5 |  426482 | 0.000855
+   6 |  101769 | 0.000852
+   7 |  139132 | 0.000851
+   8 |  544219 | 0.000850
+   9 |  194455 | 0.000850
+  10 |   34541 | 0.000847
+  11 |  261692 | 0.000844
+  12 |  141625 | 0.000833
+  13 |   64385 | 0.000826
+  14 |   36022 | 0.000824
+  15 |  433913 | 0.000810
+  16 |  199033 | 0.000809
+  17 |  530778 | 0.000808
+  18 |  254027 | 0.000806
+  19 |   97431 | 0.000805
+  20 |       2 | 0.000801
+PageRank finished.

@@ -95,11 +95,10 @@ export const AlgorithmDetails = ({ algorithm }) => {
 };
 
 // PageRank数据集配置表
-const PAGERANK_DATASETS = {
-  'Rmat-16': { node: '65,536', edge: '1,048,576', memory: '200MB' },
-  'Rmat-18': { node: '262,144', edge: '4,194,304', memory: '300MB' },
-  'Rmat-19': { node: '262,144', edge: '4,194,304', memory: '300MB' },
-  'Rmat-20': { node: '1,048,576', edge: '16,777,216', memory: '128MB' }
+export const PAGERANK_DATASETS = {
+  'Rmat-18': { node: '174,147', edge: '7,600,696', memory: '94MB' },
+  'Rmat-19': { node: '335,318', edge: '15,459,350', memory: '195MB' },
+  'Rmat-20': { node: '645,820', edge: '31,361,722', memory: '404MB' }
 };
 
 // 数据集信息组件

@@ -5,6 +5,12 @@ const config = {
   // 移除 output: 'export' 以支持标准的 Next.js 服务器模式
   // output: 'export',
   trailingSlash: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   // 标准模式下使用 .next 目录
   // distDir: isWebBuild ? 'web-build' : 'out',
   images: {

@@ -1,0 +1,40 @@
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+*****************************************
+World size: 4, rank: 0
+Iter 0, diff = 1.281495e+00
+Iter 1, diff = 2.461720e-01
+Iter 2, diff = 4.143449e-02
+Iter 3, diff = 1.097706e-02
+Iter 4, diff = 2.705184e-03
+Iter 5, diff = 8.229736e-04
+================================ DataFlow METHOD Card: 4=======================================
+                Graph: nodes: 645821, edges: 31361722
+Pagerank calculation took 0.194906 seconds for 188170332 edges within  6  iterations
+                GTEPS: 0.965444
+                Total Cost: 43.68567 seconds
+================================ DataFlow METHOD =======================================
+
+Printing top 20 node ids with their ranks
+Rank | Node ID | Score
+------------------------------
+   1 |       1 | 0.002199
+   2 |  330702 | 0.000865
+   3 |  326638 | 0.000858
+   4 |    9341 | 0.000857
+   5 |  426482 | 0.000855
+   6 |  101769 | 0.000852
+   7 |  139132 | 0.000851
+   8 |  544219 | 0.000850
+   9 |  194455 | 0.000850
+  10 |   34541 | 0.000847
+  11 |  261692 | 0.000844
+  12 |  141625 | 0.000833
+  13 |   64385 | 0.000826
+  14 |   36022 | 0.000824
+  15 |  433913 | 0.000810
+  16 |  199033 | 0.000809
+  17 |  530778 | 0.000808
+  18 |  254027 | 0.000806
+  19 |   97431 | 0.000805
+  20 |       2 | 0.000801

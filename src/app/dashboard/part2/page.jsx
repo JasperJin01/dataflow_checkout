@@ -32,7 +32,7 @@ const getAvailableDatasets = (algorithm, platform) => {
 
 // 保留原有结构用于兼容性（如排序等功能）
 const datasetsByAlgorithm = {
-  'PageRank': ['Rmat-16', 'Rmat-18', 'Rmat-20'],
+  'PageRank': ['Rmat-18', 'Rmat-19', 'Rmat-20'],
   'ViT': ['ImageNet', 'DriveSeg']
 };
 
@@ -220,6 +220,80 @@ export default function Page() {
     performanceRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // 提取日志中的性能指标
+  const extractMetricsFromLog = (logLine, currentMetrics, algorithm, platform) => {
+    // PageRank
+    if (algorithm === 'PageRank') {
+      if (platform === 'CPU-DSA') {
+        // 解析DSA的GTEPS
+        const gtepsMatch = logLine.match(/GTEPS:\s*([0-9.]+)/);
+        if (gtepsMatch) {
+          currentMetrics.gteps = parseFloat(gtepsMatch[1]);
+        }
+        
+        // 解析DSA的Total Cost
+        const costMatch = logLine.match(/Total Cost:\s*([0-9.]+)\s*seconds/);
+        if (costMatch) {
+          currentMetrics.totalCost = parseFloat(costMatch[1]);
+        }
+      } else if (platform === 'CPU-FPGA') {
+        // 解析FPGA的GTEPS
+        const gtepsMatch = logLine.match(/GTEPS:\s*([0-9.]+)/);
+        if (gtepsMatch) {
+          currentMetrics.gteps = parseFloat(gtepsMatch[1]);
+        }
+        
+        // 解析FPGA的执行时间（微秒转换为秒）
+        const timeMatch = logLine.match(/执行时间:\s*([0-9.]+)\s*微秒/);
+        if (timeMatch) {
+          currentMetrics.executionTime = parseFloat(timeMatch[1]) / 1000000; // 微秒转秒
+        }
+      } else if (platform === 'CPU-GPU') {
+        // 解析GPU的GTEPS
+        const gtepsMatch = logLine.match(/GTEPS:\s*([0-9.]+)/);
+        if (gtepsMatch) {
+          currentMetrics.gteps = parseFloat(gtepsMatch[1]);
+          console.log('GPU GTEPS extracted:', currentMetrics.gteps);
+        }
+        
+        // 解析GPU的Total Cost
+        const costMatch = logLine.match(/Total Cost:\s*([0-9.]+)\s*seconds/);
+        if (costMatch) {
+          currentMetrics.totalCost = parseFloat(costMatch[1]);
+          console.log('GPU Total Cost extracted:', currentMetrics.totalCost);
+        }
+      }
+    } else if (algorithm === 'ViT') {
+      if (platform === 'CPU-FPGA') {
+        // 解析FPGA ViT的指标
+        const timeMatch = logLine.match(/Total inference time\s*=\s*([0-9.]+)\s*s/i);
+        if (timeMatch) {
+          currentMetrics.totalCost = parseFloat(timeMatch[1]);
+          console.log('ViT Total Cost extracted:', currentMetrics.totalCost);
+        }
+
+        const gflopsMatch = logLine.match(/Avg GFLOPS\s*=\s*([0-9.]+)/i);
+        if (gflopsMatch) {
+          currentMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
+          console.log('ViT GFLOPS extracted:', currentMetrics.gteps);
+        }
+      } else if (platform === 'CPU-DSA') {
+        // 解析DSA ViT的指标
+        const timeMatch = logLine.match(/Average Time Per Epoch:\s*([0-9.]+)\s*seconds/i);
+        if (timeMatch) {
+          currentMetrics.totalCost = parseFloat(timeMatch[1]);
+          console.log('DSA ViT Total Cost extracted:', currentMetrics.totalCost);
+        }
+
+        const gflopsMatch = logLine.match(/AVG Calculate GFLOPS:\s*([0-9.]+)\s*GFLOPS/i);
+        if (gflopsMatch) {
+          currentMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
+          console.log('DSA ViT GFLOPS extracted:', currentMetrics.gteps);
+        }
+      }
+    }
+  };
+
   // 执行分布式运行命令
   const runDistributed = async (platform, cardCount, algorithm, dataset) => {
     try {
@@ -262,51 +336,10 @@ export default function Page() {
           setRunning(false);
         } else {
           setLogs(prev => [...prev, `${event.data}`]);
+          console.log(algorithm, dataset, platform)
           
-          if (algorithm === 'PageRank') {
-            if (platform === 'CPU-DSA') {
-               // 解析DSA的GTEPS
-               const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
-               if (gtepsMatch) {
-                 extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
-               }
-               
-               // 解析DSA的Total Cost
-               const costMatch = event.data.match(/Total Cost:\s*([0-9.]+)\s*seconds/);
-               if (costMatch) {
-                 extractedMetrics.totalCost = parseFloat(costMatch[1]);
-               }
-            } else if (platform === 'CPU-FPGA') {
-                // 解析FPGA的GTEPS
-                const gtepsMatch = event.data.match(/GTEPS:\s*([0-9.]+)/);
-                if (gtepsMatch) {
-                  extractedMetrics.gteps = parseFloat(gtepsMatch[1]);
-                }
-                
-                // 解析FPGA的执行时间（微秒转换为秒）
-                const timeMatch = event.data.match(/执行时间:\s*([0-9.]+)\s*微秒/);
-                if (timeMatch) {
-                  extractedMetrics.executionTime = parseFloat(timeMatch[1]) / 1000000; // 微秒转秒
-                }
-            }
-          } else if (algorithm === 'ViT') {
-             if (platform === 'CPU-FPGA') {
-                // 解析FPGA ViT的指标
-                // 日志格式：Total inference time = 60.89 s
-                const timeMatch = event.data.match(/Total inference time\s*=\s*([0-9.]+)\s*s/i);
-                if (timeMatch) {
-                  extractedMetrics.totalCost = parseFloat(timeMatch[1]);
-                  console.log('ViT Total Cost extracted:', extractedMetrics.totalCost);
-                }
-
-                // 日志格式：Avg GFLOPS = 137.21
-                const gflopsMatch = event.data.match(/Avg GFLOPS\s*=\s*([0-9.]+)/i);
-                if (gflopsMatch) {
-                  extractedMetrics.gteps = parseFloat(gflopsMatch[1]); // 复用gteps字段存储吞吐量
-                  console.log('ViT GFLOPS extracted:', extractedMetrics.gteps);
-                }
-             }
-          }
+          // 使用统一提取逻辑
+          extractMetricsFromLog(event.data, extractedMetrics, algorithm, platform);
         }
       };
       
@@ -341,16 +374,22 @@ export default function Page() {
       }
       
       const logContent = await response.text();
-      
+
       // 将日志内容按行分割并逐行显示
       const logLines = logContent.split('\n');
       
       // 清空之前的日志
       setLogs([`开始执行图算法 ${algorithm}，数据集 ${dataset}，平台 ${platform}：`]);
       
+      // 解析日志中的性能指标
+      let extractedMetrics = { gteps: null, totalCost: null, executionTime: null };
+
       // 模拟逐行输出日志
       for (let i = 0; i < logLines.length; i++) {
         if (logLines[i].trim() !== '') {
+          // 逐行解析
+          extractMetricsFromLog(logLines[i], extractedMetrics, algorithm, platform);
+
           // 使用闭包保存当前索引
           ((index) => {
             setTimeout(() => {
@@ -366,7 +405,13 @@ export default function Page() {
         setRunning(false);
         
         // 生成性能数据并更新
-        const performanceEntry = generatePerformanceData(algorithm, dataset, platform, selectedCardCount);
+        const performanceEntry = generatePerformanceData(
+          algorithm, 
+          dataset, 
+          platform, 
+          selectedCardCount,
+          (extractedMetrics.gteps && (extractedMetrics.totalCost || extractedMetrics.executionTime)) ? extractedMetrics : null
+        );
         updatePerformanceData(performanceEntry);
         
         // 执行完成后滚动到性能对比区域

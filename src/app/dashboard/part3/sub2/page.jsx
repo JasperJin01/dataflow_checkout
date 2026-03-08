@@ -62,13 +62,13 @@ export default function AutonomousDrivingDemo() {
   const performanceData = [
     {
       name: '融合前',
-      value: 1.18,
+      value: 1.78,
       unit: 'samples/s',
       fill: '#ff7043'
     },
     {
       name: '融合后', 
-      value: throughputData || 1.55,
+      value: throughputData || 2.55,
       unit: 'samples/s',
       fill: '#1976d2'
     }
@@ -78,7 +78,7 @@ export default function AutonomousDrivingDemo() {
   // 融合前: 150ms/帧 -> ~6.67fps -> 0.67x
   // 融合后: 80ms/帧 -> ~12.5fps -> 1.25x
   const BEFORE_PLAYBACK_RATE = 0.67;
-  const AFTER_PLAYBACK_RATE = 1.15;
+  const AFTER_PLAYBACK_RATE = 1.05;
 
   // 监听视频结束状态
   useEffect(() => {

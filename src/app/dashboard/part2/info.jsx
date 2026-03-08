@@ -102,7 +102,7 @@ export const PAGERANK_DATASETS = {
 };
 
 // 数据集信息组件
-export const DatasetInfo = ({ dataset }) => {
+export const DatasetInfo = ({ dataset, platform }) => {
   // 处理数组情况（全部数据集）
   if (Array.isArray(dataset)) {
     // 检查是否包含 PageRank 数据集
@@ -146,7 +146,7 @@ export const DatasetInfo = ({ dataset }) => {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
               <strong>{ds}:</strong>
             </Typography>
-            <DatasetInfo dataset={ds} />
+            <DatasetInfo dataset={ds} platform={platform} />
           </Box>
         ))}
       </Box>
@@ -181,19 +181,49 @@ export const DatasetInfo = ({ dataset }) => {
   }
   
   if (dataset === 'ImageNet') {
-    return (
-      <div>
-        大规模图像识别数据集，包含超过1400万张图像，涵盖2万多个类别
-      </div>
-    );
+    if (platform === 'CPU') {
+      return (
+        <div>
+          ImageNet21k 数据集由 707 张训练集图片和 132 张验证集图片组成
+        </div>
+      );
+    } else if (platform === 'FPGA' || platform === 'CPU-FPGA') {
+      return (
+        <div>
+          ImageNet21k数据集：大规模图像识别数据集，从中抽取150张图片进行推理测试。
+        </div>
+      );
+    } else {
+      // GPU, CPU-GPU, CPU-DSA
+      return (
+        <div>
+          ImageNet21k 数据集由 38,400 张训练集图片和 9,600 张验证集图片组成
+        </div>
+      );
+    }
   }
   
   if (dataset === 'DriveSeg') {
-    return (
-      <div>
-        自动驾驶场景分割数据集，专门用于道路场景的语义分割任务
-      </div>
-    );
+    if (platform === 'CPU') {
+      return (
+        <div>
+          DriveSeg 数据集由 800 张训练集图片和 200 张验证集图片组成
+        </div>
+      );
+    } else if (platform === 'FPGA' || platform === 'CPU-FPGA') {
+      return (
+        <div>
+          DriveSeg数据集：大规模自动驾驶场景数据集，从中抽取150张图片进行推理测试。
+        </div>
+      );
+    } else {
+      // GPU, CPU-GPU, CPU-DSA
+      return (
+        <div>
+          DriveSeg 数据集由 4,000 张训练集图片和 1,000 张验证集图片组成
+        </div>
+      );
+    }
   }
   
   return null;

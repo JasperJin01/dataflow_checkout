@@ -713,9 +713,10 @@ export default function Page() {
               {selectedDataset === allDatasetsOption ? (
                 <DatasetInfo 
                   dataset={getAvailableDatasets(selectedAlgo, selectedPlatform)} 
+                  platform={selectedPlatform}
                 />
               ) : (
-                <DatasetInfo dataset={selectedDataset} />
+                <DatasetInfo dataset={selectedDataset} platform={selectedPlatform} />
               )}
             </Paper>
           </Grid>

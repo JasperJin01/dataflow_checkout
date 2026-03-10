@@ -4,7 +4,7 @@ import { Box, Grid, Paper, Typography, Select, MenuItem, Button, Tabs, Tab, Tabl
   TableBody, TableCell, TableContainer, TableHead, TableRow, LinearProgress } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import request from '@/lib/request/request';
-import { URL_MAPS, getRunMode, PERFORMANCE_DATA } from './constData';
+import { URL_MAPS, PERFORMANCE_DATA } from './constData';
 import { AssessmentCriteria, AlgorithmDetails, DatasetInfo, getThroughputUnit } from './info';
 
 // 定义可选项
@@ -461,38 +461,28 @@ export default function Page() {
         return;
       }
 
-      // 处理单个数据集
-      const runMode = getRunMode(selectedPlatform, selectedAlgo, selectedDataset);
-      console.log(runMode);
+      // 统一使用后端执行逻辑 (后端会根据配置决定是真实执行还是模拟日志)
+      setLogs([`开始执行图算法 ${selectedAlgo}，数据集 ${selectedDataset}，平台 ${selectedPlatform}：`]);
+      setLogs(prev => [...prev, '正在与服务器建立连接...']);
       
-      if (runMode === 'log') {
-        await readLogFile(selectedAlgo, selectedDataset, selectedPlatform);
-      } else {
-        // 实现run模式的逻辑
-        setLogs([`开始执行图算法 ${selectedAlgo}，数据集 ${selectedDataset}，平台 ${selectedPlatform}：`]);
-        setLogs(prev => [...prev, '正在与服务器建立连接...']);
-        
-        // 检查是否需要清空之前的数据
-        const shouldClearData = performanceData.length > 0 && 
-          performanceData[0].algorithm !== selectedAlgo;
-        
-        if (shouldClearData) {
-          setPerformanceData([]);
-        }
-        
-        
-        let eventSource;
-        let extractedMetrics = { gteps: null, totalCost: null };
-        
-        
-        const urlPlatform = URL_MAPS.platform[selectedPlatform];
-        const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
-        const urlData = URL_MAPS.dataset[selectedDataset];
-        
-        eventSource = new EventSource(`${request.BASE_URL}/api/single/${urlPlatform}/${urlAlgo}/${urlData}/`);
+      // 检查是否需要清空之前的数据
+      const shouldClearData = performanceData.length > 0 && 
+        performanceData[0].algorithm !== selectedAlgo;
+      
+      if (shouldClearData) {
+        setPerformanceData([]);
+      }
+      
+      let eventSource;
+      let extractedMetrics = { gteps: null, totalCost: null };
+      
+      const urlPlatform = URL_MAPS.platform[selectedPlatform];
+      const urlAlgo = URL_MAPS.algorithm[selectedAlgo];
+      const urlData = URL_MAPS.dataset[selectedDataset];
+      
+      eventSource = new EventSource(`${request.BASE_URL}/api/single/${urlPlatform}/${urlAlgo}/${urlData}/`);
 
-        
-        eventSource.onmessage = async (event) => {
+      eventSource.onmessage = async (event) => {
           if (event.data === '[done]') {
             eventSource.close();
             
@@ -532,7 +522,6 @@ export default function Page() {
           setLogs(prev => [...prev, `❌ ${selectedAlgo}-${selectedDataset}-${selectedPlatform} 连接错误`]);
           setRunning(false);
         };
-      }
     } catch (error) {
       setLogs(prev => [...prev, `❌ 执行失败: ${error.message}`]);
       setRunning(false);

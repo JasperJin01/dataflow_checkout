@@ -19,40 +19,6 @@ export const URL_MAPS = {
   }
 };
 
-// NOTE run/log 控制字典
-export function getRunMode(platform, algorithm, dataset) {
-  // 读取全局环境变量，默认为 simulation
-  const executionMode = process.env.NEXT_PUBLIC_EXECUTION_MODE || 'simulation';
-  
-  // 如果是模拟模式，全部返回 log
-  if (executionMode === 'simulation') {
-    return 'log';
-  }
-
-  // 后端模式下，只有支持的组合才返回 run
-  // FPGA PageRank 使用实时执行模式
-  if (platform === 'FPGA') {
-      return 'run';
-  }
-
-  if (platform === 'CPU' && algorithm === 'PageRank') {
-    return 'run';
-  }
-
-  // DSA PageRank 也支持
-  if (platform === 'DSA' && algorithm === 'PageRank') {
-    return 'run';
-  }
-
-  // TODO CPU - VIT 需要处理！
-  if (platform === 'CPU' && algorithm === 'ViT') {
-    return 'run';
-  }
-
-  // GPU需要依赖云服务器？
-  return 'log';
-}
-
 
 
 // 单机环境下的性能指标数据

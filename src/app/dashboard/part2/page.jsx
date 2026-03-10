@@ -4,7 +4,7 @@ import { Box, Grid, Paper, Typography, Select, MenuItem, Button, Tabs, Tab, Tabl
   TableBody, TableCell, TableContainer, TableHead, TableRow, LinearProgress } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from 'recharts';
 import request from '@/lib/request/request';
-import { PERFORMANCE_DATA, getRunMode, URL_MAPS, midtermMetrics, CARD_OPTIONS, DEFAULT_CARD_COUNT } from './constData';
+import { PERFORMANCE_DATA, URL_MAPS, midtermMetrics, CARD_OPTIONS, DEFAULT_CARD_COUNT } from './constData';
 import { AssessmentCriteria, AlgorithmDetails, DatasetInfo, getThroughputUnit } from './info';
 
 const algorithms = ['PageRank', 'ViT'];
@@ -563,15 +563,14 @@ export default function Page() {
         return;
       }
 
-      // 处理单个数据集
-      const runMode = getRunMode(selectedPlatform, selectedAlgo, selectedDataset);
+      // 统一使用后端执行逻辑 (后端会根据配置决定是真实执行还是模拟日志)
+      // 处理单个数据集 (注意：虽然这里叫runDistributed，但实际上也包含单机逻辑，因为后端API设计不同)
+      // 对于Part 2，始终使用 runDistributed (即 /part2/run_distributed/ 接口)
       
-      if (runMode === 'log') {
-        await readLogFile(selectedAlgo, selectedDataset, selectedPlatform);
-      } else {
-        // 实现run模式的逻辑
-        await runDistributed(selectedPlatform, selectedCardCount, selectedAlgo, selectedDataset);
-      }
+      setLogs([`开始执行图算法 ${selectedAlgo}，数据集 ${selectedDataset}，平台 ${selectedPlatform}，${selectedCardCount}卡：`]);
+      setLogs(prev => [...prev, '正在与服务器建立连接...']);
+      
+      await runDistributed(selectedPlatform, selectedCardCount, selectedAlgo, selectedDataset);
     } catch (error) {
       setLogs(prev => [...prev, `❌ 执行失败: ${error.message}`]);
       setRunning(false);

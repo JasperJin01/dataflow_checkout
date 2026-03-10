@@ -9,8 +9,37 @@ import random
 from pathlib import Path
 from .ssh_pool import SSHConnectionPool
 
-# 全局控制开关：是否使用模拟日志
-SIMULATION_MODE = False
+# 全局控制开关：
+# 'run': 强制所有任务真实执行 # TODO ？
+# 'log': 强制所有任务模拟执行
+# 'config': 使用 SIMULATION_CONFIG 进行细粒度控制
+SIMULATION_MODE = 'config'
+
+# 细粒度模拟配置 (当 SIMULATION_MODE = 'config' 时生效)
+# 格式: 'PLATFORM_ALGORITHM': 'run'/'log'
+# 'run': 真实执行 (SSH连接服务器)
+# 'log': 模拟执行 (读取本地日志文件)
+# PLATFORM: 'CPU', 'FPGA', 'CPU-FPGA', 'CPU-DSA', 'CPU-GPU'
+# ALGORITHM: 'PR', 'ViT'
+SIMULATION_CONFIG = {
+    'CPU_PR': 'run',
+    'CPU_ViT': 'run',
+
+    'GPU_PR': 'log',
+    'GPU_ViT': 'log',
+
+    'FPGA_PR': 'run',
+    'FPGA_ViT': 'run',
+
+    'CPU-FPGA_PR': 'run',
+    'CPU-FPGA_ViT': 'run',
+
+    'CPU-DSA_PR': 'run',
+    'CPU-DSA_ViT': 'run',
+
+    'CPU-GPU_PR': 'log',
+    'CPU-GPU_ViT': 'log',
+}
 
 # SSH 连接密钥
 # 自动获取当前用户主目录，兼容 Windows/Linux/macOS
@@ -194,10 +223,116 @@ def stream_ssh_command(pool, command, slp=True):
 
 
 
+def stream_simulated_log(filename):
+    """通用模拟日志流生成器"""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    log_file_path = os.path.join(current_dir, 'logfile', f"{filename}.log")
+    
+    try:
+        if not os.path.exists(log_file_path):
+             yield f"data: [error] Simulation log file not found: {log_file_path}\n\n"
+             return
+
+        with open(log_file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # 1. 处理延时指令
+                if line.startswith('#SLEEP:'):
+                    try:
+                        seconds = float(line.split(':')[1])
+                        time.sleep(seconds)
+                    except ValueError:
+                        pass
+                    continue
+                
+                # 2. NOTE 处理性能随机化 (通用匹配)
+                # 匹配 Throughput, GTEPS, GFLOPS 等常见指标
+                if 'Throughput:' in line:
+                    random_factor = random.uniform(0.95, 1.05)
+                    line = re.sub(r'(Throughput:\s*)([\d.]+)', lambda m: f"{m.group(1)}{float(m.group(2)) * random_factor:.2f}", line)
+                elif 'GTEPS:' in line:
+                    random_factor = random.uniform(0.95, 1.05)
+                    line = re.sub(r'(GTEPS:\s*)([\d.]+)', lambda m: f"{m.group(1)}{float(m.group(2)) * random_factor:.4f}", line)
+                elif 'GFLOPS:' in line: # 可能需要根据具体日志调整正则
+                    random_factor = random.uniform(0.95, 1.05)
+                    line = re.sub(r'(GFLOPS:\s*)([\d.]+)', lambda m: f"{m.group(1)}{float(m.group(2)) * random_factor:.2f}", line)
+
+                
+                # 3. 发送日志
+                yield f"data: {line}\n\n"
+        
+        yield "data: [done]\n\n"
+        
+    except Exception as e:
+        print(f'[stream_simulated_log] Error: {str(e)}')
+        yield f"data: [error] Simulation error: {str(e)}\n\n"
+
+
+def should_simulate(platform, algorithm):
+    """判断是否应该进行模拟 (True: 模拟, False: 真实执行)"""
+    if SIMULATION_MODE == 'log':
+        return True
+    elif SIMULATION_MODE == 'run':
+        return False
+    
+    # config 模式
+    # 归一化算法名: pr/pagerank -> PR, 其他 -> ViT
+    norm_algo = 'PR' if algorithm.lower() in ['pr', 'pagerank'] else 'ViT'
+    
+    # 归一化平台名: 转为大写，确保与 SIMULATION_CONFIG 匹配
+    # 前端传来的 platform 可能是 'CPU', 'FPGA', 'CPU-FPGA', 'CPU-DSA', 'GPU', 'CPU-GPU'
+    norm_platform = platform.upper()
+    
+    config_key = f"{norm_platform}_{norm_algo}"
+    
+    # 获取配置，默认为 'run' (真实执行)
+    mode = SIMULATION_CONFIG.get(config_key, 'run')
+    
+    return mode == 'log'
+
+
 def run_single(request, platform, algo, dataset):
     """统一的单机执行API"""
     print(f'[run_single] 请求平台：{platform}, 算法：{algo}, 数据集：{dataset}')
     
+    # 检查是否需要模拟
+    if should_simulate(platform, algo):
+        print(f'[run_single] 进入模拟模式: {platform} {algo}')
+        # 构建模拟日志文件名规则:
+        # 单机模式 (run_single)
+        # 路径: logfile/single/
+        # 格式: {algo}_{platform}_{dataset}.log
+        # 示例: pr_cpu_rmat18.log, vit_fpga_imagenet.log
+        
+        # 1. 处理算法名: PageRank -> pr, ViT -> vit
+        algo_map = {
+            'PageRank': 'pr',
+            'PR': 'pr',
+            'ViT': 'vit'
+        }
+        safe_algo = algo_map.get(algo, algo.lower())
+        
+        # 2. 处理平台名: CPU -> cpu, FPGA -> fpga, GPU -> gpu
+        safe_platform = platform.lower()
+        
+        # 3. 处理数据集名
+        # PageRank: Rmat-18 -> rmat18
+        # ViT: ImageNet -> imagenet, DriveSeg -> driveseg
+        safe_dataset = dataset.lower().replace('-', '')
+        
+        log_filename = f"single/{safe_algo}_{safe_platform}_{safe_dataset}"
+        print(f'[run_single] 模拟日志路径: {log_filename}')
+        
+        response = StreamingHttpResponse(
+            stream_simulated_log(log_filename),
+            content_type='text/event-stream',
+        )
+        response['Cache-Control'] = 'no-cache'
+        return response
+
     try:
         
         if platform.lower() == 'fpga' and algo.lower() == 'pr':
@@ -375,6 +510,51 @@ def run_distributed(request):
     
     print(f'[run_distributed] 请求参数：平台={platform}, 卡数={card_count}, 算法={algorithm}, 数据集={dataset}')
     
+    # 检查是否需要模拟
+    norm_algo = 'PR' if algorithm.lower() in ['pr', 'pagerank'] else 'ViT'
+    if should_simulate(platform, norm_algo):
+        print(f'[run_distributed] 进入模拟模式: {platform} {algorithm}')
+        # 构建模拟日志文件名规则
+        # 分布式模式 (run_distributed)
+        # 路径: logfile/distrib/
+        # 格式: {algo}_{platform}_{cards}_{dataset}.log
+        # 示例: pr_dsa_4_rmat18.log, vit_gpu_8_imagenet.log
+        
+        # 1. 处理算法名: PageRank -> pr, ViT -> vit
+        algo_map = {
+            'PageRank': 'pr',
+            'PR': 'pr',
+            'ViT': 'vit'
+        }
+        safe_algo = algo_map.get(algorithm, algorithm.lower())
+        
+        # 2. 处理平台名: CPU-DSA -> dsa, CPU-FPGA -> fpga, CPU-GPU -> gpu
+        platform_map = {
+            'CPU-DSA': 'dsa',
+            'CPU-FPGA': 'fpga',
+            'CPU-GPU': 'gpu',
+            'DSA': 'dsa',
+            'FPGA': 'fpga',
+            'GPU': 'gpu'
+        }
+        safe_platform = platform_map.get(platform, platform.lower())
+        
+        # 3. 处理数据集名
+        safe_dataset = dataset.lower().replace('-', '')
+        
+        # 4. 卡数
+        safe_cards = str(card_count)
+        
+        log_filename = f"distrib/{safe_algo}_{safe_platform}_{safe_cards}_{safe_dataset}"
+        print(f'[run_distributed] 模拟日志路径: {log_filename}')
+        
+        response = StreamingHttpResponse(
+            stream_simulated_log(log_filename),
+            content_type='text/event-stream',
+        )
+        response['Cache-Control'] = 'no-cache'
+        return response
+
     try:
         # 检查是否为FPGA PageRank
         if platform == 'CPU-FPGA' and algorithm == 'PageRank':

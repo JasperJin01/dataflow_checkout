@@ -41,36 +41,6 @@ export const URL_MAPS = {
   }
 };
 
-// 获取运行模式
-export function getRunMode(platform, algorithm, dataset) {
-  // 读取全局环境变量，默认为 simulation
-  const executionMode = process.env.NEXT_PUBLIC_EXECUTION_MODE || 'simulation';
-  
-  // 如果是模拟模式，全部返回 log
-  if (executionMode === 'simulation') {
-    return 'log';
-  }
-
-  // 后端模式下，只有支持的组合才返回 run
-  console.log('getRunMode',platform, algorithm, dataset);
-
-  // FPGA PageRank算法使用实际执行模式
-  if (algorithm === 'PageRank' && platform === 'CPU-FPGA') {
-    return 'run';
-  }
-  // CPU-DSA PageRank算法使用实际执行模式
-  if (algorithm === 'PageRank' && platform === 'CPU-DSA') {
-    return 'run';
-  }
-  // CPU-FPGA ViT算法使用实际执行模式
-  if (algorithm === 'ViT' && platform === 'CPU-FPGA') {
-    return 'run';
-  }
-  if (algorithm === 'ViT' && platform === 'CPU-DSA') {
-    return 'run';
-  }
-  return 'log';
-}
 
 // 数据集执行结果
 export const PERFORMANCE_DATA = {

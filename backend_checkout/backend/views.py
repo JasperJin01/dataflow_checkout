@@ -5,8 +5,12 @@ import re
 import ast
 import os
 import time
+import random
 from pathlib import Path
 from .ssh_pool import SSHConnectionPool
+
+# 全局控制开关：是否使用模拟日志
+SIMULATION_MODE = False
 
 # SSH 连接密钥
 # 自动获取当前用户主目录，兼容 Windows/Linux/macOS
@@ -613,11 +617,63 @@ def stream_power_state_estimation(request, dataset):
         )
 
 
+def stream_simulated_uniad():
+    """模拟 UniAD 日志输出"""
+    # 获取当前文件（views.py）的绝对路径目录（backend目录）
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    log_file_path = os.path.join(current_dir, 'logfile', 'uniad_simulation.log')
+    
+    try:
+        if not os.path.exists(log_file_path):
+             yield f"data: [error] Simulation log file not found: {log_file_path}\n\n"
+             return
+
+        with open(log_file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # 1. 处理延时指令
+                if line.startswith('#SLEEP:'):
+                    try:
+                        seconds = float(line.split(':')[1])
+                        time.sleep(seconds)
+                    except ValueError:
+                        pass
+                    continue
+                
+                # 2. 处理性能随机化
+                if 'Throughput:' in line:
+                    # 提取原始值（虽然我们不需要它，但正则替换需要）
+                    # 生成随机吞吐量：在 1.45 到 1.65 之间波动
+                    random_throughput = random.uniform(1.45, 1.65)
+                    # 替换日志中的数值
+                    line = re.sub(r'Throughput: [\d.]+', f'Throughput: {random_throughput:.2f}', line)
+                
+                # 3. 发送日志
+                yield f"data: {line}\n\n"
+        
+        yield "data: [done]\n\n"
+        
+    except Exception as e:
+        print(f'[stream_simulated_uniad] Error: {str(e)}')
+        yield f"data: [error] Simulation error: {str(e)}\n\n"
+
+
 # 自动驾驶应用
 def run_uniad_command(request, idx):
     """执行UniAD命令"""
-    print(f'[run_uniad_command] 请求场景：{idx}')
+    print(f'[run_uniad_command] 请求场景：{idx}, 模拟模式：{SIMULATION_MODE}')
     
+    if SIMULATION_MODE:
+        response = StreamingHttpResponse(
+            stream_simulated_uniad(),
+            content_type='text/event-stream',
+        )
+        response['Cache-Control'] = 'no-cache'
+        return response
+
     try:
         # 验证场景索引
         scene_idx = int(idx)

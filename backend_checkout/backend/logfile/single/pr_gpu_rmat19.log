@@ -1,16 +1,20 @@
+#SLEEP:2.0
 ================= CONFIG =================
 Graph name : Rmat-19
 Card num   : 1
 Root path  : /gemini/code/graph
 ==========================================
+#SLEEP:1.0
 Start calculating PageRank...
 Using device: cuda
+#SLEEP:12.0
 ================================ DataFlow METHOD =======================================
                 Graph: nodes: 335319, edges: 15459350
 Pagerank calculation took 0.12524 seconds for 92756100 edges
                 GTEPS: 0.740629
                 Total Cost: 14.82024 seconds
 ================================ DataFlow METHOD =======================================
+#SLEEP:1.0
 
 Printing top 20 node ids with their ranks
 Rank | Node ID | Score
@@ -22,11 +26,13 @@ Rank | Node ID | Score
    5 |  289915 | 0.001093
    6 |  302985 | 0.001090
    7 |   21751 | 0.001090
+#SLEEP:0.3
    8 |  118851 | 0.001089
    9 |   84954 | 0.001088
   10 |  232019 | 0.001083
   11 |   50099 | 0.001077
   12 |  318268 | 0.001074
+#SLEEP:0.3
   13 |   23044 | 0.001074
   14 |  319671 | 0.001071
   15 |  303790 | 0.001059
@@ -35,4 +41,5 @@ Rank | Node ID | Score
   18 |       2 | 0.001022
   19 |   52496 | 0.001020
   20 |  224968 | 0.001016
+#SLEEP:0.3
 PageRank finished.

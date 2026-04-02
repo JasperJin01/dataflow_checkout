@@ -52,8 +52,10 @@ FPGA Kernel Execution time: 132.5 ms | GFLOPS: 73.9623
 FPGA Kernel Execution time: 131.3 ms | GFLOPS: 74.6382
 
 ================================ DATAFLOW METHOD =======================================
-        Total inference time    =  12243.68 ms
-        Total runs batch        =      120
-        FPGA Kernel avg time    =    93.03 ms
-        Avg GFLOPS              =   101.32
+Model load time = 17.18 ms
+Total inference time = 63.99 s
+Processed images = 150
+Total runs batch = 360
+FPGA Kernel avg time = 39.43 ms
+Avg GFLOPS = 121.75
 ================================ DATAFLOW METHOD =======================================

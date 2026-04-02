@@ -3,24 +3,35 @@ Graph name : Rmat-18
 Card num   : 8
 Root path  : /gemini/code/graph
 ==========================================
+#SLEEP:1
 Start calculating PageRank...
+#SLEEP:0.3
 Running true distributed version with 8 GPUs...
 *****************************************
 Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
 *****************************************
+#SLEEP:0.3
 World size: 8, rank: 0
+#SLEEP:0.3
 Iter 0, diff = 1.253116e+00
+#SLEEP:0.5
 Iter 1, diff = 2.518663e-01
+#SLEEP:0.5
 Iter 2, diff = 4.470579e-02
+#SLEEP:0.5
 Iter 3, diff = 1.189221e-02
+#SLEEP:0.5
 Iter 4, diff = 2.986676e-03
+#SLEEP:0.5
 Iter 5, diff = 9.052599e-04
+#SLEEP:0.5
 ================================ DataFlow METHOD Card: 8=======================================
                 Graph: nodes: 174148, edges: 7600696
 Pagerank calculation took 0.052002 seconds for 45604176 edges within  6  iterations
                 GTEPS: 0.876962
                 Total Cost: 12.79877 seconds
 ================================ DataFlow METHOD =======================================
+#SLEEP:0.5
 
 Printing top 20 node ids with their ranks
 Rank | Node ID | Score
@@ -34,6 +45,7 @@ Rank | Node ID | Score
    7 |    2099 | 0.001414
    8 |   20983 | 0.001412
    9 |  115679 | 0.001412
+#SLEEP:0.5
   10 |  143636 | 0.001398
   11 |   46630 | 0.001394
   12 |  108888 | 0.001392

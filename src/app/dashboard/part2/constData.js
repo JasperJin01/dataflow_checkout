@@ -1,10 +1,4 @@
 
-// 中期指标常量
-export const midtermMetrics = {
-  'PageRank': 6, // GTEPS
-  'ViT': 1000, // GFLOPS
-};
-
 // 多卡/多机配置
 export const CARD_OPTIONS = {
   'CPU-FPGA': [4],
@@ -263,22 +257,22 @@ export const PERFORMANCE_DATA = {
           'Dataset': 'Rmat-18',
           'Baseline-Time(s)': 0.023,
           'Dataflow-Time(s)': 0.006,
-          'Baseline-Throughput': 3.29, // GTEPS
-          'Dataflow-Throughput': 6.14 // GTEPS
+          'Baseline-Throughput': 1.9897, // GTEPS
+          'Dataflow-Throughput': 5.7005 // GTEPS
         },
         {
           'Dataset': 'Rmat-19',
           'Baseline-Time(s)': 0.040,
           'Dataflow-Time(s)': 0.013,
-          'Baseline-Throughput': 3.45, // GTEPS
-          'Dataflow-Throughput': 6.55 // GTEPS
+          'Baseline-Throughput': 2.2891, // GTEPS
+          'Dataflow-Throughput': 6.6827 // GTEPS
         },
         {
           'Dataset': 'Rmat-20',
           'Baseline-Time(s)': 0.071,
           'Dataflow-Time(s)': 0.019,
-          'Baseline-Throughput': 3.58, // GTEPS
-          'Dataflow-Throughput': 6.82 // GTEPS
+          'Baseline-Throughput': 2.6354, // GTEPS
+          'Dataflow-Throughput': 7.7087 // GTEPS
         }
       ]
     },

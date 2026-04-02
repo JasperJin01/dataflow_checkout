@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, Paper, Typography, Select, MenuItem, Button, Tabs, Tab, Table, 
   TableBody, TableCell, TableContainer, TableHead, TableRow, LinearProgress } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import request from '@/lib/request/request';
-import { PERFORMANCE_DATA, URL_MAPS, midtermMetrics, CARD_OPTIONS, DEFAULT_CARD_COUNT } from './constData';
+import { PERFORMANCE_DATA, URL_MAPS, CARD_OPTIONS, DEFAULT_CARD_COUNT } from './constData';
 import { AssessmentCriteria, AlgorithmDetails, DatasetInfo, getThroughputUnit } from './info';
 
 const algorithms = ['PageRank', 'ViT'];
@@ -58,8 +58,6 @@ export default function Page() {
   // const [vitChartMetric, setVitChartMetric] = useState(platforms[0]);
   // const [chartMetric, setChartMetric] = useState(platforms[0]); // 添加统一的图表指标状态
   
-  // 参考线（中期指标）状态
-  const [showReferenceLine, setShowReferenceLine] = useState(false);
   const logBoxRef = React.useRef(null);
   const performanceRef = React.useRef(null); // 添加性能对比区域的ref
 
@@ -501,65 +499,72 @@ export default function Page() {
       
       // 处理"全部数据集"选项
       if (selectedDataset === allDatasetsOption) {
-        setLogs(['正在加载全部数据集...']);
+        setLogs(['开始批量执行全部数据集...']);
         
-        // 获取当前选中算法-平台组合的所有数据集
-        const datasetsToProcess = getAvailableDatasets(selectedAlgo, selectedPlatform);
-        
-        // 等待200ms
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        // 批量生成性能数据
-        const newEntries = [];
-        for (const dataset of datasetsToProcess) {
-          const entry = generatePerformanceData(selectedAlgo, dataset, selectedPlatform, selectedCardCount);
-          if (entry) {
-            newEntries.push(entry);
-          }
-        }
-
-        // 批量更新性能数据
-        setPerformanceData(prev => {
-          // 过滤掉即将更新的条目
-          const filtered = prev.filter(item => 
-            !newEntries.some(entry => 
-              entry.algorithm === item.algorithm && 
-              entry.dataset === item.dataset && 
-              entry.platform === item.platform &&
-              entry.cardCount === item.cardCount
-            )
-          );
-
-          // 合并并排序
-          const newData = [...filtered, ...newEntries].sort((a, b) => {
-            // 首先按算法排序
-            if (a.algorithm !== b.algorithm) {
-              return algorithms.indexOf(a.algorithm) - algorithms.indexOf(b.algorithm);
-            }
-            // 然后按数据集排序
-            if (a.dataset !== b.dataset) {
-              const allDatasets = datasetsByAlgorithm[a.algorithm] || [];
-              const aIndex = allDatasets.indexOf(a.dataset);
-              const bIndex = allDatasets.indexOf(b.dataset);
-              return aIndex - bIndex;
-            }
-            // 如果有平台信息，按平台排序
-            if (a.platform && b.platform) {
-              const platformDiff = platforms.indexOf(a.platform) - platforms.indexOf(b.platform);
-              if (platformDiff !== 0) return platformDiff;
-            }
-            // 最后按卡数排序
-            return (a.cardCount || 0) - (b.cardCount || 0);
-          });
-          
-          return newData;
+        const params = new URLSearchParams({
+          platform: selectedPlatform,
+          algorithm: selectedAlgo,
+          card_count: selectedCardCount
         });
         
-        setLogs(prev => [...prev, '全部数据集加载完成']);
-        setRunning(false);
+        const eventSource = new EventSource(`${request.BASE_URL}/api/usage/run_all?${params}`);
         
-        // 执行完成后滚动到性能对比区域
-        setTimeout(() => scrollToPerformance(), 500);
+        let currentDataset = null;
+        let currentMetrics = { gteps: null, totalCost: null, executionTime: null };
+        
+        eventSource.onmessage = (event) => {
+          const line = event.data;
+          
+          if (line === '[done]') {
+            eventSource.close();
+            setLogs(prev => [...prev, '✅ 全部数据集执行完成']);
+            setRunning(false);
+            setTimeout(() => scrollToPerformance(), 500);
+            return;
+          }
+          
+          // 检查数据集开始/结束标记
+          if (line.startsWith('[INFO] Starting execution for dataset:')) {
+            const match = line.match(/dataset:\s*(.+)/);
+            if (match) {
+              currentDataset = match[1].trim();
+              currentMetrics = { gteps: null, totalCost: null, executionTime: null };
+              setLogs(prev => [...prev, `\n--- 开始执行数据集: ${currentDataset} ---`]);
+            }
+          } else if (line.startsWith('[INFO] Completed dataset:')) {
+            const match = line.match(/dataset:\s*(.+)/);
+            if (match) {
+              const completedDataset = match[1].trim();
+              setLogs(prev => [...prev, `--- 完成数据集: ${completedDataset} ---\n`]);
+              
+              // 立即生成并更新该数据集的性能数据
+              const entry = generatePerformanceData(
+                selectedAlgo, 
+                completedDataset, 
+                selectedPlatform, 
+                selectedCardCount,
+                (currentMetrics.gteps && (currentMetrics.totalCost || currentMetrics.executionTime)) ? currentMetrics : null
+              );
+              updatePerformanceData(entry);
+            }
+          } else if (line.startsWith('[WARN]') || line.startsWith('[ERROR]')) {
+             setLogs(prev => [...prev, line]);
+          } else if (line.startsWith('--------------------------------------------------')) {
+             // 忽略
+          } else {
+             setLogs(prev => [...prev, line]);
+             if (currentDataset) {
+                 extractMetricsFromLog(line, currentMetrics, selectedAlgo, selectedPlatform);
+             }
+          }
+        };
+        
+        eventSource.onerror = () => {
+            eventSource.close();
+            setLogs(prev => [...prev, '❌ 连接中断或发生错误']);
+            setRunning(false);
+        };
+        
         return;
       }
 
@@ -884,26 +889,6 @@ export default function Page() {
                           <Legend />
                           <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
                           <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
-                          <ReferenceLine
-                            y={midtermMetrics['PageRank']}
-                            stroke="red"
-                            strokeDasharray="3 3"
-                            strokeOpacity={showReferenceLine ? 1 : 0}
-                            style={{
-                              opacity: showReferenceLine ? 1 : 0,
-                              transition: 'opacity 0.3s ease-in-out'
-                            }}
-                            label={{
-                              value: `中期指标\n(${midtermMetrics['PageRank']} GTEPS)`,
-                              position: 'insideRight',
-                              fill: 'red',
-                              fontSize: 14,
-                              fontWeight: 'bold', 
-                              dy: -10,
-                              opacity: showReferenceLine ? 1 : 0,
-                              transition: 'opacity 0.3s'
-                            }}
-                          />
                         </BarChart>
                       </ResponsiveContainer>
                     </Box>
@@ -1032,8 +1017,6 @@ export default function Page() {
                           margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
                           barSize={35}
                           barGap={5}
-                          onMouseEnter={() => setShowReferenceLine(true)}
-                          onMouseLeave={() => setShowReferenceLine(false)}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
@@ -1062,26 +1045,6 @@ export default function Page() {
                           <Legend />
                           <Bar dataKey="baselineThroughput" fill="#26a69a" name="TensorFlow吞吐量" />
                           <Bar dataKey="optimizedThroughput" fill="#ef5350" name="优化吞吐量" />
-                          <ReferenceLine
-                            y={midtermMetrics['ViT']}
-                            stroke="red"
-                            strokeDasharray="3 3"
-                            strokeOpacity={showReferenceLine ? 1 : 0}
-                            style={{
-                              opacity: showReferenceLine ? 1 : 0,
-                              transition: 'opacity 0.3s ease-in-out'
-                            }}
-                            label={{
-                              value: `中期指标\n(${midtermMetrics['ViT']} GFLOPS)`,
-                              position: 'insideRight',
-                              fill: 'red',
-                              fontSize: 14,
-                              fontWeight: 'bold', 
-                              dy: -10,
-                              opacity: showReferenceLine ? 1 : 0,
-                              transition: 'opacity 0.3s'
-                            }}
-                          />
                         </BarChart>
                       </ResponsiveContainer>
                     </Box>

@@ -15,6 +15,7 @@ Pagerank calculation took 0.07320 seconds for 45604176 edges
                 Total Cost: 9.04648 seconds
 ================================ DataFlow METHOD =======================================
 #SLEEP:1.0
+
 Printing top 20 node ids with their ranks
 Rank | Node ID | Score
 ------------------------------

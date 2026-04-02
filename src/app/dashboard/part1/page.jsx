@@ -400,64 +400,72 @@ export default function Page() {
       
       // 处理"全部数据集"选项
       if (selectedDataset === allDatasetsOption) {
-        setLogs(['正在加载全部数据集...']);
+        setLogs(['开始批量执行全部数据集...']);
         
-        // 获取当前选中算法-平台组合的所有数据集
-        const datasetsToProcess = getAvailableDatasets(selectedAlgo, selectedPlatform);
-        
-        // 等待
-        await new Promise(resolve => setTimeout(resolve, 600));
-        setLogs(['...']);
-        await new Promise(resolve => setTimeout(resolve, 600));
-
-
-        // 批量生成性能数据
-        const newEntries = [];
-        for (const dataset of datasetsToProcess) {
-          const entry = generatePerformanceData(selectedAlgo, dataset, selectedPlatform);
-          if (entry) {
-            newEntries.push(entry);
-          }
-        }
-
-        // 批量更新性能数据
-        setPerformanceData(prev => {
-          // 过滤掉即将更新的条目
-          const filtered = prev.filter(item => 
-            !newEntries.some(entry => 
-              entry.algorithm === item.algorithm && 
-              entry.dataset === item.dataset && 
-              entry.platform === item.platform
-            )
-          );
-
-          // 合并并排序
-          const newData = [...filtered, ...newEntries].sort((a, b) => {
-            // 首先按算法排序
-            if (a.algorithm !== b.algorithm) {
-              return algorithms.indexOf(a.algorithm) - algorithms.indexOf(b.algorithm);
-            }
-            // 然后按数据集排序
-            if (a.dataset !== b.dataset) {
-              const allDatasets = a.algorithm === 'PageRank' 
-                ? ['Rmat-16', 'Rmat-18', 'Rmat-19', 'Rmat-20']
-                : ['ImageNet', 'DriveSeg'];
-              const aIndex = allDatasets.indexOf(a.dataset);
-              const bIndex = allDatasets.indexOf(b.dataset);
-              return aIndex - bIndex;
-            }
-            // 最后按平台排序
-            return platforms.indexOf(a.platform) - platforms.indexOf(b.platform);
-          });
-          
-          return newData;
+        const params = new URLSearchParams({
+          platform: selectedPlatform,
+          algorithm: selectedAlgo
         });
         
-        setLogs(prev => [...prev, '全部数据集加载完成']);
-        setRunning(false);
+        const eventSource = new EventSource(`${request.BASE_URL}/api/usage/run_all?${params}`);
         
-        // 执行完成后滚动到性能对比区域
-        setTimeout(() => scrollToPerformance(), 500);
+        let currentDataset = null;
+        let currentMetrics = { gteps: null, totalCost: null, executionTime: null };
+        
+        eventSource.onmessage = (event) => {
+          const line = event.data;
+          
+          if (line === '[done]') {
+            eventSource.close();
+            setLogs(prev => [...prev, '✅ 全部数据集执行完成']);
+            setRunning(false);
+            setTimeout(() => scrollToPerformance(), 500);
+            return;
+          }
+          
+          // 检查数据集开始/结束标记
+          if (line.startsWith('[INFO] Starting execution for dataset:')) {
+            const match = line.match(/dataset:\s*(.+)/);
+            if (match) {
+              currentDataset = match[1].trim();
+              // 重置当前数据集的指标
+              currentMetrics = { gteps: null, totalCost: null, executionTime: null };
+              setLogs(prev => [...prev, `\n--- 开始执行数据集: ${currentDataset} ---`]);
+            }
+          } else if (line.startsWith('[INFO] Completed dataset:')) {
+            const match = line.match(/dataset:\s*(.+)/);
+            if (match) {
+              const completedDataset = match[1].trim();
+              setLogs(prev => [...prev, `--- 完成数据集: ${completedDataset} ---\n`]);
+              
+              // 立即生成并更新该数据集的性能数据
+              const entry = generatePerformanceData(
+                selectedAlgo, 
+                completedDataset, 
+                selectedPlatform, 
+                (currentMetrics.gteps && (currentMetrics.totalCost || currentMetrics.executionTime)) ? currentMetrics : null
+              );
+              updatePerformanceData(entry);
+            }
+          } else if (line.startsWith('[WARN]') || line.startsWith('[ERROR]')) {
+             setLogs(prev => [...prev, line]);
+          } else if (line.startsWith('--------------------------------------------------')) {
+             // 分隔线，忽略
+          } else {
+             // 普通日志行
+             setLogs(prev => [...prev, line]);
+             if (currentDataset) {
+                 extractMetricsFromLog(line, currentMetrics, selectedAlgo, selectedPlatform);
+             }
+          }
+        };
+        
+        eventSource.onerror = () => {
+            eventSource.close();
+            setLogs(prev => [...prev, '❌ 连接中断或发生错误']);
+            setRunning(false);
+        };
+        
         return;
       }
 

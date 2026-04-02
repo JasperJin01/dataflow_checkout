@@ -294,6 +294,107 @@ def should_simulate(platform, algorithm):
     return mode == 'log'
 
 
+def stream_multi_simulated_logs(log_tasks):
+    """
+    通用多日志流生成器
+    log_tasks: list of tuples (log_filename, display_name)
+    """
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    for filename, display_name in log_tasks:
+        log_file_path = os.path.join(current_dir, 'logfile', f"{filename}.log")
+        
+        yield f"data: [INFO] Starting execution for dataset: {display_name}\n\n"
+        
+        if not os.path.exists(log_file_path):
+            yield f"data: [WARN] Log file not found: {filename}.log\n\n"
+            continue
+
+        try:
+            with open(log_file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    
+                    # 忽略SLEEP指令，使用固定间隔
+                    if line.startswith('#SLEEP:'):
+                        continue
+                    
+                    # 处理性能随机化
+                    if 'Throughput:' in line:
+                        random_factor = random.uniform(0.95, 1.05)
+                        line = re.sub(r'(Throughput:\s*)([\d.]+)', lambda m: f"{m.group(1)}{float(m.group(2)) * random_factor:.2f}", line)
+                    elif 'GTEPS:' in line:
+                        random_factor = random.uniform(0.95, 1.05)
+                        line = re.sub(r'(GTEPS:\s*)([\d.]+)', lambda m: f"{m.group(1)}{float(m.group(2)) * random_factor:.4f}", line)
+                    elif 'GFLOPS:' in line:
+                        random_factor = random.uniform(0.95, 1.05)
+                        line = re.sub(r'(GFLOPS:\s*)([\d.]+)', lambda m: f"{m.group(1)}{float(m.group(2)) * random_factor:.2f}", line)
+
+                    yield f"data: {line}\n\n"
+                    # 固定50ms间隔
+                    time.sleep(0.005)
+                    
+        except Exception as e:
+            print(f'[stream_multi_simulated_logs] Error reading {filename}: {str(e)}')
+            yield f"data: [ERROR] Reading log failed: {str(e)}\n\n"
+            
+        yield f"data: [INFO] Completed dataset: {display_name}\n\n"
+        yield f"data: --------------------------------------------------\n\n"
+        
+    yield "data: [done]\n\n"
+
+
+def run_all_datasets(request):
+    """批量执行所有数据集（模拟日志回放）"""
+    platform = request.GET.get('platform')
+    algorithm = request.GET.get('algorithm')
+    card_count = request.GET.get('card_count') # 可选，用于分布式
+    
+    print(f'[run_all_datasets] 请求: 平台={platform}, 算法={algorithm}, 卡数={card_count}')
+    
+    # 确定数据集列表
+    datasets = []
+    algo_lower = algorithm.lower()
+    if algo_lower in ['pr', 'pagerank']:
+        datasets = ['Rmat-18', 'Rmat-19', 'Rmat-20']
+        algo_short = 'pr'
+    else:
+        datasets = ['ImageNet', 'DriveSeg']
+        algo_short = 'vit'
+        
+    log_tasks = []
+    
+    # 构造日志文件名
+    for dataset in datasets:
+        safe_dataset = dataset.lower().replace('-', '')
+        
+        if card_count: # 分布式 (Part 2)
+            # 逻辑参考 run_distributed
+            platform_map = {
+                'CPU-DSA': 'dsa', 'DSA': 'dsa',
+                'CPU-FPGA': 'fpga', 'FPGA': 'fpga',
+                'CPU-GPU': 'gpu', 'GPU': 'gpu'
+            }
+            safe_platform = platform_map.get(platform, platform.lower())
+            safe_cards = str(card_count)
+            filename = f"distrib/{algo_short}_{safe_platform}_{safe_cards}_{safe_dataset}"
+        else: # 单机 (Part 1)
+            # 逻辑参考 run_single
+            safe_platform = platform.lower()
+            filename = f"single/{algo_short}_{safe_platform}_{safe_dataset}"
+            
+        log_tasks.append((filename, dataset))
+        
+    response = StreamingHttpResponse(
+        stream_multi_simulated_logs(log_tasks),
+        content_type='text/event-stream',
+    )
+    response['Cache-Control'] = 'no-cache'
+    return response
+
+
 def run_single(request, platform, algo, dataset):
     """统一的单机执行API"""
     print(f'[run_single] 请求平台：{platform}, 算法：{algo}, 数据集：{dataset}')
@@ -825,11 +926,9 @@ def stream_simulated_uniad():
                 
                 # 2. 处理性能随机化
                 if 'Throughput:' in line:
-                    # 提取原始值（虽然我们不需要它，但正则替换需要）
-                    # 生成随机吞吐量：在 1.45 到 1.65 之间波动
-                    random_throughput = random.uniform(1.45, 1.65)
-                    # 替换日志中的数值
-                    line = re.sub(r'Throughput: [\d.]+', f'Throughput: {random_throughput:.2f}', line)
+                    # 在原值基础上波动 +/- 5%
+                    random_factor = random.uniform(0.95, 1.05)
+                    line = re.sub(r'(Throughput:\s*)([\d.]+)', lambda m: f"{m.group(1)}{float(m.group(2)) * random_factor:.2f}", line)
                 
                 # 3. 发送日志
                 yield f"data: {line}\n\n"

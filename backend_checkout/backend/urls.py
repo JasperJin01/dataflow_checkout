@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/single/<str:platform>/<str:algo>/<str:dataset>/', views.run_single, name='run_single'),
     # 分布式执行接口
     path('part2/run_distributed/', views.run_distributed, name='run_distributed'),
+    path('api/usage/run_all', views.run_all_datasets, name='run_all_datasets'),
     
 
     

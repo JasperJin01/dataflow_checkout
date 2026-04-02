@@ -11,6 +11,7 @@ Setting OMP_NUM_THREADS environment variable for each process to be 1 in default
 | distributed init (rank 6): env://
 Namespace(batch_size=8, data_path='/gemini/code/DriveSeg', device='cuda', dist_backend='nccl', dist_url='env://', distributed=True, epochs=8, freeze_layers=True, gpu=0, local_rank=None, lr=0.008, lrf=0.01, num_classes=13, pre_calflops=1310.21, rank=0, syncBN=True, use_pre_calflops=True, weights='./vit_base_patch16_224_in21k.pth', world_size=8)
 Using 8 dataloader workers every process
+#SLEEP:1.5
 Training head.weight
 Training head.bias
 Training head.weight
@@ -27,31 +28,40 @@ Training head.weight
 Training head.bias
 Training head.weight
 Training head.bias
+#SLEEP:1.5
 =============== CompileTime: 2.71 second
 [train epoch 0] loss: 1.252, acc: 0.492: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:12<00:00,  4.85it/s]
 [valid epoch 0] loss: 1.050, acc: 0.648: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.18it/s]
 EPOCH1 GFLOPS: 8334.62 GFLOPS, TIME: 16.80 seconds.
+#SLEEP:1.5
 [train epoch 1] loss: 1.040, acc: 0.558: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:10<00:00,  5.94it/s]
 [valid epoch 1] loss: 0.918, acc: 0.568: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.27it/s]
 EPOCH2 GFLOPS: 9849.77 GFLOPS, TIME: 14.21 seconds.
+#SLEEP:1.5
 [train epoch 2] loss: 1.027, acc: 0.599: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:10<00:00,  6.10it/s]
 [valid epoch 2] loss: 1.008, acc: 0.648: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.33it/s]
 EPOCH3 GFLOPS: 9730.59 GFLOPS, TIME: 14.39 seconds.
+#SLEEP:1.5
 [train epoch 3] loss: 0.856, acc: 0.639: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:11<00:00,  5.33it/s]
 [valid epoch 3] loss: 0.742, acc: 0.712: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.42it/s]
 EPOCH4 GFLOPS: 8995.12 GFLOPS, TIME: 15.56 seconds.
+#SLEEP:1.5
 [train epoch 4] loss: 0.808, acc: 0.643: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:10<00:00,  5.96it/s]
 [valid epoch 4] loss: 0.807, acc: 0.672: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.27it/s]
 EPOCH5 GFLOPS: 9669.86 GFLOPS, TIME: 14.48 seconds.
+#SLEEP:1.5
 [train epoch 5] loss: 0.835, acc: 0.653: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:11<00:00,  5.43it/s]
 [valid epoch 5] loss: 0.715, acc: 0.752: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.14it/s]
 EPOCH6 GFLOPS: 9023.08 GFLOPS, TIME: 15.52 seconds.
+#SLEEP:1.5
 [train epoch 6] loss: 0.829, acc: 0.667: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:10<00:00,  5.78it/s]
 [valid epoch 6] loss: 0.693, acc: 0.752: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.17it/s]
 EPOCH7 GFLOPS: 9434.61 GFLOPS, TIME: 14.84 seconds.
+#SLEEP:1.5
 [train epoch 7] loss: 0.832, acc: 0.651: 100%|██████████████████████████████████████████████████████████████████████████████| 62/62 [00:10<00:00,  5.79it/s]
 [valid epoch 7] loss: 0.708, acc: 0.712: 100%|██████████████████████████████████████████████████████████████████████████████| 16/16 [00:03<00:00,  4.34it/s]
 EPOCH8 GFLOPS: 9467.27 GFLOPS, TIME: 14.79 seconds.
+#SLEEP:1.0
 ======================== DataFlow ========================
                 Total E2E time: 145.49 seconds
                  Average Time Per Epoch: 15.07 seconds,

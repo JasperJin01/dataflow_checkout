@@ -1,29 +1,219 @@
-2.4.1+cu118
-Start predicting...
-predict.py:46: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
-  model.load_state_dict(torch.load(model_weight_path, map_location=device))
-[1/20] Result for 14267691818_301aceda07.jpg from worker 1 | Prob: 0.555 | Time: 0.8324s | GFLOPS: 20.255
-[2/20] Result for 5060519573_c628547e20_n.jpg from worker 0 | Prob: 0.434 | Time: 0.8926s | GFLOPS: 18.89
-[3/20] Result for 8388497874_1fe750cc95_m.jpg from worker 1 | Prob: 0.560 | Time: 0.1420s | GFLOPS: 117.005
-[4/20] Result for 12395698413_c0388278f7.jpg from worker 1 | Prob: 0.527 | Time: 0.1296s | GFLOPS: 130.185
-[5/20] Result for 8853083579_dd1dfa3188.jpg from worker 0 | Prob: 0.371 | Time: 0.1502s | GFLOPS: 112.24
-[6/20] Result for 3560426426_1c66cb8330.jpg from worker 1 | Prob: 0.557 | Time: 0.1300s | GFLOPS: 129.725
-[7/20] Result for 459042023_6273adc312_n.jpg from worker 0 | Prob: 0.538 | Time: 0.1460s | GFLOPS: 115.465
-[8/20] Result for 6936225976_a91b60d8c2_m.jpg from worker 1 | Prob: 0.615 | Time: 0.1292s | GFLOPS: 130.565
-[9/20] Result for 17990320484_93bba345d2_m.jpg from worker 0 | Prob: 0.567 | Time: 0.1450s | GFLOPS: 116.295
-[10/20] Result for 8742493617_c2a9bf854f_m.jpg from worker 1 | Prob: 0.532 | Time: 0.1294s | GFLOPS: 130.195
-[11/20] Result for 2675221506_5286c0595f.jpg from worker 0 | Prob: 0.511 | Time: 0.1464s | GFLOPS: 115.165
-[12/20] Result for 6347847065_83cf87333b_n.jpg from worker 1 | Prob: 0.507 | Time: 0.1304s | GFLOPS: 129.275
-[13/20] Result for 3207482427_49d5c75291_m.jpg from worker 0 | Prob: 0.418 | Time: 0.1464s | GFLOPS: 115.185
-[14/20] Result for 15419696882_9394168a10_n.jpg from worker 1 | Prob: 0.213 | Time: 0.1326s | GFLOPS: 127.19
-[15/20] Result for 3554620445_082dd0bec4_n.jpg from worker 0 | Prob: 0.547 | Time: 0.1464s | GFLOPS: 115.155
-[16/20] Result for 15319767030_e6c5602a77_m.jpg from worker 1 | Prob: 0.305 | Time: 0.1320s | GFLOPS: 127.725
-[17/20] Result for 2536282942_b5ca27577e.jpg from worker 0 | Prob: 0.369 | Time: 0.1472s | GFLOPS: 114.54
-[18/20] Result for 475936554_a2b38aaa8e.jpg from worker 1 | Prob: 0.286 | Time: 0.1334s | GFLOPS: 126.425
-[19/20] Result for 4588034197_e300b0872a_n.jpg from worker 0 | Prob: 0.338 | Time: 0.1492s | GFLOPS: 112.965
-[20/20] Result for 2389205905_17ce9e6936.jpg from worker 1 | Prob: 0.489 | Time: 0.1302s | GFLOPS: 129.525
-===== Summary (PyTorch Method) =====
-Total images processed: 20
-Total execution time: 5.41s 
-Average inference time: 0.1608s/image (9.20 images/s)
-Throughput: 98.43 GFLOPS
+Found 707 training images (ratio: 0.02).
+Found 132 validation images (ratio: 0.02).
+Using 8 dataloader workers every process
+pin_memory: False
+<All keys matched successfully>
+training head.weight
+training head.bias
+#SLEEP:0.8
+
+  0%|          | 0/23 [00:00<?, ?it/s]
+#SLEEP:1.1
+[train epoch 1] loss: 4.347, acc: 0.94:   4%|▍         | 1/23 [00:05<02:04,  5.64s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.355, acc: 0.91:   9%|▊         | 2/23 [00:07<01:14,  3.53s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.363, acc: 0.89:  13%|█▎        | 3/23 [00:09<00:52,  2.63s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.369, acc: 0.88:  17%|█▋        | 4/23 [00:10<00:42,  2.22s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.374, acc: 0.85:  22%|██▏       | 5/23 [00:12<00:39,  2.19s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.368, acc: 0.85:  26%|██▌       | 6/23 [00:15<00:36,  2.13s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.372, acc: 0.84:  30%|███       | 7/23 [00:16<00:32,  2.05s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.376, acc: 0.83:  35%|███▍      | 8/23 [00:18<00:28,  1.88s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.375, acc: 0.83:  39%|███▉      | 9/23 [00:19<00:24,  1.76s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.374, acc: 0.83:  43%|████▎     | 10/23 [00:21<00:21,  1.66s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.374, acc: 0.83:  48%|████▊     | 11/23 [00:23<00:20,  1.72s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.374, acc: 0.83:  52%|█████▏    | 12/23 [00:24<00:18,  1.69s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.375, acc: 0.83:  57%|█████▋    | 13/23 [00:26<00:16,  1.61s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.376, acc: 0.82:  61%|██████    | 14/23 [00:27<00:14,  1.58s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.375, acc: 0.82:  65%|██████▌   | 15/23 [00:29<00:12,  1.56s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.374, acc: 0.83:  70%|██████▉   | 16/23 [00:30<00:10,  1.53s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.373, acc: 0.83:  74%|███████▍  | 17/23 [00:32<00:09,  1.58s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.372, acc: 0.83:  78%|███████▊  | 18/23 [00:33<00:07,  1.56s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.369, acc: 0.83:  83%|████████▎ | 19/23 [00:35<00:06,  1.52s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.371, acc: 0.83:  87%|████████▋ | 20/23 [00:36<00:04,  1.50s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.369, acc: 0.83:  91%|█████████▏| 21/23 [00:38<00:03,  1.51s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.369, acc: 0.83:  96%|█████████▌| 22/23 [00:39<00:01,  1.49s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.364, acc: 0.83: 100%|██████████| 23/23 [00:40<00:00,  1.11s/it]
+#SLEEP:1.1
+[train epoch 1] loss: 4.364, acc: 0.83: 100%|██████████| 23/23 [00:40<00:00,  1.74s/it]
+ 
+#SLEEP:1.1
+  0%|          | 0/5 [00:00<?, ?it/s]
+#SLEEP:1.1
+[valid epoch 1] loss: 4.307, acc: 0.91:  20%|██        | 1/5 [00:02<00:11,  2.77s/it]
+#SLEEP:1.1
+[valid epoch 1] loss: 4.330, acc: 0.84:  40%|████      | 2/5 [00:04<00:07,  2.33s/it]
+#SLEEP:1.1
+[valid epoch 1] loss: 4.344, acc: 0.83:  60%|██████    | 3/5 [00:06<00:04,  2.21s/it]
+#SLEEP:1.1
+[valid epoch 1] loss: 4.350, acc: 0.84:  80%|████████  | 4/5 [00:08<00:02,  2.13s/it]
+#SLEEP:1.1
+[valid epoch 1] loss: 4.357, acc: 0.83: 100%|██████████| 5/5 [00:09<00:00,  1.46s/it]
+#SLEEP:1.1
+[valid epoch 1] loss: 4.357, acc: 0.83: 100%|██████████| 5/5 [00:09<00:00,  1.83s/it]
+===========================
+707 132
+EPOCH1 GFLOPS: 477.49 GFLOPS, TIME: 49.20 seconds.
+
+#SLEEP:1.1
+  0%|          | 0/23 [00:00<?, ?it/s]
+#SLEEP:1.1
+[train epoch 2] loss: 4.344, acc: 0.88:   4%|▍         | 1/23 [00:01<00:42,  1.91s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.338, acc: 0.88:   9%|▊         | 2/23 [00:03<00:36,  1.75s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.348, acc: 0.84:  13%|█▎        | 3/23 [00:05<00:33,  1.68s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.353, acc: 0.83:  17%|█▋        | 4/23 [00:06<00:31,  1.64s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.354, acc: 0.85:  22%|██▏       | 5/23 [00:08<00:28,  1.59s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.356, acc: 0.84:  26%|██▌       | 6/23 [00:09<00:27,  1.61s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.352, acc: 0.84:  30%|███       | 7/23 [00:11<00:25,  1.60s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.352, acc: 0.84:  35%|███▍      | 8/23 [00:12<00:23,  1.55s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.354, acc: 0.82:  39%|███▉      | 9/23 [00:14<00:21,  1.51s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.354, acc: 0.83:  43%|████▎     | 10/23 [00:15<00:19,  1.51s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.356, acc: 0.82:  48%|████▊     | 11/23 [00:17<00:17,  1.49s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.357, acc: 0.82:  52%|█████▏    | 12/23 [00:18<00:16,  1.48s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.356, acc: 0.83:  57%|█████▋    | 13/23 [00:20<00:14,  1.47s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.357, acc: 0.83:  61%|██████    | 14/23 [00:21<00:13,  1.46s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.356, acc: 0.82:  65%|██████▌   | 15/23 [00:23<00:12,  1.50s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.356, acc: 0.82:  70%|██████▉   | 16/23 [00:24<00:10,  1.51s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.357, acc: 0.82:  74%|███████▍  | 17/23 [00:26<00:08,  1.48s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.358, acc: 0.82:  78%|███████▊  | 18/23 [00:27<00:07,  1.48s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.359, acc: 0.82:  83%|████████▎ | 19/23 [00:29<00:05,  1.49s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.359, acc: 0.81:  87%|████████▋ | 20/23 [00:30<00:04,  1.49s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.358, acc: 0.82:  91%|█████████▏| 21/23 [00:32<00:02,  1.50s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.358, acc: 0.82:  96%|█████████▌| 22/23 [00:33<00:01,  1.48s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.363, acc: 0.82: 100%|██████████| 23/23 [00:33<00:00,  1.10s/it]
+#SLEEP:1.1
+[train epoch 2] loss: 4.363, acc: 0.82: 100%|██████████| 23/23 [00:33<00:00,  1.47s/it]
+
+#SLEEP:1.1
+  0%|          | 0/5 [00:00<?, ?it/s]
+#SLEEP:1.1
+[valid epoch 2] loss: 4.291, acc: 0.91:  20%|██        | 1/5 [00:01<00:07,  1.87s/it]
+#SLEEP:1.1
+[valid epoch 2] loss: 4.316, acc: 0.86:  40%|████      | 2/5 [00:03<00:04,  1.58s/it]
+#SLEEP:1.1
+[valid epoch 2] loss: 4.331, acc: 0.85:  60%|██████    | 3/5 [00:04<00:03,  1.55s/it]
+#SLEEP:1.1
+[valid epoch 2] loss: 4.337, acc: 0.85:  80%|████████  | 4/5 [00:06<00:01,  1.51s/it]
+#SLEEP:1.1
+[valid epoch 2] loss: 4.344, acc: 0.85: 100%|██████████| 5/5 [00:06<00:00,  1.06s/it]
+#SLEEP:1.1
+[valid epoch 2] loss: 4.344, acc: 0.85: 100%|██████████| 5/5 [00:06<00:00,  1.29s/it]
+===========================
+707 132
+EPOCH2 GFLOPS: 583.65 GFLOPS, TIME: 40.25 seconds.
+ 
+#SLEEP:1.1
+  0%|          | 0/23 [00:00<?, ?it/s]
+#SLEEP:1.1
+[train epoch 3] loss: 4.389, acc: 0.75:   4%|▍         | 1/23 [00:02<00:46,  2.10s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.377, acc: 0.84:   9%|▊         | 2/23 [00:03<00:36,  1.76s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.353, acc: 0.88:  13%|█▎        | 3/23 [00:05<00:33,  1.67s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.353, acc: 0.85:  17%|█▋        | 4/23 [00:06<00:30,  1.59s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.347, acc: 0.86:  22%|██▏       | 5/23 [00:08<00:28,  1.56s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.345, acc: 0.85:  26%|██▌       | 6/23 [00:09<00:26,  1.56s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.344, acc: 0.85:  30%|███       | 7/23 [00:11<00:24,  1.55s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.342, acc: 0.86:  35%|███▍      | 8/23 [00:12<00:23,  1.54s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.343, acc: 0.85:  39%|███▉      | 9/23 [00:14<00:21,  1.54s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.341, acc: 0.86:  43%|████▎     | 10/23 [00:15<00:19,  1.53s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.340, acc: 0.86:  48%|████▊     | 11/23 [00:17<00:18,  1.52s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.337, acc: 0.86:  52%|█████▏    | 12/23 [00:19<00:17,  1.63s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.340, acc: 0.85:  57%|█████▋    | 13/23 [00:20<00:16,  1.61s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.341, acc: 0.85:  61%|██████    | 14/23 [00:22<00:15,  1.72s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.339, acc: 0.85:  65%|██████▌   | 15/23 [00:24<00:13,  1.66s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.341, acc: 0.85:  70%|██████▉   | 16/23 [00:26<00:12,  1.77s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.342, acc: 0.84:  74%|███████▍  | 17/23 [00:27<00:10,  1.75s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.343, acc: 0.84:  78%|███████▊  | 18/23 [00:29<00:08,  1.69s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.342, acc: 0.84:  83%|████████▎ | 19/23 [00:31<00:06,  1.64s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.344, acc: 0.84:  87%|████████▋ | 20/23 [00:32<00:04,  1.60s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.344, acc: 0.84:  91%|█████████▏| 21/23 [00:34<00:03,  1.60s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.346, acc: 0.84:  96%|█████████▌| 22/23 [00:35<00:01,  1.58s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.346, acc: 0.84: 100%|██████████| 23/23 [00:35<00:00,  1.17s/it]
+#SLEEP:1.1
+[train epoch 3] loss: 4.346, acc: 0.84: 100%|██████████| 23/23 [00:35<00:00,  1.56s/it]
+ 
+#SLEEP:1.1
+  0%|          | 0/5 [00:00<?, ?it/s]
+#SLEEP:1.1
+[valid epoch 3] loss: 4.286, acc: 0.91:  20%|██        | 1/5 [00:01<00:07,  1.91s/it]
+#SLEEP:1.1
+[valid epoch 3] loss: 4.311, acc: 0.86:  40%|████      | 2/5 [00:03<00:04,  1.63s/it]
+#SLEEP:1.1
+[valid epoch 3] loss: 4.326, acc: 0.85:  60%|██████    | 3/5 [00:04<00:03,  1.58s/it]
+#SLEEP:1.1
+[valid epoch 3] loss: 4.332, acc: 0.85:  80%|████████  | 4/5 [00:06<00:01,  1.62s/it]
+#SLEEP:1.1
+[valid epoch 3] loss: 4.340, acc: 0.85: 100%|██████████| 5/5 [00:06<00:00,  1.10s/it]
+#SLEEP:1.1
+[valid epoch 3] loss: 4.340, acc: 0.85: 100%|██████████| 5/5 [00:06<00:00,  1.34s/it]
+===========================
+707 132
+EPOCH3 GFLOPS: 551.13 GFLOPS, TIME: 42.63 seconds.
+#SLEEP:0.8
+======================== DataFlow ========================
+          Total E2E time: 135.59 seconds
+           Average Time Per Epoch: 42.63 seconds, AVG Calculate GFLOPS: 551.13 GFLOPS
+======================== DataFlow ========================
